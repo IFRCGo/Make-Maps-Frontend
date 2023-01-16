@@ -12,9 +12,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend
 
     steps:
       - uses: actions/checkout@v2
@@ -26,9 +23,10 @@ jobs:
 
       - name: npm install, build, and test
         run: |
-          npm install --frontend
-          npm run build --frontend
-          npm run test --frontend
+          cd frontend 
+          npm install --if-present
+          npm run build --if-present
+          npm run test --if-present
           
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
