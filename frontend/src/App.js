@@ -19,7 +19,6 @@ function App() {
         </a>
         <p>this is a new feature</p>
         <p>this is an another new feature</p>
-        <p>this is the third new feature</p>
       </header>
     </div>
   );
