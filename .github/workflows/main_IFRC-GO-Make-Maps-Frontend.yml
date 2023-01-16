@@ -23,8 +23,7 @@ jobs:
 
       - name: npm install, build, and test
         run: |
-          cd frontend 
-          npm install --if-present
+          cd frontend && npm install --if-present
           npm run build --if-present
           npm run test --if-present
           
