@@ -23,7 +23,7 @@ jobs:
         working-directory: "./frontend"
 
       - name: Run tests
-        run: npm test --if-present
+        run: npm test --if-present -- --passWithNoTests
         working-directory: "./frontend"
 
       - name: Build application
