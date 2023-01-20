@@ -38,7 +38,7 @@ function App() {
           textAlign: 'center',
         }}
       >
-        IFRC GO MAKE MAPS ©2023
+        IFRC GO MAKE MAPS ©2023 add footer feature
       </Footer>
     </Layout>
   );
