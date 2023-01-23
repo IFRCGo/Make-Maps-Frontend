@@ -19,6 +19,7 @@ const LeftDrawer = () => {
       <Button 
         style={{
           left: 10,
+          top: -12,
         }}
         size="large"
         type="text"

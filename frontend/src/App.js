@@ -2,8 +2,9 @@ import React from 'react';
 import './App.css';
 import { Layout, theme } from 'antd';
 import Map from './components/Map';
-import FloatBut from './components/FloatBut';
+// import FloatBut from './components/FloatBut';
 import HeaderContents from './components/HeaderContents';
+import ToolBar from './components/ToolBar';
 
 const { Header, Content, Footer } = Layout;
 
@@ -31,7 +32,7 @@ function App() {
         }}
       >
         <Map className="map-layout"/>
-        <FloatBut />
+        <ToolBar />
       </Content>
       <Footer
         style={{
