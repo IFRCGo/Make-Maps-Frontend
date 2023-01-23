@@ -1,44 +1,59 @@
-import React from 'react'
-import { Button, Drawer } from 'antd';
-import { useState } from 'react';
+import React from "react";
+import { Button, Drawer } from "antd";
+import { useState } from "react";
+import { MenuOutlined } from "@ant-design/icons";
+import HomePage from "../pages/home_page";
+import App from "../App.js";
 import {
-  MenuOutlined,
-} from '@ant-design/icons';
+	BrowserRouter as Router,
+	Switch,
+	Route,
+	Redirect,
+	Routes,
+	Link,
+	Navigate,
+} from "react-router-dom";
 
 const LeftDrawer = () => {
-  const [open, setOpen] = useState(false);
-  const showDrawer = () => {
-    setOpen(true);
-  };
-  const onClose = () => {
-    setOpen(false);
-  };
+	const [open, setOpen] = useState(false);
+	const showDrawer = () => {
+		setOpen(true);
+	};
+	const onClose = () => {
+		setOpen(false);
+	};
 
-  return (
-    <>
-      <Button 
-        style={{
-          left: 10,
-        }}
-        size="large"
-        type="text"
-        onClick={showDrawer}
-        icon={<MenuOutlined />}
-      >
-      </Button>
-      <Drawer 
-        title="Basic Drawer" 
-        placement="left" 
-        onClose={onClose} 
-        open={open}
-        width="320px"
-      >
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-      </Drawer>
-    </>
-  );
+	return (
+		<>
+			{/* Routes */}
+			<Router>
+				<Routes>
+					<Route exact path="/" component={<HomePage />} />
+					<Route exact path="app" component={<App />} />
+				</Routes>
+			</Router>
+			<Button
+				style={{
+					left: 10,
+				}}
+				size="large"
+				type="text"
+				onClick={showDrawer}
+				icon={<MenuOutlined />}
+			></Button>
+			<Drawer
+				title="Basic Drawer"
+				placement="left"
+				onClose={onClose}
+				open={open}
+				width="320px"
+			>
+				<Link to="/app">About</Link>
+				<p>Some contents...</p>
+				<p>Some contents...</p>
+			</Drawer>
+		</>
+	);
 };
 
-export default LeftDrawer
+export default LeftDrawer;
