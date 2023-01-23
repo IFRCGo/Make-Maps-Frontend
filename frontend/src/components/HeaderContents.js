@@ -14,7 +14,7 @@ const HeaderContents = () => {
         <LeftDrawer />
         <img src={GoLogo} alt="logo" className="logo"/>
         <Search 
-          placeholder="input search text" 
+          placeholder="Search for places..." 
           allowClear 
           onSearch={onSearch} 
           style={{ width: 300 }} 
