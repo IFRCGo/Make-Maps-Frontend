@@ -5,7 +5,7 @@ import { ToolOutlined, PushpinOutlined, FormOutlined, LinkOutlined, DownloadOutl
 import './ToolBar.css'
 
 const ToolBar = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const showDrawer = () => {
     open === false ? setOpen(true) : setOpen(false);
   };
@@ -23,6 +23,7 @@ const ToolBar = () => {
       />
       <div className="tool-area">
         <Drawer 
+          autoFocus={false}
           height={100}
           mask={false}
           placement="bottom" 
