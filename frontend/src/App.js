@@ -1,14 +1,14 @@
-import React from 'react';
-import './App.css';
-import { Layout, theme } from 'antd';
-import Map from './components/Map';
-import FloatBut from './components/FloatBut';
-import HeaderContents from './components/HeaderContents';
+import React from "react";
+import "./App.css";
+import { Layout, theme } from "antd";
+import MapComponent from "./components/MapComponent";
+import FloatBut from "./components/FloatBut";
+import HeaderContents from "./components/HeaderContents";
+import "maplibre-gl/dist/maplibre-gl.css";
 
 const { Header, Content, Footer } = Layout;
 
 function App() {
-
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -27,15 +27,15 @@ function App() {
         style={{
           margin: 0,
           background: colorBgContainer,
-          height: '500px',
+          height: "500px",
         }}
       >
-        <Map className="map-layout"/>
+        <MapComponent className="map-layout" />
         <FloatBut />
       </Content>
       <Footer
         style={{
-          textAlign: 'center',
+          textAlign: "center",
         }}
       >
         IFRC GO MAKE MAPS ©2023
