@@ -5,7 +5,7 @@ import MapInterface from './components/MapInterface';
 import Map from 'react-map-gl';
 import maplibregl from 'maplibre-gl';
 import FloatBut from './components/FloatBut';
-import Map from './components/Map';
+
 // import FloatBut from './components/FloatBut';
 import HeaderContents from './components/HeaderContents';
 import ToolBar from './components/ToolBar';
@@ -35,26 +35,24 @@ function App() {
           height: '500px',
         }}
       >
-        <MapInterface className="map-layout"/>
-        {/* <Map mapLib={maplibregl}
+        {/* <MapInterface className="map-layout"/> */}
+        <Map mapLib={maplibregl}
         initialViewState={{
           longitude: -0.2,
           latitude: 51.5072,
           zoom: 12
         }}
-          // style={{width: "100%", height: "100vh"}}
           style={{width: "100%", height: " calc(100vh - 77px)"}}
-          // mapStyle="https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC" // Basic layer
+          mapStyle="https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC" // Basic layer
           // mapStyle="https://api.maptiler.com/maps/streets-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC" // Street Layer
           // mapStyle="https://api.maptiler.com/maps/openstreetmap/style.json?key=HMeYX3yPwK7wfZQDqdeC" // open street layer
           // mapStyle="https://api.maptiler.com/maps/hybrid/style.json?key=HMeYX3yPwK7wfZQDqdeC"  // satellite layer
         >
-        </Map> */}
+        </Map>
 
-        <FloatBut />
-        <Map className="map-layout"/>
-        <ToolBar />
-      </Content>
+          <FloatBut />
+          <ToolBar />
+        </Content>
       <Footer
         style={{
           textAlign: 'center',

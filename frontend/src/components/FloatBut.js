@@ -8,7 +8,8 @@ const FloatBut = () => {
     <FloatButton.Group
       shape="square"
       style={{
-        right: 30,
+        bottom: 150,
+        right: 25,
       }}
     >
       <FloatButton icon={<QuestionCircleOutlined />} />
