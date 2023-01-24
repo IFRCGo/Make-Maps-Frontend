@@ -5,7 +5,10 @@ import MapInterface from './components/MapInterface';
 import Map from 'react-map-gl';
 import maplibregl from 'maplibre-gl';
 import FloatBut from './components/FloatBut';
+import Map from './components/Map';
+// import FloatBut from './components/FloatBut';
 import HeaderContents from './components/HeaderContents';
+import ToolBar from './components/ToolBar';
 
 const { Header, Content, Footer } = Layout;
 
@@ -49,6 +52,8 @@ function App() {
         </Map> */}
 
         <FloatBut />
+        <Map className="map-layout"/>
+        <ToolBar />
       </Content>
       <Footer
         style={{
