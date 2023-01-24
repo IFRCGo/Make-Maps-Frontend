@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react'
 import maplibregl from 'maplibre-gl';
-import './Map.css';
+import './MapInterface.css';
 
 const Map = () => {
 
