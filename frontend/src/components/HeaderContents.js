@@ -2,6 +2,7 @@ import React from "react";
 import { Input, Space } from "antd";
 import LeftDrawer from "./LeftDrawer";
 import GoLogo from '../images/goLogo.svg';
+import { Link } from "react-router-dom";
 
 const { Search } = Input;
 const onSearch = (value: string) => console.log(value);
@@ -17,9 +18,12 @@ const HeaderContents = () => {
 			}}
 		>
 			<LeftDrawer />
-			<div className="logo-wrap">
-				<img src={GoLogo} alt="logo" className="logo"/>
-			</div>
+			<Link to="/">
+				<div className="logo-wrap">
+					<img src={GoLogo} alt="logo" className="logo"/>
+				</div>
+			</Link>
+			
 			<Search
 				placeholder="input search text"
 				allowClear
