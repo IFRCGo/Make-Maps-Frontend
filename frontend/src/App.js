@@ -5,6 +5,7 @@ import MapComponent from "./components/MapComponent";
 import FloatBut from "./components/FloatBut";
 import HeaderContents from "./components/HeaderContents";
 import "maplibre-gl/dist/maplibre-gl.css";
+import HomePage from "./pages/home_page";
 
 const { Header, Content, Footer } = Layout;
 
