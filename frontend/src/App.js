@@ -1,10 +1,9 @@
 import React from "react";
-import "./App.css";
 import { Route, Routes } from 'react-router-dom';
 import "maplibre-gl/dist/maplibre-gl.css";
-import MapComponent from "./components/MapComponent";
+import MapComponent from "./map/MapComponent";
 import Layout from "./components/Layout";
-import Home from "./pages/Home";
+import Home from "./home/Home";
 
 
 

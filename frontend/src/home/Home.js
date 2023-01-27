@@ -1,5 +1,5 @@
 import React from "react";
-import home_page_styles from "./home_page_styles.css";
+import home_page_styles from "./Home.css";
 import { Link } from "react-router-dom";
 
 const Home = () => {
