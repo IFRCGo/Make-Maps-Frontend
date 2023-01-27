@@ -2,17 +2,7 @@ import React from "react";
 import { Button, Drawer } from "antd";
 import { useState } from "react";
 import { MenuOutlined } from "@ant-design/icons";
-import Home from "../pages/Home";
-import App from "../App.js";
-import {
-	BrowserRouter as Router,
-	Switch,
-	Route,
-	Redirect,
-	Routes,
-	Link,
-	Navigate,
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const LeftDrawer = () => {
 	const [open, setOpen] = useState(false);
@@ -25,13 +15,6 @@ const LeftDrawer = () => {
 
 	return (
 		<>
-			{/* Routes */}
-			<Router>
-				<Routes>
-					<Route exact path="/" component={<Home />} />
-					<Route exact path="app" component={<App />} />
-				</Routes>
-			</Router>
 			<Button
 				style={{
 					left: 10,
@@ -48,9 +31,12 @@ const LeftDrawer = () => {
 				open={open}
 				width="320px"
 			>
-				<Link to="/app">About</Link>
-				<p>Some contents...</p>
-				<p>Some contents...</p>
+				<Link to="/">
+					<p>Home</p>
+				</Link>
+				<Link to="map">
+					<p>Test Map</p>
+				</Link>
 			</Drawer>
 		</>
 	);

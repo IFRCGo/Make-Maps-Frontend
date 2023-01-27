@@ -8,27 +8,25 @@ const onSearch = (value: string) => console.log(value);
 
 const HeaderContents = () => {
 	return (
-		<>
-			{/* <LeftDrawer /> */}
-			<img src={GoLogo} alt="logo" className="logo"/>
-			<Space
-				direction="horizontal"
-				style={{
-					position: "fixed",
-					width: "100%",
-					top: "14px",
-					justifyContent: "center",
-					alignContent: "center",
-				}}
-			>
-				<Search
-					placeholder="input search text"
-					allowClear
-					onSearch={onSearch}
-					style={{ width: 500 }}
-				/>
-			</Space>
-		</>
+		<Space
+			direction="horizontal"
+			size={15}
+			style={{
+				height: "100%",
+				width: "100%",
+			}}
+		>
+			<LeftDrawer />
+			<div className="logo-wrap">
+				<img src={GoLogo} alt="logo" className="logo"/>
+			</div>
+			<Search
+				placeholder="input search text"
+				allowClear
+				onSearch={onSearch}
+				style={{ width: 300, marginTop: 16 }}
+			/>
+		</Space>
 	);
 };
 
