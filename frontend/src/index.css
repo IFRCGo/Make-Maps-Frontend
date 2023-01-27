@@ -25,3 +25,8 @@
   margin: 16px;
   background: rgba(255, 255, 255, 0.3);
 }
+
+.App {
+  margin: 0;
+  height: 100%;
+}

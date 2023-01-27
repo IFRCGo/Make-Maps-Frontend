@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Drawer } from "antd";
 import { useState } from "react";
 import { MenuOutlined } from "@ant-design/icons";
-import HomePage from "../pages/home_page";
+import Home from "../pages/Home";
 import App from "../App.js";
 import {
 	BrowserRouter as Router,
@@ -28,7 +28,7 @@ const LeftDrawer = () => {
 			{/* Routes */}
 			<Router>
 				<Routes>
-					<Route exact path="/" component={<HomePage />} />
+					<Route exact path="/" component={<Home />} />
 					<Route exact path="app" component={<App />} />
 				</Routes>
 			</Router>

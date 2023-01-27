@@ -9,7 +9,7 @@ const onSearch = (value: string) => console.log(value);
 const HeaderContents = () => {
 	return (
 		<>
-			<LeftDrawer />
+			{/* <LeftDrawer /> */}
 			<img src={GoLogo} alt="logo" className="logo"/>
 			<Space
 				direction="horizontal"
