@@ -1,7 +1,8 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useState } from "react";
 import maplibregl from "maplibre-gl";
 import "./Map.css";
-import Map, { NavigationControl, Marker, Popup } from "react-map-gl";
+import Map, { NavigationControl, Marker } from "react-map-gl";
+import ToolBar from "./ToolBar"
 
 const MapComponent = () => {
   const MARKER = 0; //usually you can have a seperate file to store this kind of const, but in our cases the number of const is small so i think we don't need do that.
@@ -110,6 +111,7 @@ const MapComponent = () => {
                 </Popup>
         ))}
       </Map>
+      <ToolBar handlePinButton={handlePinButton} />
     </div>
   );
 };
