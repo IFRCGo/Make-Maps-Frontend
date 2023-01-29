@@ -1,6 +1,8 @@
 #root,body,html {
   margin: 0;
   height: 100%;
+  width: 100%;
+  position: fixed;
 }
 
 .ant-layout {
@@ -9,9 +11,28 @@
   min-height: 100%;
 }
 
+.ant-layout .ant-layout-header {
+  border-bottom: 2px solid #f5333f;
+}
+
 .ant-layout .ant-layout-footer {
   padding: 0px;
   height: 30px;
   line-height: 30px;
   z-index: 999;
+}
+
+.logo-wrap {
+  height: 64px;
+}
+
+.logo {
+  height: 32px;
+  background: rgba(255, 255, 255, 0.3);
+  margin-top: 16px;
+}
+
+.App {
+  margin: 0;
+  height: 100%;
 }

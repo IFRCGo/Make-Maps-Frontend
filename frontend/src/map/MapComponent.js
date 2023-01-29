@@ -1,7 +1,8 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useState } from "react";
 import maplibregl from "maplibre-gl";
 import "./Map.css";
 import Map, { NavigationControl, Marker } from "react-map-gl";
+import ToolBar from "./ToolBar"
 
 const MapComponent = () => {
   const [pins, setPins] = useState([]);
@@ -25,8 +26,8 @@ const MapComponent = () => {
 
   return (
     <div className="map-wrap">
-      <button onClick={handlePinButton}>Marker</button>
-      <Map
+      <Map 
+        // className="map"
         mapLib={maplibregl}
         initialViewState={{
           longitude: 16.62662018,
@@ -34,7 +35,7 @@ const MapComponent = () => {
           zoom: 14,
         }}
         onClick={handleMapClick}
-        style={{ width: "100%", height: " calc(100vh - 77px)" }}
+        style={{ width: "100%", height: " calc(100vh - 94px)" }}
         mapStyle="https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
       >
         <NavigationControl position="top-left" />
@@ -50,6 +51,7 @@ const MapComponent = () => {
           </Marker>
         ))}
       </Map>
+      <ToolBar handlePinButton={handlePinButton} />
     </div>
   );
 };
