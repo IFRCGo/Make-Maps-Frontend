@@ -21,7 +21,7 @@ const ToolBar = ({ handlePinButton }) => {
         icon={<ToolOutlined />}
         onClick={showDrawer}
       />
-      <div className="tool-area">
+      <div className="tool-area" style={{ display: (open === false ? "none" : "initial") }}>
         <Drawer 
           autoFocus={false}
           height={100}
