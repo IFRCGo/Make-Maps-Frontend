@@ -6,11 +6,16 @@ import './ToolBar.css'
 
 const ToolBar = ({ handlePinButton , handleTextButton}) => {
   const [open, setOpen] = useState(true);
+  const [visual, setVisual] = useState(true);
   const showDrawer = () => {
     open === false ? setOpen(true) : setOpen(false);
+    visual === false ? setVisual(true) : setTimeout(() => {
+      setVisual(false);
+    }, 300);
   };
   const onClose = () => {
     setOpen(false);
+    setVisual(false);
   };
 
   return (
@@ -21,7 +26,7 @@ const ToolBar = ({ handlePinButton , handleTextButton}) => {
         icon={<ToolOutlined />}
         onClick={showDrawer}
       />
-      <div className="tool-area" style={{ display: (open === false ? "none" : "initial") }}>
+      <div className="tool-area" style={{ display: (visual === false ? "none" : "initial") }}>
         <Drawer 
           autoFocus={false}
           height={100}

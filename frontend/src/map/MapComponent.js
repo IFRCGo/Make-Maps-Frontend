@@ -14,12 +14,12 @@ const MapComponent = () => {
   const [popupList, setPopupList] = useState([]);
 
   const handleMapClick = (event) => {
-    if (status == ADD_PIN) {
+    if (status === ADD_PIN) {
       setPins([...pins, [event.lngLat.lng, event.lngLat.lat]]);
       setStatus(DO_NOTHING);
     }
 
-    if (status == ADD_POPUP) {
+    if (status === ADD_POPUP) {
       setPopupList([...popupList, [event.lngLat.lng, event.lngLat.lat, prompt("Your input", "My Text Data")]]);
       setStatus(DO_NOTHING);
     }
