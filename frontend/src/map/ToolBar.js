@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ToolOutlined, PushpinOutlined, FormOutlined, LinkOutlined, DownloadOutlined } from '@ant-design/icons';
 import './ToolBar.css'
 
-const ToolBar = ({ handlePinButton }) => {
+const ToolBar = ({ handlePinButton , handleTextButton}) => {
   const [open, setOpen] = useState(true);
   const showDrawer = () => {
     open === false ? setOpen(true) : setOpen(false);
@@ -35,7 +35,7 @@ const ToolBar = ({ handlePinButton }) => {
           <div className="tool-button">
             <Space>
               <Button type="text" size="large" icon={<PushpinOutlined onClick={handlePinButton} />} />
-              <Button type="text" size="large" icon={<FormOutlined />} />
+              <Button type="text" size="large" icon={<FormOutlined onClick={handleTextButton}/>} />
               <Button type="text" size="large" icon={<LinkOutlined />} />
               <Button type="text" size="large" icon={<DownloadOutlined />} />
             </Space>
