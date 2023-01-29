@@ -5,85 +5,51 @@ import Map, { NavigationControl, Marker } from "react-map-gl";
 import ToolBar from "./ToolBar"
 
 const MapComponent = () => {
-  const MARKER = 0; //usually you can have a seperate file to store this kind of const, but in our cases the number of const is small so i think we don't need do that.
-  const POPUP = 1;
+  const ADD_PIN = 1;
+  const ADD_POPUP = 2;
+  const DO_NOTHING = 0;
 
   const [pins, setPins] = useState([]);
-  const [pinVisible, setPinVisible] = useState(false);
-
+  const [status, setStatus] = useState(DO_NOTHING);
   const [popupList, setPopupList] = useState([]);
-  const [popupVisible, setPopupVisible] = useState(false);
-  const [popupId, setPopupId] = useState(0);
 
-  const handleMapClick = (event, type) => {
-    switch (type) {
-      case MARKER:
-        if (pinVisible) {
-          setPins([...pins, [event.lngLat.lng, event.lngLat.lat]]);
-          setPinVisible(!pinVisible);
-        }
-        break;
-
-      case POPUP:
-        if (popupVisible) {
-          setPopupList([...popupList, [popupId, event.lngLat.lng,  event.lngLat.lat, prompt("xxx", "xxxx")]]);
-          setPopupId(popupId + 1);
-          setPopupVisible(!popupVisible);
-        }
-
+  const handleMapClick = (event) => {
+    if (status == ADD_PIN) {
+      setPins([...pins, [event.lngLat.lng, event.lngLat.lat]]);
+      setStatus(DO_NOTHING);
     }
 
+    if (status == ADD_POPUP) {
+      setPopupList([...popupList, [event.lngLat.lng, event.lngLat.lat, prompt("Your input", "My Text Data")]]);
+      setStatus(DO_NOTHING);
+    }
+    
   };
 
-  const popuRemove = (popu) => {
-    const newPopupList = popupList.filter((item) => item[0] !== popu[0]);
-    //popu.remove(); todo
-    setPopupList(newPopupList); 
-  }
-  
   const handlePinDragEnd = (event, index) => {
     const newPins = [...pins];
     newPins[index] = [event.lngLat.lng, event.lngLat.lat];
     setPins(newPins);
   };
-
-  const handleButton = (event, type) => {
-    switch (type) {
-      case MARKER:
-        setPinVisible(!pinVisible);
-        setPopupVisible(false);
-        break;
-
-      case POPUP:
-        setPopupVisible(!popupVisible);
-        setPinVisible(false);
-    }
-
+  const handlePinButton = () => {
+    setStatus(ADD_PIN);
   };
-
-  const getCurrType = () => {
-    if(pinVisible) {
-      return MARKER;
-    }
-
-    if(popupVisible) {
-      return POPUP;
-    }
-  }
+  const handleTextButton = () => {
+    setStatus(ADD_POPUP);
+  };
 
   return (
     <div className="map-wrap">
-      <button onClick={(e) => handleButton(e, MARKER)}>Marker</button>
-      <button onClick={(e) => handleButton(e, POPUP)}>Popup</button>
-      <Map
+      <Map 
+        // className="map"
         mapLib={maplibregl}
         initialViewState={{
           longitude: 16.62662018,
           latitude: 49.2125578,
           zoom: 14,
         }}
-        onClick={(e) => handleMapClick(e, getCurrType())} //changed: change the style, so i can pass more parameter.
-        style={{ width: "100%", height: " calc(100vh - 77px)" }}
+        onClick={handleMapClick}
+        style={{ width: "100%", height: " calc(100vh - 94px)" }}
         mapStyle="https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
       >
         <NavigationControl position="top-left" />
@@ -99,19 +65,20 @@ const MapComponent = () => {
           </Marker>
         ))}
         {popupList.map((popu, index) => (
-                <Popup 
-                  closeButton={true}
-                  closeOnClick={false}
-                  key={index}
-                  onClose={() => popuRemove(popu)}
-                  longitude={popu[1]} 
-                  latitude={popu[2]}
-                >
-                  {popu[3]}
-                </Popup>
+          <Marker
+            key={index}
+            draggable={true}
+            onDragEnd={(e) => handlePinDragEnd(e, index)}
+            longitude={popu[0]}
+            latitude={popu[1]}
+          >
+            <div><button>{popu[2]}</button></div>
+          </Marker>
         ))}
       </Map>
-      <ToolBar handlePinButton={handlePinButton} />
+      <ToolBar 
+        handlePinButton={handlePinButton} 
+        handleTextButton={handleTextButton}/>
     </div>
   );
 };
