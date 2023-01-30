@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ToolOutlined, PushpinOutlined, FormOutlined, LinkOutlined, DownloadOutlined } from '@ant-design/icons';
 import './ToolBar.css'
 
-const ToolBar = ({ handlePinButton , handleTextButton}) => {
+const ToolBar = ({ handlePinButton , handleTextButton, props}) => {
   const [open, setOpen] = useState(true);
   const [visual, setVisual] = useState(true);
   const showDrawer = () => {
@@ -46,7 +46,7 @@ const ToolBar = ({ handlePinButton , handleTextButton}) => {
               <Button type="text" size="large" icon={<img src="https://cloud.maptiler.com/static/img/maps/basic-v2.png?t=1663665773" width="40" height="40" alt='basic'></img>} />
               <Button type="text" size="large" icon={<img src="https://cloud.maptiler.com/static/img/maps/streets-v2.png?t=1663665773" width="40" height="40" alt='basic'></img>} />
               <Button type="text" size="large" icon={<img src="https://cloud.maptiler.com/static/img/maps/openstreetmap.png?t=1663665773" width="40" height="40" alt='basic'></img>} />
-              <Button type="text" size="large" onClick={e => { props.data = 0}} icon={<img src="https://cloud.maptiler.com/static/img/maps/hybrid.png?t=1663665773" width="40" height="40" alt='basic'></img>} />
+              <Button type="text" size="large" icon={<img src="https://cloud.maptiler.com/static/img/maps/hybrid.png?t=1663665773" width="40" height="40" alt='basic'></img>} />
 
             </Space>
           </div>
