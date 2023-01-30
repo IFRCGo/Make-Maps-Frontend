@@ -4,14 +4,18 @@ import { useState } from 'react';
 import { ToolOutlined, PushpinOutlined, FormOutlined, LinkOutlined, DownloadOutlined } from '@ant-design/icons';
 import './ToolBar.css'
 
-const ToolBar = (props) => {
-  const [open, setOpen] = useState(false);
-
+const ToolBar = ({ handlePinButton , handleTextButton}) => {
+  const [open, setOpen] = useState(true);
+  const [visual, setVisual] = useState(true);
   const showDrawer = () => {
     open === false ? setOpen(true) : setOpen(false);
+    visual === false ? setVisual(true) : setTimeout(() => {
+      setVisual(false);
+    }, 300);
   };
   const onClose = () => {
     setOpen(false);
+    setVisual(false);
   };
 
   return (
@@ -22,8 +26,9 @@ const ToolBar = (props) => {
         icon={<ToolOutlined />}
         onClick={showDrawer}
       />
-      <div className="tool-area">
+      <div className="tool-area" style={{ display: (visual === false ? "none" : "initial") }}>
         <Drawer 
+          autoFocus={false}
           height={100}
           mask={false}
           placement="bottom" 
@@ -34,8 +39,8 @@ const ToolBar = (props) => {
         > 
           <div className="tool-button">
             <Space>
-              <Button type="text" size="large" icon={<PushpinOutlined />} />
-              <Button type="text" size="large" icon={<FormOutlined />} />
+              <Button type="text" size="large" icon={<PushpinOutlined onClick={handlePinButton} />} />
+              <Button type="text" size="large" icon={<FormOutlined onClick={handleTextButton}/>} />
               <Button type="text" size="large" icon={<LinkOutlined />} />
               <Button type="text" size="large" icon={<DownloadOutlined />} />
               <Button type="text" size="large" icon={<img src="https://cloud.maptiler.com/static/img/maps/basic-v2.png?t=1663665773" width="40" height="40" alt='basic'></img>} />

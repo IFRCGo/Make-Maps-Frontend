@@ -1,0 +1,11 @@
+#main table,
+th,
+td {
+	border: 1px solid #000000;
+	padding: 8px;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
