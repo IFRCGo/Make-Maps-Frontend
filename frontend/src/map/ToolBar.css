@@ -16,7 +16,7 @@
   padding: 10px;
 }
 
-.tool-area .ant-btn.ant-btn-lg.ant-btn-icon-only {
+.tool-area .ant-btn.ant-btn-lg.ant-btn-icon-only, button {
   width: 50px;
   padding-inline-start: 0;
   padding-inline-end: 0;

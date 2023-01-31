@@ -45,54 +45,56 @@ const MapComponent = () => {
 		setStatus(ADD_POPUP);
 	};
 
-	return (
-		<div className="map-wrap">
-			<Map
-				// className="map"
-				mapLib={maplibregl}
-				initialViewState={{
-					longitude: 16.62662018,
-					latitude: 49.2125578,
-					zoom: 0,
-				}}
-				onClick={handleMapClick}
-				style={{ width: "100%", height: " calc(100vh - 94px)" }}
-				mapStyle="https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
-			>
-				<NavigationControl position="top-left" />
-				{pins.map((pin, index) => (
-					<Marker
-						key={index}
-						draggable={true}
-						onDragEnd={(e) => handlePinDragEnd(e, index)}
-						longitude={pin[0]}
-						latitude={pin[1]}
-					>
-						<div>
+  return (
+    <div className="map-wrap">
+      <Map 
+        // className="map"
+        mapLib={maplibregl}
+        initialViewState={{
+          longitude: 16.62662018,
+          latitude: 49.2125578,
+          zoom: 14,
+        }}
+        onClick={handleMapClick}
+        style={{ width: "100%", height: " calc(100vh - 94px)" }}
+				// mapStyle="https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC" // Basic layer
+        // mapStyle="https://api.maptiler.com/maps/streets-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC" // Street Layer
+        //mapStyle="https://api.maptiler.com/maps/openstreetmap/style.json?key=HMeYX3yPwK7wfZQDqdeC" // open street layer
+        mapStyle="https://api.maptiler.com/maps/hybrid/style.json?key=HMeYX3yPwK7wfZQDqdeC"  // satellite layer
+      >
+        <NavigationControl position="top-left" />
+        {pins.map((pin, index) => (
+          <Marker
+            key={index}
+            draggable={true}
+            onDragEnd={(e) => handlePinDragEnd(e, index)}
+            longitude={pin[0]}
+            latitude={pin[1]}
+          >
+            <div>
 							<IoLocationSharp style={{ color: "red", fontSize: "2em" }} />
 						</div>
-					</Marker>
-				))}
-				{popupList.map((popu, index) => (
-					<Marker
-						key={index}
-						draggable={true}
-						onDragEnd={(e) => handlePinDragEnd(e, index)}
-						longitude={popu[0]}
-						latitude={popu[1]}
-					>
-						<div>
+          </Marker>
+        ))}
+        {popupList.map((popu, index) => (
+          <Marker
+            key={index}
+            draggable={true}
+            onDragEnd={(e) => handlePinDragEnd(e, index)}
+            longitude={popu[0]}
+            latitude={popu[1]}
+          >
+            <div>
 							<button>{popu[2]}</button>
 						</div>
-					</Marker>
-				))}
-			</Map>
-			<ToolBar
-				handlePinButton={handlePinButton}
-				handleTextButton={handleTextButton}
-			/>
-		</div>
-	);
+          </Marker>
+        ))}
+      </Map>
+      <ToolBar 
+        handlePinButton={handlePinButton} 
+        handleTextButton={handleTextButton}/>
+    </div>
+  );
 };
 
 export default MapComponent;
