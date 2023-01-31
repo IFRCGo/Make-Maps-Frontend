@@ -2,45 +2,51 @@ import React, { useState } from "react";
 import maplibregl from "maplibre-gl";
 import "./Map.css";
 import Map, { NavigationControl, Marker } from "react-map-gl";
-import ToolBar from "./ToolBar"
+import ToolBar from "./ToolBar";
+import { IoLocationSharp } from "react-icons/io5";
 
 const MapComponent = () => {
-  const ADD_PIN = 1;
-  const ADD_POPUP = 2;
-  const DO_NOTHING = 0;
+	const ADD_PIN = 1;
+	const ADD_POPUP = 2;
+	const DO_NOTHING = 0;
 
-  const [pins, setPins] = useState([]);
-  const [status, setStatus] = useState(DO_NOTHING);
-  const [popupList, setPopupList] = useState([]);
+	const [pins, setPins] = useState([]);
+	const [status, setStatus] = useState(DO_NOTHING);
+	const [popupList, setPopupList] = useState([]);
 
-  const handleMapClick = (event) => {
-    if (status === ADD_PIN) {
-      setPins([...pins, [event.lngLat.lng, event.lngLat.lat]]);
-      setStatus(DO_NOTHING);
-    }
+	const handleMapClick = (event) => {
+		if (status === ADD_PIN) {
+			setPins([...pins, [event.lngLat.lng, event.lngLat.lat]]);
+			setStatus(DO_NOTHING);
+		}
 
-    if (status === ADD_POPUP) {
-      setPopupList([...popupList, [event.lngLat.lng, event.lngLat.lat, prompt("Your input", "My Text Data")]]);
-      setStatus(DO_NOTHING);
-    }
-    
-  };
+		if (status === ADD_POPUP) {
+			setPopupList([
+				...popupList,
+				[
+					event.lngLat.lng,
+					event.lngLat.lat,
+					prompt("Your input", "My Text Data"),
+				],
+			]);
+			setStatus(DO_NOTHING);
+		}
+	};
 
-  const handlePinDragEnd = (event, index) => {
-    const newPins = [...pins];
-    newPins[index] = [event.lngLat.lng, event.lngLat.lat];
-    setPins(newPins);
-  };
-  const handlePinButton = () => {
-    setStatus(ADD_PIN);
-  };
-  const handleTextButton = () => {
-    setStatus(ADD_POPUP);
-  };
+	const handlePinDragEnd = (event, index) => {
+		const newPins = [...pins];
+		newPins[index] = [event.lngLat.lng, event.lngLat.lat];
+		setPins(newPins);
+	};
+	const handlePinButton = () => {
+		setStatus(ADD_PIN);
+	};
+	const handleTextButton = () => {
+		setStatus(ADD_POPUP);
+	};
 
   return (
     <div className="map-wrap">
-
       <Map 
         // className="map"
         mapLib={maplibregl}
@@ -51,7 +57,7 @@ const MapComponent = () => {
         }}
         onClick={handleMapClick}
         style={{ width: "100%", height: " calc(100vh - 94px)" }}
-        // mapStyle="https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC" // Basic layer
+				// mapStyle="https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC" // Basic layer
         // mapStyle="https://api.maptiler.com/maps/streets-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC" // Street Layer
         //mapStyle="https://api.maptiler.com/maps/openstreetmap/style.json?key=HMeYX3yPwK7wfZQDqdeC" // open street layer
         mapStyle="https://api.maptiler.com/maps/hybrid/style.json?key=HMeYX3yPwK7wfZQDqdeC"  // satellite layer
@@ -65,7 +71,9 @@ const MapComponent = () => {
             longitude={pin[0]}
             latitude={pin[1]}
           >
-            <div>Your Pin icon here</div>
+            <div>
+							<IoLocationSharp style={{ color: "red", fontSize: "2em" }} />
+						</div>
           </Marker>
         ))}
         {popupList.map((popu, index) => (
@@ -76,7 +84,9 @@ const MapComponent = () => {
             longitude={popu[0]}
             latitude={popu[1]}
           >
-            <div><button>{popu[2]}</button></div>
+            <div>
+							<button>{popu[2]}</button>
+						</div>
           </Marker>
         ))}
       </Map>
