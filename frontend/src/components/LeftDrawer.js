@@ -31,10 +31,10 @@ const LeftDrawer = () => {
 				open={open}
 				width="320px"
 			>
-				<Link to="/">
+				<Link to="/" onClick={onClose}>
 					<p>Home</p>
 				</Link>
-				<Link to="map">
+				<Link to="map" onClick={onClose}>
 					<p>Test Map</p>
 				</Link>
 			</Drawer>

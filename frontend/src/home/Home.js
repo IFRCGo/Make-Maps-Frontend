@@ -1,5 +1,4 @@
 import React from "react";
-import home_page_styles from "./Home.css";
 import { Link } from "react-router-dom";
 import { Table } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
@@ -154,7 +153,6 @@ const Home = () => {
 			}}
 		>
 			<Table columns={columns} dataSource={disastersTest} onChange={onChange} />
-			;
 			{/* <table class="main">
 				<thead>
 					<tr role="row">
