@@ -1,0 +1,16 @@
+.ant-drawer .ant-drawer-body {
+  padding: 0px;
+}
+
+.close-button {
+  color: #000000;
+  border: transparent;
+  background-color: transparent;
+  font-size: 18px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: #7f7f7f;
+}
