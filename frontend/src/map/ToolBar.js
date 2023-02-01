@@ -47,7 +47,6 @@ const ToolBar = ({ handlePinButton , handleTextButton, props}) => {
               <Button type="text" size="large" icon={<img src="https://cloud.maptiler.com/static/img/maps/streets-v2.png?t=1663665773" width="40" height="40" alt='basic'></img>} />
               <Button type="text" size="large" icon={<img src="https://cloud.maptiler.com/static/img/maps/openstreetmap.png?t=1663665773" width="40" height="40" alt='basic'></img>} />
               <Button type="text" size="large" icon={<img src="https://cloud.maptiler.com/static/img/maps/hybrid.png?t=1663665773" width="40" height="40" alt='basic'></img>} />
-
             </Space>
           </div>
         </Drawer>
