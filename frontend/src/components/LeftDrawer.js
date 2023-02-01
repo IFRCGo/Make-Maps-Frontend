@@ -1,8 +1,11 @@
 import React from "react";
-import { Button, Drawer } from "antd";
+import { Button, Drawer, Menu } from "antd";
 import { useState } from "react";
-import { MenuOutlined } from "@ant-design/icons";
+import { MenuOutlined, HomeOutlined } from "@ant-design/icons";
+import { BiMapAlt } from "react-icons/bi";
+import { IoClose } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import "./LeftDrawer.css";
 
 const LeftDrawer = () => {
 	const [open, setOpen] = useState(false);
@@ -12,6 +15,19 @@ const LeftDrawer = () => {
 	const onClose = () => {
 		setOpen(false);
 	};
+
+	function getItem(label, key, icon) {
+		return {
+			label,
+			key,
+			icon,
+		};
+	}
+
+	const items = [
+		getItem((<Link to="/" onClick={onClose}><p>Home</p></Link>), 'home', <HomeOutlined />),
+		getItem((<Link to="map" onClick={onClose}><p>Disaster Map</p></Link>), 'map', <BiMapAlt />),
+	];
 
 	return (
 		<>
@@ -25,18 +41,29 @@ const LeftDrawer = () => {
 				icon={<MenuOutlined />}
 			></Button>
 			<Drawer
-				title="Basic Drawer"
+				title="IFRC Go Make Maps"
 				placement="left"
 				onClose={onClose}
+				closable={false}
 				open={open}
-				width="320px"
+				width={300}
+				extra={
+					<button 
+						className="close-button"
+						onClick={onClose} 
+					>
+						<IoClose />
+					</button>
+        }
 			>
-				<Link to="/" onClick={onClose}>
-					<p>Home</p>
-				</Link>
-				<Link to="map" onClick={onClose}>
-					<p>Test Map</p>
-				</Link>
+				<Menu
+					style={{
+						width: "100%",
+					}}
+					mode="inline"
+					selectable={false}
+					items={items}
+				/>
 			</Drawer>
 		</>
 	);
