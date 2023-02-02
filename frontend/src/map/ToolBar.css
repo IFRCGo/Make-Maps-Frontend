@@ -47,3 +47,18 @@
   border-top-left-radius: 25px;
   border-top-right-radius: 25px;
 }
+
+.layer-button {
+  width: 200px;
+  height: 60px;
+  text-align: left;
+}
+
+.ant-popover .ant-popover-inner {
+  padding: 0px;
+}
+
+.layer-img {
+  vertical-align: middle;
+  border-radius: 6px;
+}
