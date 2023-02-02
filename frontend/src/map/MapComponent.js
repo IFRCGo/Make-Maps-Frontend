@@ -106,7 +106,7 @@ const MapComponent = () => {
           latitude: 49.2125578,
           zoom: 14,
         }}
-        style={{ width: "100%", height: " calc(100vh - 77px)" }}
+        style={{ width: "100%", height: " calc(100vh - 94px)" }}
         onMouseMove={painting ? handleDrawPoint : ""}
         onClick={paintButton ? handlePaintButton : handleMapClick}
         mapStyle={mapType}
