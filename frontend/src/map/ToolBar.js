@@ -1,18 +1,21 @@
 import React from "react";
-import { Drawer, FloatButton, Button, Space } from "antd";
+import { Drawer, FloatButton, Button, Space, Popover } from "antd";
 import { useState } from "react";
 import {
-	ToolOutlined,
 	PushpinOutlined,
 	FormOutlined,
 	LinkOutlined,
 	DownloadOutlined,
 } from "@ant-design/icons";
+import { FiLayers } from "react-icons/fi";
+import { CgToolbox } from "react-icons/cg";
 import "./ToolBar.css";
 
 const ToolBar = ({ handlePinButton, handleTextButton, props, setMapType }) => {
 	const [open, setOpen] = useState(true);
 	const [visual, setVisual] = useState(true);
+	const [select, setSelect] = useState("Default")
+
 	const showDrawer = () => {
 		open === false ? setOpen(true) : setOpen(false);
 		visual === false
@@ -26,14 +29,109 @@ const ToolBar = ({ handlePinButton, handleTextButton, props, setMapType }) => {
 		setVisual(false);
 	};
 
-	const changeMap = (event) => {};
+	const layerContent = (
+		<div>
+			<Space>
+				<Space.Compact direction="vertical">
+					<Button 
+						className="layer-button" 
+						type={select === "Default" ? "primary" : "text"}
+						onClick={() => {
+							setMapType(
+								"https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
+							);
+							setSelect("Default");
+						}}
+					>
+						<Space>
+							<img
+								className="layer-img"
+								src="https://cloud.maptiler.com/static/img/maps/basic-v2.png?t=1663665773"
+								width="40"
+								height="40"
+								alt="basic"
+							/>
+							<p>Default</p>
+						</Space>
+						
+					</Button>
+					<Button 
+						id="Street"
+						className="layer-button" 
+						type={select === "Street" ? "primary" : "text"}
+						onClick={() => {
+							setMapType(
+								"https://api.maptiler.com/maps/streets-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
+							);
+							setSelect("Street");
+						}}
+					>
+						<Space>
+							<img
+								className="layer-img"
+								src="https://cloud.maptiler.com/static/img/maps/streets-v2.png?t=1663665773"
+								width="40"
+								height="40"
+								alt="basic"
+							/>
+							<p>Street</p>
+						</Space>
+					</Button>
+					<Button 
+						className="layer-button" 
+						type={select === "Open" ? "primary" : "text"}
+						onClick={() => {
+							setMapType(
+								"https://api.maptiler.com/maps/openstreetmap/style.json?key=HMeYX3yPwK7wfZQDqdeC"
+							);
+							setSelect("Open");
+						}}
+					>
+						<Space>
+							<img
+								className="layer-img"
+								src="https://cloud.maptiler.com/static/img/maps/openstreetmap.png?t=1663665773"
+								width="40"
+								height="40"
+								alt="basic"
+								style={{ verticalAlign: "middle" }}
+							/>
+							<p>Open Street</p>
+						</Space>
+					</Button>
+					<Button 
+						className="layer-button" 
+						type={select === "Satellite" ? "primary" : "text"}
+						onClick={() => {
+							setMapType(
+								"https://api.maptiler.com/maps/hybrid/style.json?key=HMeYX3yPwK7wfZQDqdeC"
+							);
+							setSelect("Satellite");
+						}}
+					>
+						<Space>
+							<img
+								className="layer-img"
+								src="https://cloud.maptiler.com/static/img/maps/hybrid.png?t=1663665773"
+								width="40"
+								height="40"
+								alt="basic"
+								style={{ verticalAlign: "middle" }}
+							/>
+							<p>Satellite</p>
+						</Space>
+					</Button>
+				</Space.Compact>
+			</Space>
+  	</div>
+	);
 
 	return (
 		<>
 			<FloatButton
 				shape="square"
 				style={{ right: 24, marginBottom: 20 }}
-				icon={<ToolOutlined />}
+				icon={<CgToolbox />}
 				onClick={showDrawer}
 			/>
 			<div
@@ -64,74 +162,9 @@ const ToolBar = ({ handlePinButton, handleTextButton, props, setMapType }) => {
 							/>
 							<Button type="text" size="large" icon={<LinkOutlined />} />
 							<Button type="text" size="large" icon={<DownloadOutlined />} />
-							<Button
-								type="text"
-								size="large"
-								icon={
-									<img
-										src="https://cloud.maptiler.com/static/img/maps/basic-v2.png?t=1663665773"
-										onClick={() =>
-											setMapType(
-												"https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
-											)
-										}
-										width="40"
-										height="40"
-										alt="basic"
-									/>
-								}
-							/>
-							<Button
-								type="text"
-								size="large"
-								icon={
-									<img
-										src="https://cloud.maptiler.com/static/img/maps/streets-v2.png?t=1663665773"
-										onClick={() =>
-											setMapType(
-												"https://api.maptiler.com/maps/streets-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
-											)
-										}
-										width="40"
-										height="40"
-										alt="basic"
-									/>
-								}
-							/>
-							<Button
-								type="text"
-								size="large"
-								icon={
-									<img
-										src="https://cloud.maptiler.com/static/img/maps/openstreetmap.png?t=1663665773"
-										onClick={() =>
-											setMapType(
-												"https://api.maptiler.com/maps/openstreetmap/style.json?key=HMeYX3yPwK7wfZQDqdeC"
-											)
-										}
-										width="40"
-										height="40"
-										alt="basic"
-									/>
-								}
-							/>
-							<Button
-								type="text"
-								size="large"
-								icon={
-									<img
-										src="https://cloud.maptiler.com/static/img/maps/hybrid.png?t=1663665773"
-										onClick={() =>
-											setMapType(
-												"https://api.maptiler.com/maps/hybrid/style.json?key=HMeYX3yPwK7wfZQDqdeC"
-											)
-										}
-										width="40"
-										height="40"
-										alt="basic"
-									/>
-								}
-							/>
+							<Popover placement="topLeft" content={layerContent} trigger="click">
+								<Button type="text" size="large" icon={<FiLayers style={{ verticalAlign: "text-top" }}/>} />
+							</Popover>
 						</Space>
 					</div>
 				</Drawer>
