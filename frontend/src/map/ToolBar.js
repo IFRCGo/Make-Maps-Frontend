@@ -6,6 +6,7 @@ import {
 	FormOutlined,
 	LinkOutlined,
 	DownloadOutlined,
+	FormatPainterOutlined
 } from "@ant-design/icons";
 import { FiLayers } from "react-icons/fi";
 import { CgToolbox } from "react-icons/cg";
@@ -52,11 +53,9 @@ const ToolBar = ({ handlePinButton, handleTextButton, handlePaintButton, setMapT
 								alt="basic"
 							/>
 							<p>Default</p>
-						</Space>
-						
+						</Space>					
 					</Button>
 					<Button 
-						id="Street"
 						className="layer-button" 
 						type={select === "Street" ? "primary" : "text"}
 						onClick={() => {
@@ -94,7 +93,6 @@ const ToolBar = ({ handlePinButton, handleTextButton, handlePaintButton, setMapT
 								width="40"
 								height="40"
 								alt="basic"
-								style={{ verticalAlign: "middle" }}
 							/>
 							<p>Open Street</p>
 						</Space>
@@ -116,7 +114,6 @@ const ToolBar = ({ handlePinButton, handleTextButton, handlePaintButton, setMapT
 								width="40"
 								height="40"
 								alt="basic"
-								style={{ verticalAlign: "middle" }}
 							/>
 							<p>Satellite</p>
 						</Space>
