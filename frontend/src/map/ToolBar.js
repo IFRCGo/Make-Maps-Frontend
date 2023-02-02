@@ -7,10 +7,12 @@ import {
 	FormOutlined,
 	LinkOutlined,
 	DownloadOutlined,
+	EyeInvisibleTwoTone,
+	EyeTwoTone
 } from "@ant-design/icons";
 import "./ToolBar.css";
 
-const ToolBar = ({ handlePinButton, handleTextButton, props, setMapType }) => {
+const ToolBar = ({ handlePinButton, handleTextButton, setMapType, setBlur }) => {
 	const [open, setOpen] = useState(true);
 	const [visual, setVisual] = useState(true);
 	const showDrawer = () => {
@@ -131,6 +133,29 @@ const ToolBar = ({ handlePinButton, handleTextButton, props, setMapType }) => {
 										alt="basic"
 									/>
 								}
+							/>
+							<Button
+								type="text"
+								size="large"
+								icon={
+									<EyeInvisibleTwoTone 
+										onClick={() =>
+											setBlur("blur(2px)")
+
+										}
+									/>
+								}			
+							/>
+							<Button
+								type="text"
+								size="large"
+								icon={
+									<EyeTwoTone 
+										onClick={() =>
+											setBlur("blur(0px)")
+										}
+									/>
+								}			
 							/>
 						</Space>
 					</div>
