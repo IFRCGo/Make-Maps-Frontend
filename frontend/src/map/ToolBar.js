@@ -127,7 +127,7 @@ const ToolBar = ({ handlePinButton, handleTextButton, handlePaintButton, setMapT
 		<>
 			<FloatButton
 				shape="square"
-				style={{ right: 24, marginBottom: 20 }}
+				style={{ right: 24, marginBottom: -10 }}
 				icon={<CgToolbox />}
 				onClick={showDrawer}
 			/>
