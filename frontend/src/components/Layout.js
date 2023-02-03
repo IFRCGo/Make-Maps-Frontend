@@ -19,17 +19,17 @@ const Layout = () => {
         >
           <HeaderContents />
         </Header>
-        <Content>
+        <Content style={{ background: colorBgContainer }}>
           <Outlet />
         </Content>
-        <Footer
+        {/* <Footer
           style={{
             textAlign: "center",
             background: colorBgContainer,
           }}
         >
           IFRC GO MAKE MAPS ©2023
-        </Footer>
+        </Footer> */}
       </AntdLayout>
     </div>
   )

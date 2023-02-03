@@ -1,11 +1,15 @@
-#main table,
+/* #main table,
 th,
 td {
 	border: 1px solid #000000;
 	padding: 8px;
-}
+} */
 
 table {
 	width: 100%;
 	border-collapse: collapse;
+}
+
+.underline {
+	border-bottom: 1px solid #c9c3c1;
 }

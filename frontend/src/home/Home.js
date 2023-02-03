@@ -1,8 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Table } from "antd";
+import { Table, Button, Space } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import moment from "moment";
+import "./Home.css";
 
 const Home = () => {
 	const disastersTest = [
@@ -16,6 +17,7 @@ const Home = () => {
 			disasterType: "Epidemic",
 			fundingRequirements: "208,367 CHF",
 			fundingCoverage: 80,
+			country: "Kenya",
 		},
 		{
 			startDate: new Intl.DateTimeFormat("fr-CA").format(
@@ -27,6 +29,7 @@ const Home = () => {
 			disasterType: "Epidemic",
 			fundingRequirements: "208,367 CHF",
 			fundingCoverage: 80,
+			country: "Bangladesh",
 		},
 		{
 			startDate: new Intl.DateTimeFormat("fr-CA").format(
@@ -38,6 +41,7 @@ const Home = () => {
 			disasterType: "Drought",
 			fundingRequirements: "42,951 CHF",
 			fundingCoverage: 100,
+			country: "Afghanistan",
 		},
 		{
 			startDate: new Intl.DateTimeFormat("fr-CA").format(
@@ -49,6 +53,7 @@ const Home = () => {
 			disasterType: "Flood",
 			fundingRequirements: "86,140 CHF",
 			fundingCoverage: 100,
+			country: "Pakistan",
 		},
 	];
 
@@ -61,6 +66,7 @@ const Home = () => {
 		disasterType: String;
 		fundingRequirements: String;
 		fundingCoverage: Number;
+		country: String;
 	}
 
 	const columns: ColumnsType<DataType> = [
@@ -130,6 +136,11 @@ const Home = () => {
 			defaultSortOrder: "descend",
 			sorter: (a, b) => a.fundingCoverage - b.fundingCoverage,
 		},
+		{
+			title: "Country",
+			dataIndex: "country",
+			render: (text) => (<Link to="map"><Button danger type="link" style={{ padding: 0, minWidth: 100, textAlign: "left" }}>{text}</Button></Link>)
+		},
 	];
 
 	const onChange: TableProps<DataType>["onChange"] = (
@@ -145,59 +156,23 @@ const Home = () => {
 		<main
 			style={{
 				margin: 100,
-				background: "#FAF9F9",
 				display: "flex",
 				alignContent: "center",
 				justifyContent: "center",
 				alignItems: "center",
 			}}
 		>
-			<Table columns={columns} dataSource={disastersTest} onChange={onChange} />
-			{/* <table class="main">
-				<thead>
-					<tr role="row">
-						<th colSpan="1" role="columnheader" title="Toggle SortBy">
-							Start Date<span></span>
-						</th>
-						<th colSpan="1" role="columnheader" title="Toggle SortBy">
-							Appeal Type<span></span>
-						</th>
-						<th colSpan="1" role="columnheader" title="Toggle SortBy">
-							Appeal Code<span></span>
-						</th>
-						<th colSpan="1" role="columnheader" title="Toggle SortBy">
-							Active Operations<span></span>
-						</th>
-						<th colSpan="1" role="columnheader" title="Toggle SortBy">
-							Disaster Type<span></span>
-						</th>
-						<th colSpan="1" role="columnheader" title="Toggle SortBy">
-							Funding Requirements<span></span>
-						</th>
-						<th colSpan="1" role="columnheader" title="Toggle SortBy">
-							Funding Coverage<span></span>
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					{disastersTest.map((element) => {
-						return (
-							<tr style={home_page_styles.tr}>
-								<td>{element.startDate}</td>
-								<td>{element.appealType}</td>
-								<td>{element.appealCode}</td>
-								<td>{element.activeOperations}</td>
-								<td>{element.disasterType}</td>
-								<td>{element.fundingRequirements}</td>
-								<td>{element.fundingCoverage}</td>
-							</tr>
-						);
-					})}
-				</tbody>
-			</table> */}
-			<Link to="map">
-				<button>Test map</button>
-			</Link>
+			<Space direction="vertical" size="large">
+				<div className="underline">
+					<h1 style={{ fontSize: 35, marginBottom: 10 }}>Disaster Maps</h1>
+				</div>
+				<Table 
+					columns={columns} 
+					dataSource={disastersTest} 
+					onChange={onChange} 
+					bordered={true}
+				/>
+			</Space>
 		</main>
 	);
 };
