@@ -19,7 +19,7 @@ const Layout = () => {
         >
           <HeaderContents />
         </Header>
-        <Content>
+        <Content style={{ background: colorBgContainer }}>
           <Outlet />
         </Content>
         <Footer
