@@ -48,14 +48,8 @@ const disastersTest = [
 	},
 ];
 
-const locations = [
-	{
-		country: "venezuela",
-		Disasterlocation: { x: 6.4141070000000004, y: 66.5789265 },
-	},
-];
+const Home = ({locations}) => {
 
-const Home = () => {
 	interface DataType {
 		key: React.Key;
 		startDate: Date;
@@ -140,10 +134,7 @@ const Home = () => {
 			dataIndex: "country",
 			render: (text) => (
 				<Link
-					to={{
-						pathname: "map",
-						state: locations[0],
-					}}
+					to={`/map/${locations[0].id}`}
 				>
 					<Button
 						danger
