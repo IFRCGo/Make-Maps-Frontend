@@ -25,8 +25,20 @@ const LeftDrawer = () => {
 	}
 
 	const items = [
-		getItem((<Link to="/" onClick={onClose}><p>Home</p></Link>), 'home', <HomeOutlined />),
-		getItem((<Link to="map" onClick={onClose}><p>Disaster Map</p></Link>), 'map', <BiMapAlt />),
+		getItem(
+			<Link to="/" onClick={onClose}>
+				<p>Home</p>
+			</Link>,
+			"home",
+			<HomeOutlined />
+		),
+		getItem(
+			<Link to="map" onClick={onClose}>
+				<p>Disaster Map</p>
+			</Link>,
+			"map",
+			<BiMapAlt />
+		),
 	];
 
 	return (
@@ -48,13 +60,10 @@ const LeftDrawer = () => {
 				open={open}
 				width={300}
 				extra={
-					<button 
-						className="close-button"
-						onClick={onClose} 
-					>
+					<button className="close-button" onClick={onClose}>
 						<IoClose />
 					</button>
-        }
+				}
 			>
 				<Menu
 					style={{

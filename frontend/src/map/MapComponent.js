@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import maplibregl from "maplibre-gl";
 import "./Map.css";
 import Map, {
@@ -11,13 +11,20 @@ import Map, {
 import ToolBar from "./ToolBar";
 import HeaderContents from "../components/HeaderContents";
 import { IoLocationSharp } from "react-icons/io5";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 const MapComponent = ({ searchCountry, props }) => {
 	const ADD_PIN = 1;
 	const ADD_POPUP = 2;
 	const DO_NOTHING = 0;
-	const location = { longitude: 16.62662018, latitude: 49.2125578, zoom: 0 };
+	// Destructuring
+	const { long, lat } = useParams();
+	console.log(long, lat);
+	const location = {
+		longitude: typeof long != "undefined" ? long : 16.62662018,
+		latitude: typeof lat != "undefined" ? lat : 49.2125578,
+		zoom: typeof long != "undefined" ? 9 : 0,
+	};
 
 	const [mapLocation, setMapLocation] = useState(location);
 	const [pins, setPins] = useState([]);
@@ -36,6 +43,17 @@ const MapComponent = ({ searchCountry, props }) => {
 	const handlePaintButtonToggle = (event) => {
 		setPaintButton(!paintButton);
 	};
+
+	const tempFunc = useCallback(() => {
+		setMapLocation({ longitude: long, latitude: lat, zoom: 9 });
+	});
+
+	console.log(mapLocation);
+
+	useEffect(() => {
+		tempFunc();
+	}, [long, lat]);
+	//
 
 	let locationInfo = useLocation();
 	// ISSUE

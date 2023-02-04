@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Table, Button, Space } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import moment from "moment";
@@ -51,7 +51,8 @@ const disastersTest = [
 const locations = [
 	{
 		country: "venezuela",
-		Disasterlocation: { x: 6.4141070000000004, y: 66.5789265 },
+		// y = lat x = long
+		Disasterlocation: { x: -66.110932, y: 8.001871 },
 	},
 ];
 
@@ -67,6 +68,28 @@ const Home = () => {
 		fundingCoverage: Number;
 		country: String;
 	}
+
+	const navigate = useNavigate();
+
+	const countryLink = (country) => {
+		// const found = locations.includes((element) => element == value);
+		console.log(country);
+		let locationFound = locations.filter(
+			(location) => location["country"] === country.toLowerCase()
+		);
+		console.log(locationFound);
+		// console.log(locationFound[0].Disasterlocation);
+		let locationData = locationFound[0].Disasterlocation;
+		console.log(locationData);
+
+		navigate(`map/${locationData.x}/${locationData.y}`);
+
+		// setMapLocation({
+		// 	longitude: locationData.x,
+		// 	latitude: locationData.y,
+		// 	zoom: 9,
+		// });
+	};
 
 	const columns: ColumnsType<DataType> = [
 		{
@@ -138,21 +161,17 @@ const Home = () => {
 		{
 			title: "Country",
 			dataIndex: "country",
-			render: (text) => (
-				<Link
-					to={{
-						pathname: "map",
-						state: locations[0],
+			render: (country) => (
+				<Button
+					danger
+					type="link"
+					style={{ padding: 0, minWidth: 100, textAlign: "left" }}
+					onClick={() => {
+						countryLink(country);
 					}}
 				>
-					<Button
-						danger
-						type="link"
-						style={{ padding: 0, minWidth: 100, textAlign: "left" }}
-					>
-						{text}
-					</Button>
-				</Link>
+					{country}
+				</Button>
 			),
 		},
 	];
