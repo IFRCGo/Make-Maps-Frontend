@@ -10,32 +10,34 @@ import Map, {
 	FullscreenControl,
 } from "react-map-gl";
 import ToolBar from "./ToolBar";
-import HeaderContents from "../components/HeaderContents";
 import { IoLocationSharp } from "react-icons/io5";
-import { useLocation } from "react-router-dom";
+
+const ADD_PIN = 1;
+const ADD_POPUP = 2;
+const DO_NOTHING = 0;
 
 const CountryMap = ({ searchCountry, props, locations }) => {
-  const { id } = useParams();
-  const location = locations.find(location => (location.id).toString() === id);
-	const ADD_PIN = 1;
-	const ADD_POPUP = 2;
-	const DO_NOTHING = 0;
-	const disasterLocation = { longitude: location.longitude, latitude: location.latitude, zoom: location.zoom };
+	const { long, lat } = useParams();
+	const location = {
+		longitude: typeof long != "undefined" ? long : 16.62662018,
+		latitude: typeof lat != "undefined" ? lat : 49.2125578,
+		zoom: typeof long != "undefined" ? 9 : 0,
+	};
 
-	const [mapLocation, setMapLocation] = useState(disasterLocation);
+	const [mapLocation, setMapLocation] = useState(location);
 	const [pins, setPins] = useState([]);
 	const [status, setStatus] = useState(DO_NOTHING);
 	const [popupList, setPopupList] = useState([]);
 	const [mapType, setMapType] = useState(
 		"https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
 	);
-
 	const [userDrawnLines, setUserDrawnLines] = useState([]);
 	const [currentLine, setCurrentLine] = useState([]);
 	const [brushColor, setBrushColor] = useState("#ffa500");
 	const [brushSize, setBrushSize] = useState(10);
 	const [painting, setPainting] = useState(false);
 	const [paintButton, setPaintButton] = useState(false);
+
 	const handlePaintButtonToggle = (event) => {
 		setPaintButton(!paintButton);
 	};
@@ -101,8 +103,6 @@ const CountryMap = ({ searchCountry, props, locations }) => {
 	const handleTextButton = () => {
 		setStatus(ADD_POPUP);
 	};
-
-	console.log(mapType);
 
 	return (
 		<div className="map-wrap">

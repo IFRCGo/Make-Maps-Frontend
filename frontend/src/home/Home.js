@@ -49,7 +49,6 @@ const disastersTest = [
 ];
 
 const Home = ({locations}) => {
-
 	interface DataType {
 		key: React.Key;
 		startDate: Date;
@@ -65,23 +64,11 @@ const Home = ({locations}) => {
 	const navigate = useNavigate();
 
 	const countryLink = (country) => {
-		// const found = locations.includes((element) => element == value);
-		console.log(country);
 		let locationFound = locations.filter(
-			(location) => location["country"] === country.toLowerCase()
+			(location) => location["country"].toLowerCase() === country.toLowerCase()
 		);
-		console.log(locationFound);
-		// console.log(locationFound[0].Disasterlocation);
-		let locationData = locationFound[0].Disasterlocation;
-		console.log(locationData);
-
+		let locationData = locationFound[0].disasterLocation;
 		navigate(`map/${locationData.x}/${locationData.y}`);
-
-		// setMapLocation({
-		// 	longitude: locationData.x,
-		// 	latitude: locationData.y,
-		// 	zoom: 9,
-		// });
 	};
 
 	const columns: ColumnsType<DataType> = [

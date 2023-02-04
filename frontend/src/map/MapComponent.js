@@ -13,19 +13,18 @@ import HeaderContents from "../components/HeaderContents";
 import { IoLocationSharp } from "react-icons/io5";
 import { useLocation, useParams } from "react-router-dom";
 
+const ADD_PIN = 1;
+const ADD_POPUP = 2;
+const DO_NOTHING = 0;
+
 const MapComponent = ({ searchCountry, props }) => {
-	const ADD_PIN = 1;
-	const ADD_POPUP = 2;
-	const DO_NOTHING = 0;
 	// Destructuring
 	const { long, lat } = useParams();
-	console.log(long, lat);
 	const location = {
 		longitude: typeof long != "undefined" ? long : 16.62662018,
 		latitude: typeof lat != "undefined" ? lat : 49.2125578,
 		zoom: typeof long != "undefined" ? 9 : 0,
 	};
-
 	const [mapLocation, setMapLocation] = useState(location);
 	const [pins, setPins] = useState([]);
 	const [status, setStatus] = useState(DO_NOTHING);
@@ -33,13 +32,13 @@ const MapComponent = ({ searchCountry, props }) => {
 	const [mapType, setMapType] = useState(
 		"https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
 	);
-
 	const [userDrawnLines, setUserDrawnLines] = useState([]);
 	const [currentLine, setCurrentLine] = useState([]);
 	const [brushColor, setBrushColor] = useState("#ffa500");
 	const [brushSize, setBrushSize] = useState(10);
 	const [painting, setPainting] = useState(false);
 	const [paintButton, setPaintButton] = useState(false);
+
 	const handlePaintButtonToggle = (event) => {
 		setPaintButton(!paintButton);
 	};
@@ -47,8 +46,6 @@ const MapComponent = ({ searchCountry, props }) => {
 	const tempFunc = useCallback(() => {
 		setMapLocation({ longitude: long, latitude: lat, zoom: 9 });
 	});
-
-	console.log(mapLocation);
 
 	useEffect(() => {
 		tempFunc();
