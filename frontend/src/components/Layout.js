@@ -3,7 +3,7 @@ import { Layout as AntdLayout, theme } from "antd";
 import HeaderContents from "./HeaderContents";
 import { Outlet } from 'react-router-dom';
 
-const Layout = () => {
+const Layout = ({ locations }) => {
 
   const { Header, Content, Footer } = AntdLayout;
   const { token: { colorBgContainer } } = theme.useToken();
@@ -17,7 +17,7 @@ const Layout = () => {
             background: colorBgContainer,
           }}
         >
-          <HeaderContents />
+          <HeaderContents locations={locations} />
         </Header>
         <Content style={{ background: colorBgContainer }}>
           <Outlet />

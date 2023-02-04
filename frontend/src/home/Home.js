@@ -48,15 +48,8 @@ const disastersTest = [
 	},
 ];
 
-const locations = [
-	{
-		country: "venezuela",
-		// y = lat x = long
-		Disasterlocation: { x: -66.110932, y: 8.001871 },
-	},
-];
+const Home = ({locations}) => {
 
-const Home = () => {
 	interface DataType {
 		key: React.Key;
 		startDate: Date;
