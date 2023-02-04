@@ -1,62 +1,54 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Table, Button, Space } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import moment from "moment";
 import "./Home.css";
 
-const Home = () => {
-	const disastersTest = [
-		{
-			startDate: new Intl.DateTimeFormat("fr-CA").format(
-				new Date("2018-09-18")
-			),
-			appealType: "DREF",
-			appealCode: "MDRUA010",
-			activeOperations: "Venezuela - Conflict",
-			disasterType: "Epidemic",
-			fundingRequirements: "208,367 CHF",
-			fundingCoverage: 80,
-			country: "Kenya",
-		},
-		{
-			startDate: new Intl.DateTimeFormat("fr-CA").format(
-				new Date("2018-10-18")
-			),
-			appealType: "DREF",
-			appealCode: "MDRUA010",
-			activeOperations: "Venezuela - Conflict",
-			disasterType: "Epidemic",
-			fundingRequirements: "208,367 CHF",
-			fundingCoverage: 80,
-			country: "Bangladesh",
-		},
-		{
-			startDate: new Intl.DateTimeFormat("fr-CA").format(
-				new Date("2023-01-29")
-			),
-			appealType: "DREF",
-			appealCode: "MDRUY004",
-			activeOperations: "Uruguay - Drought",
-			disasterType: "Drought",
-			fundingRequirements: "42,951 CHF",
-			fundingCoverage: 100,
-			country: "Afghanistan",
-		},
-		{
-			startDate: new Intl.DateTimeFormat("fr-CA").format(
-				new Date("2023-01-24")
-			),
-			appealType: "DREF",
-			appealCode: "MDRZM017",
-			activeOperations: "Zambia - Flood",
-			disasterType: "Flood",
-			fundingRequirements: "86,140 CHF",
-			fundingCoverage: 100,
-			country: "Pakistan",
-		},
-	];
+const disastersTest = [
+	{
+		startDate: new Intl.DateTimeFormat("fr-CA").format(new Date("2018-09-18")),
+		appealType: "DREF",
+		appealCode: "MDRUA010",
+		activeOperations: "Venezuela - Conflict",
+		disasterType: "Epidemic",
+		fundingRequirements: "208,367 CHF",
+		fundingCoverage: 80,
+		country: "Venezuela",
+	},
+	{
+		startDate: new Intl.DateTimeFormat("fr-CA").format(new Date("2018-10-18")),
+		appealType: "DREF",
+		appealCode: "MDRUA010",
+		activeOperations: "Venezuela - Conflict",
+		disasterType: "Epidemic",
+		fundingRequirements: "208,367 CHF",
+		fundingCoverage: 80,
+		country: "Venezuela",
+	},
+	{
+		startDate: new Intl.DateTimeFormat("fr-CA").format(new Date("2023-01-29")),
+		appealType: "DREF",
+		appealCode: "MDRUY004",
+		activeOperations: "Uruguay - Drought",
+		disasterType: "Drought",
+		fundingRequirements: "42,951 CHF",
+		fundingCoverage: 100,
+		country: "Uruguay",
+	},
+	{
+		startDate: new Intl.DateTimeFormat("fr-CA").format(new Date("2023-01-24")),
+		appealType: "DREF",
+		appealCode: "MDRZM017",
+		activeOperations: "Zambia - Flood",
+		disasterType: "Flood",
+		fundingRequirements: "86,140 CHF",
+		fundingCoverage: 100,
+		country: "Zambia",
+	},
+];
 
+const Home = ({locations}) => {
 	interface DataType {
 		key: React.Key;
 		startDate: Date;
@@ -68,6 +60,16 @@ const Home = () => {
 		fundingCoverage: Number;
 		country: String;
 	}
+
+	const navigate = useNavigate();
+
+	const countryLink = (country) => {
+		let locationFound = locations.filter(
+			(location) => location["country"].toLowerCase() === country.toLowerCase()
+		);
+		let locationData = locationFound[0].disasterLocation;
+		navigate(`map/${locationData.x}/${locationData.y}`);
+	};
 
 	const columns: ColumnsType<DataType> = [
 		{
@@ -139,7 +141,18 @@ const Home = () => {
 		{
 			title: "Country",
 			dataIndex: "country",
-			render: (text) => (<Link to="map"><Button danger type="link" style={{ padding: 0, minWidth: 100, textAlign: "left" }}>{text}</Button></Link>)
+			render: (country) => (
+				<Button
+					danger
+					type="link"
+					style={{ padding: 0, minWidth: 100, textAlign: "left" }}
+					onClick={() => {
+						countryLink(country);
+					}}
+				>
+					{country}
+				</Button>
+			),
 		},
 	];
 
@@ -164,12 +177,12 @@ const Home = () => {
 		>
 			<Space direction="vertical" size="large">
 				<div className="underline">
-					<h1 style={{ fontSize: 35, marginBottom: 10 }}>Disaster Maps</h1>
+					<h1 style={{ fontSize: 35, marginBottom: 10 }}>Disaster Locations</h1>
 				</div>
-				<Table 
-					columns={columns} 
-					dataSource={disastersTest} 
-					onChange={onChange} 
+				<Table
+					columns={columns}
+					dataSource={disastersTest}
+					onChange={onChange}
 					bordered={true}
 				/>
 			</Space>

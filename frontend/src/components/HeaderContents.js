@@ -1,13 +1,12 @@
-import React from "react";
-import { Input, Space } from "antd";
+import React, { useState } from "react";
+import { Space } from "antd";
 import LeftDrawer from "./LeftDrawer";
-import GoLogo from '../images/goLogo.svg';
+import GoLogo from "../images/goLogo.svg";
 import { Link } from "react-router-dom";
+import CountrySearch from "./CountrySearch";
 
-const { Search } = Input;
-const onSearch = (value: string) => console.log(value);
+const HeaderContents = ({ locations }) => {
 
-const HeaderContents = () => {
 	return (
 		<Space
 			direction="horizontal"
@@ -20,16 +19,10 @@ const HeaderContents = () => {
 			<LeftDrawer />
 			<Link to="/">
 				<div className="logo-wrap">
-					<img src={GoLogo} alt="logo" className="logo"/>
+					<img src={GoLogo} alt="logo" className="logo" />
 				</div>
 			</Link>
-			
-			<Search
-				placeholder="input search text"
-				allowClear
-				onSearch={onSearch}
-				style={{ width: 300, marginTop: 16 }}
-			/>
+			<CountrySearch locations={locations} />
 		</Space>
 	);
 };

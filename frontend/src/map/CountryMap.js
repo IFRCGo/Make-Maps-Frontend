@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useParams } from 'react-router-dom'
 import maplibregl from "maplibre-gl";
 import "./Map.css";
 import Map, {
@@ -9,22 +10,20 @@ import Map, {
 	FullscreenControl,
 } from "react-map-gl";
 import ToolBar from "./ToolBar";
-import HeaderContents from "../components/HeaderContents";
 import { IoLocationSharp } from "react-icons/io5";
-import { useLocation, useParams } from "react-router-dom";
 
 const ADD_PIN = 1;
 const ADD_POPUP = 2;
 const DO_NOTHING = 0;
 
-const MapComponent = ({ searchCountry, props }) => {
-	// Destructuring
+const CountryMap = ({ searchCountry, props, locations }) => {
 	const { long, lat } = useParams();
 	const location = {
 		longitude: typeof long != "undefined" ? long : 16.62662018,
 		latitude: typeof lat != "undefined" ? lat : 49.2125578,
 		zoom: typeof long != "undefined" ? 9 : 0,
 	};
+
 	const [mapLocation, setMapLocation] = useState(location);
 	const [pins, setPins] = useState([]);
 	const [status, setStatus] = useState(DO_NOTHING);
@@ -42,18 +41,6 @@ const MapComponent = ({ searchCountry, props }) => {
 	const handlePaintButtonToggle = (event) => {
 		setPaintButton(!paintButton);
 	};
-
-	const tempFunc = useCallback(() => {
-		setMapLocation({ longitude: long, latitude: lat, zoom: 9 });
-	});
-
-	useEffect(() => {
-		tempFunc();
-	}, [long, lat]);
-	//
-
-	let locationInfo = useLocation();
-	// ISSUE
 
 	const handleDrawPoint = (event) => {
 		if (paintButton) {
@@ -116,8 +103,6 @@ const MapComponent = ({ searchCountry, props }) => {
 	const handleTextButton = () => {
 		setStatus(ADD_POPUP);
 	};
-
-	console.log(mapType);
 
 	return (
 		<div className="map-wrap">
@@ -188,4 +173,4 @@ const MapComponent = ({ searchCountry, props }) => {
 	);
 };
 
-export default MapComponent;
+export default CountryMap;
