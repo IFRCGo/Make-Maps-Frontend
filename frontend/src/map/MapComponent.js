@@ -125,7 +125,7 @@ const MapComponent = ({ searchCountry, props }) => {
 		maplibreMap.addSource('tms', {
 			type: 'raster',
 			tiles: [
-			  'http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
+			  'https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.jpg?key=HMeYX3yPwK7wfZQDqdeC'
 			],
 			tileSize: 256
 		  });
@@ -137,6 +137,29 @@ const MapComponent = ({ searchCountry, props }) => {
 		  });
 	};
 
+	const addLayer2 = () => {
+		const maplibreMap = mapRef.current.getMap();
+
+		maplibreMap.addSource('tms1', {
+			type: 'raster',
+			tiles: [
+			  'https://api.maptiler.com/maps/toner-v2/{z}/{x}/{y}.png?key=HMeYX3yPwK7wfZQDqdeC'
+			],
+			tileSize: 256
+		  });
+
+		  maplibreMap.addLayer({
+			id: 'tms1',
+			type: 'raster',
+			source: 'tms1'
+		  });
+	};
+
+	const setLayerOpacity = ()  => {
+		const maplibreMap = mapRef.current.getMap();
+		maplibreMap.setPaintProperty("tms", "raster-opacity", 0.5);
+	};
+
 
 	console.log(mapType);
 
@@ -144,6 +167,8 @@ const MapComponent = ({ searchCountry, props }) => {
 	return (
 		<div className="map-wrap">
 			<button onClick={addLayer1}> openStree</button>
+			<button onClick={setLayerOpacity}>opacity</button>
+			<button onClick={addLayer2}>layer2</button>
 			<Map
 				ref={mapRef}
 				mapLib={maplibregl}
