@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState,useRef } from "react";
 import maplibregl from "maplibre-gl";
 import "./Map.css";
 import Map, {
@@ -38,6 +38,8 @@ const MapComponent = ({ searchCountry, props }) => {
 	const [brushSize, setBrushSize] = useState(10);
 	const [painting, setPainting] = useState(false);
 	const [paintButton, setPaintButton] = useState(false);
+
+	const mapRef = useRef(null);
 
 	const handlePaintButtonToggle = (event) => {
 		setPaintButton(!paintButton);
@@ -117,11 +119,33 @@ const MapComponent = ({ searchCountry, props }) => {
 		setStatus(ADD_POPUP);
 	};
 
+	const addLayer1 = () => {
+		const maplibreMap = mapRef.current.getMap();
+
+		maplibreMap.addSource('tms', {
+			type: 'raster',
+			tiles: [
+			  'http://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
+			],
+			tileSize: 256
+		  });
+
+		  maplibreMap.addLayer({
+			id: 'tms',
+			type: 'raster',
+			source: 'tms'
+		  });
+	};
+
+
 	console.log(mapType);
+
 
 	return (
 		<div className="map-wrap">
+			<button onClick={addLayer1}> openStree</button>
 			<Map
+				ref={mapRef}
 				mapLib={maplibregl}
 				initialViewState={mapLocation}
 				style={{ width: "100%", height: " calc(100vh - 64px)" }}
