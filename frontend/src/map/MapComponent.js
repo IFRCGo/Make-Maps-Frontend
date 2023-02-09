@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState,useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import maplibregl from "maplibre-gl";
 import "./Map.css";
 import Map, {
@@ -125,16 +125,19 @@ const MapComponent = ({ searchCountry, props }) => {
 		maplibreMap.addSource('tms', {
 			type: 'raster',
 			tiles: [
-			  'https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.jpg?key=HMeYX3yPwK7wfZQDqdeC'
+				'https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.jpg?key=HMeYX3yPwK7wfZQDqdeC'
 			],
 			tileSize: 256
-		  });
+		});
 
-		  maplibreMap.addLayer({
+		maplibreMap.addLayer({
 			id: 'tms',
 			type: 'raster',
-			source: 'tms'
-		  });
+			source: 'tms',
+			paint: {
+				'raster-opacity': 1
+			}
+		});
 	};
 
 	const addLayer2 = () => {
@@ -143,32 +146,55 @@ const MapComponent = ({ searchCountry, props }) => {
 		maplibreMap.addSource('tms1', {
 			type: 'raster',
 			tiles: [
-			  'https://api.maptiler.com/maps/toner-v2/{z}/{x}/{y}.png?key=HMeYX3yPwK7wfZQDqdeC'
+				'https://api.maptiler.com/maps/toner-v2/{z}/{x}/{y}.png?key=HMeYX3yPwK7wfZQDqdeC'
 			],
 			tileSize: 256
-		  });
+		});
 
-		  maplibreMap.addLayer({
+		maplibreMap.addLayer({
 			id: 'tms1',
 			type: 'raster',
-			source: 'tms1'
-		  });
+			source: 'tms1',
+			paint: {
+				'raster-opacity': 1
+			}
+		});
 	};
 
-	const setLayerOpacity = ()  => {
+	const setLayerOpacity = () => {
 		const maplibreMap = mapRef.current.getMap();
 		maplibreMap.setPaintProperty("tms", "raster-opacity", 0.5);
 	};
 
+	const showData = () => {
+		const maplibreMap = mapRef.current.getMap();
+		console.log(maplibreMap.getLayer("tms"));
+	};
 
 	console.log(mapType);
 
-
+	const getOpacity = () => {
+		const maplibreMap = mapRef.current.getMap();
+		console.log(maplibreMap.getPaintProperty("tms", "raster-opacity"));
+	};
+	const handleChange = (event) => {
+		const value = event.target.value;
+		const opacity = value / 100;
+		const maplibreMap = mapRef.current.getMap();
+		maplibreMap.setPaintProperty("tms", "raster-opacity", opacity);
+	};
 	return (
 		<div className="map-wrap">
 			<button onClick={addLayer1}> openStree</button>
 			<button onClick={setLayerOpacity}>opacity</button>
 			<button onClick={addLayer2}>layer2</button>
+			<button onClick={getOpacity}> getOpacity("tms") </button>
+			<input
+				type="range"
+				min="0"
+				max="100"
+				onChange={handleChange}
+			/>
 			<Map
 				ref={mapRef}
 				mapLib={maplibregl}
