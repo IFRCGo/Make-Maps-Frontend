@@ -31,15 +31,11 @@ jobs:
         run: npm run build --if-present
         working-directory: "./frontend"
 
-      - name: Compress files
-        run: |
-          zip -r artifact.zip .
-
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: node-app
-          path: artifact.zip
+          path: .
        
 
   deploy:
@@ -51,7 +47,7 @@ jobs:
       
     steps:
     - name: Download artifact from build job
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: node-app
 
@@ -61,5 +57,5 @@ jobs:
       with:
         app-name: 'IFRC-GO-Make-Maps-Frontend'
         slot-name: 'Production'
-        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C7781ABE22564DF89122B66B303E79F3 }}
+        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FRONTEND }}
         package: .
