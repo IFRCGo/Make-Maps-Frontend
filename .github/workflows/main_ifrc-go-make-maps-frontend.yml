@@ -31,6 +31,10 @@ jobs:
         run: npm run build --if-present
         working-directory: "./frontend"
 
+      - name: Compress files
+        run: |
+          zip -r artifact.zip .
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
