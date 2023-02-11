@@ -12,13 +12,18 @@ import ToolBar from "./ToolBar";
 import HeaderContents from "../components/HeaderContents";
 import { IoLocationSharp } from "react-icons/io5";
 import { useLocation, useParams } from "react-router-dom";
+import { Modal, Button } from "antd";
 
-const ADD_PIN = 1;
-const ADD_POPUP = 2;
-const DO_NOTHING = 0;
+import { LAYERS, API_KEY, MAP_STATUS, LAYER_STATUS } from "./constant"
 
 const MapComponent = ({ searchCountry, props }) => {
 	// Destructuring
+	const [layerStatus, setLayerStatus] = useState(() => {
+		return LAYERS.reduce((acc, layer) => {
+			acc[layer.name] = LAYER_STATUS.NOT_RENDERING;
+			return acc;
+		}, {});
+	});
 	const { long, lat } = useParams();
 	const location = {
 		longitude: typeof long != "undefined" ? long : 16.62662018,
@@ -27,7 +32,7 @@ const MapComponent = ({ searchCountry, props }) => {
 	};
 	const [mapLocation, setMapLocation] = useState(location);
 	const [pins, setPins] = useState([]);
-	const [status, setStatus] = useState(DO_NOTHING);
+	const [status, setStatus] = useState(MAP_STATUS.DO_NOTHING);
 	const [popupList, setPopupList] = useState([]);
 	const [mapType, setMapType] = useState(
 		"https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
@@ -39,6 +44,20 @@ const MapComponent = ({ searchCountry, props }) => {
 	const [painting, setPainting] = useState(false);
 	const [paintButton, setPaintButton] = useState(false);
 
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	const showModal = () => {
+		setIsModalOpen(true);
+	};
+
+	const handleOk = () => {
+		setIsModalOpen(false);
+	};
+
+	const handleCancel = () => {
+		setIsModalOpen(false);
+	};
+
 	const mapRef = useRef(null);
 
 	const handlePaintButtonToggle = (event) => {
@@ -48,6 +67,17 @@ const MapComponent = ({ searchCountry, props }) => {
 	const tempFunc = useCallback(() => {
 		setMapLocation({ longitude: long, latitude: lat, zoom: 9 });
 	});
+
+	const checkLayerStatus = (layerName) => {
+		return layerStatus[layerName];
+	};
+
+	const updateLayerStatus = (layerName, status) => {
+		setLayerStatus({
+			...layerStatus,
+			[layerName]: status
+		});
+	};
 
 	useEffect(() => {
 		tempFunc();
@@ -89,12 +119,12 @@ const MapComponent = ({ searchCountry, props }) => {
 	});
 
 	const handleMapClick = (event) => {
-		if (status === ADD_PIN) {
+		if (status === MAP_STATUS.ADD_PIN) {
 			setPins([...pins, [event.lngLat.lng, event.lngLat.lat]]);
-			setStatus(DO_NOTHING);
+			setStatus(MAP_STATUS.DO_NOTHING);
 		}
 
-		if (status === ADD_POPUP) {
+		if (status === MAP_STATUS.ADD_POPUP) {
 			setPopupList([
 				...popupList,
 				[
@@ -103,9 +133,10 @@ const MapComponent = ({ searchCountry, props }) => {
 					prompt("Your input", "My Text Data"),
 				],
 			]);
-			setStatus(DO_NOTHING);
+			setStatus(MAP_STATUS.DO_NOTHING);
 		}
 	};
+
 
 	const handlePinDragEnd = (event, index) => {
 		const newPins = [...pins];
@@ -113,87 +144,84 @@ const MapComponent = ({ searchCountry, props }) => {
 		setPins(newPins);
 	};
 	const handlePinButton = () => {
-		setStatus(ADD_PIN);
+		setStatus(MAP_STATUS.ADD_PIN);
 	};
 	const handleTextButton = () => {
-		setStatus(ADD_POPUP);
+		setStatus(MAP_STATUS.ADD_POPUP);
 	};
 
-	const addLayer1 = () => {
+	const addLayer = (layerName) => {
 		const maplibreMap = mapRef.current.getMap();
+		
+		const layer = LAYERS.find(layer => layer.name === layerName);
 
-		maplibreMap.addSource('tms', {
+		maplibreMap.addSource(layerName, {
 			type: 'raster',
 			tiles: [
-				'https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.jpg?key=HMeYX3yPwK7wfZQDqdeC'
+				layer.url
 			],
 			tileSize: 256
 		});
-
 		maplibreMap.addLayer({
-			id: 'tms',
+			id: layerName,
 			type: 'raster',
-			source: 'tms',
+			source: layerName,
 			paint: {
 				'raster-opacity': 1
 			}
 		});
+
+		updateLayerStatus(layerName, LAYER_STATUS.IS_RENDERING);
 	};
 
-	const addLayer2 = () => {
+	const removeLayer = (layerName) => {
 		const maplibreMap = mapRef.current.getMap();
 
-		maplibreMap.addSource('tms1', {
-			type: 'raster',
-			tiles: [
-				'https://api.maptiler.com/maps/toner-v2/{z}/{x}/{y}.png?key=HMeYX3yPwK7wfZQDqdeC'
-			],
-			tileSize: 256
-		});
+		maplibreMap.removeLayer(layerName);
+		maplibreMap.removeSource(layerName);
 
-		maplibreMap.addLayer({
-			id: 'tms1',
-			type: 'raster',
-			source: 'tms1',
-			paint: {
-				'raster-opacity': 1
-			}
-		});
-	};
+		updateLayerStatus(layerName, LAYER_STATUS.NOT_RENDERING);
+	}
 
-	const setLayerOpacity = () => {
-		const maplibreMap = mapRef.current.getMap();
-		maplibreMap.setPaintProperty("tms", "raster-opacity", 0.5);
-	};
 
-	const showData = () => {
-		const maplibreMap = mapRef.current.getMap();
-		console.log(maplibreMap.getLayer("tms"));
-	};
 
-	console.log(mapType);
-
-	const getOpacity = () => {
-		const maplibreMap = mapRef.current.getMap();
-		console.log(maplibreMap.getPaintProperty("tms", "raster-opacity"));
-	};
-	const handleChange = (event) => {
+	const changeOpacity = (event, LayerName) => {
 		const value = event.target.value;
 		const opacity = value / 100;
 		const maplibreMap = mapRef.current.getMap();
-		maplibreMap.setPaintProperty("tms", "raster-opacity", opacity);
+		maplibreMap.setPaintProperty(LayerName, "raster-opacity", opacity);
 	};
 	return (
 		<div className="map-wrap">
-			<button onClick={addLayer1}> openStree</button>
-			<button onClick={setLayerOpacity}>opacity</button>
-			<button onClick={addLayer2}>layer2</button>
-			<button onClick={getOpacity}> getOpacity("tms") </button>
+			<button type="primary" onClick={showModal}>
+				Edit Layer
+			</button>
+			<Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+				{LAYERS.map((item, index) => (
+					<div key={index}>
+						<div>{item.name}</div>
+						{checkLayerStatus(item.name) === LAYER_STATUS.IS_RENDERING ? (
+							<>
+								<input
+									type="range"
+									min="0"
+									max="100"
+									onChange={e => changeOpacity(e, item.name)}
+								/>
+								<button onClick={e => removeLayer(item.name)}>Remove this layer</button>
+							</>
+						) : (
+							<button onClick={e => addLayer(item.name)}>Add this layer</button>
+						)}
+					</div>
+				))}
+			</Modal>
+
 			<input
 				type="range"
 				min="0"
 				max="100"
-				onChange={handleChange}
+				onChange={changeOpacity}
 			/>
 			<Map
 				ref={mapRef}
