@@ -217,12 +217,6 @@ const MapComponent = ({ searchCountry, props }) => {
 				))}
 			</Modal>
 
-			<input
-				type="range"
-				min="0"
-				max="100"
-				onChange={changeOpacity}
-			/>
 			<Map
 				ref={mapRef}
 				mapLib={maplibregl}
