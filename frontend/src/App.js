@@ -5,7 +5,7 @@ import MapComponent from "./map/MapComponent";
 import Layout from "./components/Layout";
 import Home from "./home/Home";
 import CountryMap from "./map/CountryMap";
-import { DisplayLocations } from "./API/GetAllDisasters";
+import TestAPI from "./TestAPI";
 
 function App() {
   const locations = [
@@ -38,7 +38,7 @@ function App() {
           />
         </Route>
       </Route>
-      <Route path="/test" element={<DisplayLocations />} />
+      <Route path="/test" element={<TestAPI />} />
     </Routes>
   );
 }

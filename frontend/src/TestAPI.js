@@ -1,20 +1,8 @@
-import { useQuery, gql } from "@apollo/client";
+import { useQuery } from "@apollo/client";
+import * as Query from "./API/AllQueries";
 
-const ALL_DISASTERS = gql`
-  query DisasterById {
-    disasterMany {
-      _id
-      amount_funded
-      amount_requested
-      createdAt
-      createdBy
-      date
-    }
-  }
-`;
-
-export function DisplayLocations() {
-  const { loading, error, data } = useQuery(ALL_DISASTERS);
+export default function TestAPI() {
+  const { loading, error, data } = useQuery(Query.ALL_DISASTERS);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error : {error.message}</p>;
