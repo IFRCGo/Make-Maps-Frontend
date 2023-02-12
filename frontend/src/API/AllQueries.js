@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 export const ALL_DISASTERS = gql`
-  query DisasterById {
+  query disasterMany {
     disasterMany {
       _id
       amount_funded
