@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client";
+
 export const ALL_DISASTERS = gql`
   query disasterMany {
     disasterMany {

@@ -99,7 +99,7 @@ const MapComponent = () => {
           zoom: 0,
         }}
         onClick={handleMapClick}
-        style={{ width: "100%", height: " calc(100vh - 94px)" }}
+        style={{ width: "100%", height: " calc(100vh - 64px)" }}
         mapStyle={mapType}
       >
         <NavigationControl position="top-left" />
