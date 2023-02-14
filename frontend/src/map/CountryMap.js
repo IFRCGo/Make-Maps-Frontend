@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams } from 'react-router-dom'
 import maplibregl from "maplibre-gl";
-import "./Map.css";
+import "./MapComponent.css";
 import Map, {
 	NavigationControl,
 	Marker,
