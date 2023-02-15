@@ -5,6 +5,7 @@ import MapComponent from "./map/MapComponent";
 import Layout from "./components/Layout";
 import Home from "./home/Home";
 import CountryMap from "./map/CountryMap";
+import TestAPI from "./TestAPI";
 
 function App() {
   const locations = [
@@ -31,13 +32,14 @@ function App() {
         <Route index element={<Home locations={locations} />} />
         <Route path="map">
           <Route index element={<MapComponent />} />
-          <Route path=":long?/:lat?" element={<CountryMap locations={locations} />} />
+          <Route
+            path=":long?/:lat?"
+            element={<CountryMap locations={locations} />}
+          />
         </Route>
       </Route>
+      <Route path="/test" element={<TestAPI />} />
     </Routes>
-
-
-    
   );
 }
 

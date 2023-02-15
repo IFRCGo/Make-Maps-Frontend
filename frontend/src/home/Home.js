@@ -1,12 +1,12 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Table, Button, Space } from "antd";
-import type { ColumnsType, TableProps } from "antd/es/table";
 import moment from "moment";
 import "./Home.css";
 
 const disastersTest = [
 	{
+		key: 1,
 		startDate: new Intl.DateTimeFormat("fr-CA").format(new Date("2018-09-18")),
 		appealType: "DREF",
 		appealCode: "MDRUA010",
@@ -17,6 +17,7 @@ const disastersTest = [
 		country: "Venezuela",
 	},
 	{
+		key: 2,
 		startDate: new Intl.DateTimeFormat("fr-CA").format(new Date("2018-10-18")),
 		appealType: "DREF",
 		appealCode: "MDRUA010",
@@ -27,6 +28,7 @@ const disastersTest = [
 		country: "Venezuela",
 	},
 	{
+		key: 3,
 		startDate: new Intl.DateTimeFormat("fr-CA").format(new Date("2023-01-29")),
 		appealType: "DREF",
 		appealCode: "MDRUY004",
@@ -37,6 +39,7 @@ const disastersTest = [
 		country: "Uruguay",
 	},
 	{
+		key: 4,
 		startDate: new Intl.DateTimeFormat("fr-CA").format(new Date("2023-01-24")),
 		appealType: "DREF",
 		appealCode: "MDRZM017",
@@ -49,18 +52,6 @@ const disastersTest = [
 ];
 
 const Home = ({locations}) => {
-	interface DataType {
-		key: React.Key;
-		startDate: Date;
-		appealType: String;
-		appealCode: String;
-		activeOperations: String;
-		disasterType: String;
-		fundingRequirements: String;
-		fundingCoverage: Number;
-		country: String;
-	}
-
 	const navigate = useNavigate();
 
 	const countryLink = (country) => {
@@ -71,7 +62,7 @@ const Home = ({locations}) => {
 		navigate(`map/${locationData.x}/${locationData.y}`);
 	};
 
-	const columns: ColumnsType<DataType> = [
+	const columns = [
 		{
 			title: "Start Date",
 			dataIndex: "startDate",
@@ -135,7 +126,6 @@ const Home = ({locations}) => {
 		{
 			title: "Funding Coverage",
 			dataIndex: "fundingCoverage",
-			defaultSortOrder: "descend",
 			sorter: (a, b) => a.fundingCoverage - b.fundingCoverage,
 		},
 		{
@@ -156,12 +146,7 @@ const Home = ({locations}) => {
 		},
 	];
 
-	const onChange: TableProps<DataType>["onChange"] = (
-		pagination,
-		filters,
-		sorter,
-		extra
-	) => {
+	const onChange = (pagination, filters, sorter, extra) => {
 		console.log("params", pagination, filters, sorter, extra);
 	};
 
@@ -180,8 +165,8 @@ const Home = ({locations}) => {
 					<h1 style={{ fontSize: 35, marginBottom: 10 }}>Disaster Locations</h1>
 				</div>
 				<Table
-					columns={columns}
 					dataSource={disastersTest}
+					columns={columns}
 					onChange={onChange}
 					bordered={true}
 				/>

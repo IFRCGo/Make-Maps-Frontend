@@ -5,7 +5,7 @@ import { Outlet } from 'react-router-dom';
 
 const Layout = ({ locations }) => {
 
-  const { Header, Content, Footer } = AntdLayout;
+  const { Header, Content } = AntdLayout;
   const { token: { colorBgContainer } } = theme.useToken();
 
   return (
