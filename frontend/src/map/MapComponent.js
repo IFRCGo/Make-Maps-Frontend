@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import maplibregl from "maplibre-gl";
+import maplibregl, {Map as map1} from "maplibre-gl";
 import "./MapComponent.css";
 import { Tag } from "antd";
 import Map, { NavigationControl, Marker } from "react-map-gl";
@@ -182,6 +182,122 @@ const MapComponent = ({ searchCountry, props }) => {
 		updateLayerStatus(layerName, LAYER_STATUS.IS_RENDERING);
 	};
 
+	const handleDownloadButton = () => {
+		const maplibreMap = mapRef.current.getMap();
+		const renderMap = new map1({
+		  container: maplibreMap.getContainer(),
+		  style: maplibreMap.getStyle(),
+		  center: maplibreMap.getCenter(),
+		  zoom: maplibreMap.getZoom(),
+		  bearing: maplibreMap.getBearing(),
+		  pitch: maplibreMap.getPitch(),
+		  interactive: false,
+		  preserveDrawingBuffer: true,
+		  fadeDuration: 0,
+		  attributionControl: false,
+		})
+
+
+		console.log(maplibreMap.getStyle());
+		const images = (maplibreMap.getStyle().imageManager || {}).images || [];
+		Object.keys(images).forEach((key) => {
+		  renderMap.addImage(key, images[key].data);
+		});
+	
+	
+		renderMap.on('load', () => {
+		  // Load an image from an external URL.
+		  renderMap.loadImage(
+			'https://docs.mapbox.com/mapbox-gl-js/assets/cat.png',
+			(error, image) => {
+			  if (error) throw error;
+	
+			  // Add the image to the map style.
+			  renderMap.addImage('cat', image);
+			  pins.forEach((item, index) => {
+				renderMap.addSource('point' + index, {
+				  'type': 'geojson',
+				  'data': {
+					'type': 'FeatureCollection',
+					'features': [
+					  {
+						'type': 'Feature',
+						'geometry': {
+						  'type': 'Point',
+						  'coordinates': [item[0], item[1]]
+						}
+					  }
+					]
+				  }
+				});
+				renderMap.addLayer({
+				  'id': 'points' + index,
+				  'type': 'symbol',
+				  'source': 'point' + index, // reference the data source
+				  'layout': {
+					'icon-image': 'cat', // reference the image
+					'icon-size': 0.25
+				  }
+				});
+			  })
+	
+			  popupList.forEach((item, index) => {
+				renderMap.addSource('text' + index, {
+				  'type': 'geojson',
+				  'data': {
+					'type': 'FeatureCollection',
+					'features': [
+					  {
+						'type': 'Feature',
+						'geometry': {
+						  'type': 'Point',
+						  'coordinates': [item[0], item[1]]
+						}
+					  }
+					]
+				  }
+				});
+				renderMap.addLayer({
+				  'id': 'texts' + index,
+				  'type': 'symbol',
+				  'source': 'text' + index, // reference the data source
+				  'layout': {
+					"text-field": item[2],
+					"text-font": [
+					  "DIN Offc Pro Medium",
+					  "Arial Unicode MS Bold"
+					],
+					"text-size": 12
+				  }
+				});
+			  })
+			  // Add a data source containing one point feature.
+	
+	
+			  // Add a layer to use the image to represent the data.
+	
+			}
+		  );
+		});
+	
+		renderMap.once('idle', () => {
+		  setTimeout(() => {
+			const canvasDataURL = renderMap.getCanvas().toDataURL();
+			const link = document.createElement("a");
+			link.href = canvasDataURL;
+			link.download = "map-export.png";
+			link.click();
+			link.remove();
+		  }, 1000)
+		})
+		renderMap.once('idle', ()=> {
+			setTimeout(()=> {
+				renderMap.remove();
+			}, 1000)
+		})
+	
+	  }
+
 	const removeLayer = (layerName) => {
 		const maplibreMap = mapRef.current.getMap();
 
@@ -282,6 +398,7 @@ const MapComponent = ({ searchCountry, props }) => {
 				handlePaintButton={handlePaintButton}
 				handleLineButton={handleLineButton}
 				handlePolygonButton={handlePolygonButton}
+				handleDownloadButton={handleDownloadButton}
 			/>
 		</div>
 	);

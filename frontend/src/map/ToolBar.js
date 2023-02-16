@@ -20,6 +20,7 @@ const ToolBar = ({
   handlePaintButton,
   handleLineButton,
   handlePolygonButton,
+  handleDownloadButton,
   setMapType,
 }) => {
   const [open, setOpen] = useState(true);
@@ -31,8 +32,8 @@ const ToolBar = ({
     visual === false
       ? setVisual(true)
       : setTimeout(() => {
-          setVisual(false);
-        }, 300);
+        setVisual(false);
+      }, 300);
   };
   const onClose = () => {
     setOpen(false);
@@ -182,7 +183,10 @@ const ToolBar = ({
                 icon={<LineChartOutlined onClick={handlePolygonButton} />}
               />
               <Button type="text" size="large" icon={<LinkOutlined />} />
-              <Button type="text" size="large" icon={<DownloadOutlined />} />
+              <Button
+                type="text"
+                size="large"
+                icon={<DownloadOutlined onClick={handleDownloadButton} />} />
               <Popover
                 placement="topLeft"
                 content={layerContent}

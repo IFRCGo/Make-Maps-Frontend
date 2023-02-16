@@ -6,6 +6,7 @@ export const LAYERS = [
 export const MAP_STATUS = {
     ADD_PIN: 1,
     ADD_POPUP: 2,
+    MAP_STATUS: 3,
     DO_NOTHING: 0
 };
 export const LAYER_STATUS = {
