@@ -4,98 +4,30 @@ import { Table, Button, Space } from "antd";
 import moment from "moment";
 import "./Home.css";
 
-const disastersTest = [
-	{
-		key: 1,
-		startDate: new Intl.DateTimeFormat("fr-CA").format(new Date("2018-09-18")),
-		appealType: "DREF",
-		appealCode: "MDRUA010",
-		activeOperations: "Venezuela - Conflict",
-		disasterType: "Epidemic",
-		fundingRequirements: "208,367 CHF",
-		fundingCoverage: 80,
-		country: "Venezuela",
-	},
-	{
-		key: 2,
-		startDate: new Intl.DateTimeFormat("fr-CA").format(new Date("2018-10-18")),
-		appealType: "DREF",
-		appealCode: "MDRUA010",
-		activeOperations: "Venezuela - Conflict",
-		disasterType: "Epidemic",
-		fundingRequirements: "208,367 CHF",
-		fundingCoverage: 80,
-		country: "Venezuela",
-	},
-	{
-		key: 3,
-		startDate: new Intl.DateTimeFormat("fr-CA").format(new Date("2023-01-29")),
-		appealType: "DREF",
-		appealCode: "MDRUY004",
-		activeOperations: "Uruguay - Drought",
-		disasterType: "Drought",
-		fundingRequirements: "42,951 CHF",
-		fundingCoverage: 100,
-		country: "Uruguay",
-	},
-	{
-		key: 4,
-		startDate: new Intl.DateTimeFormat("fr-CA").format(new Date("2023-01-24")),
-		appealType: "DREF",
-		appealCode: "MDRZM017",
-		activeOperations: "Zambia - Flood",
-		disasterType: "Flood",
-		fundingRequirements: "86,140 CHF",
-		fundingCoverage: 100,
-		country: "Zambia",
-	},
-];
-
-const Home = ({locations}) => {
+const Home = ({ disasters }) => {
 	const navigate = useNavigate();
 
 	const countryLink = (country) => {
-		let locationFound = locations.filter(
-			(location) => location["country"].toLowerCase() === country.toLowerCase()
+		let locationFound = disasters.filter(
+			(disaster) => disaster["location"].toLowerCase() === country.toLowerCase()
 		);
-		let locationData = locationFound[0].disasterLocation;
-		navigate(`map/${locationData.x}/${locationData.y}`);
+		let locationData = locationFound[0].disasterCoordinates;
+		navigate(`map/${locationData.coordinates[0]}/${locationData.coordinates[1]}`);
 	};
+
+	const disasterType = disasters.map((disaster) => disaster.disasterType)
 
 	const columns = [
 		{
 			title: "Start Date",
-			dataIndex: "startDate",
+			dataIndex: "date",
 			sorter: (a, b) =>
-				moment(a.startDate, "YYYY-MM-DD").unix() -
-				moment(b.startDate, "YYYY-MM-DD").unix(),
+				moment(a.date, "YYYY-MM-DD").unix() -
+				moment(b.date, "YYYY-MM-DD").unix(),
 		},
 		{
-			title: "Appeal Type",
-			dataIndex: "appealType",
-			defaultSortOrder: "descend",
-		},
-		{
-			title: "Appeal Code",
-			dataIndex: "appealCode",
-		},
-		{
-			title: "Active Operations",
-			dataIndex: "activeOperations",
-			filters: [
-				{
-					text: "Venezuela",
-					value: "Venezuela",
-				},
-				{
-					text: "Uruguay",
-					value: "Uruguay",
-				},
-				{
-					text: "Zambia",
-					value: "Zambia",
-				},
-			],
+			title: "Disaster Name",
+			dataIndex: "disasterName",
 			onFilter: (value: string, record) =>
 				record.activeOperations.indexOf(value) === 0,
 		},
@@ -107,30 +39,22 @@ const Home = ({locations}) => {
 					text: "Epidemic",
 					value: "Epidemic",
 				},
-				{
-					text: "Drought",
-					value: "Drought",
-				},
-				{
-					text: "Flood",
-					value: "Flood",
-				},
 			],
 			onFilter: (value: string, record) =>
 				record.disasterType.indexOf(value) === 0,
 		},
 		{
 			title: "Funding Requirements",
-			dataIndex: "fundingRequirements",
+			dataIndex: "amount_requested",
 		},
 		{
-			title: "Funding Coverage",
-			dataIndex: "fundingCoverage",
-			sorter: (a, b) => a.fundingCoverage - b.fundingCoverage,
+			title: "Funding",
+			dataIndex: "amount_funded",
+			sorter: (a, b) => a.amount_funded - b.amount_funded,
 		},
 		{
 			title: "Country",
-			dataIndex: "country",
+			dataIndex: "location",
 			render: (country) => (
 				<Button
 					danger
@@ -165,7 +89,8 @@ const Home = ({locations}) => {
 					<h1 style={{ fontSize: 35, marginBottom: 10 }}>Disaster Locations</h1>
 				</div>
 				<Table
-					dataSource={disastersTest}
+					rowKey="_id"
+					dataSource={disasters}
 					columns={columns}
 					onChange={onChange}
 					bordered={true}
