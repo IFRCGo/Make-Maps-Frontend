@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
 import "./MapComponent.css";
 import { Tag } from "antd";

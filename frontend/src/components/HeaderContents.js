@@ -5,7 +5,7 @@ import GoLogo from "../images/goLogo.svg";
 import { Link } from "react-router-dom";
 import CountrySearch from "./CountrySearch";
 
-const HeaderContents = ({ locations }) => {
+const HeaderContents = ({ disasters }) => {
   return (
     <Space
       direction="horizontal"
@@ -21,7 +21,7 @@ const HeaderContents = ({ locations }) => {
           <img src={GoLogo} alt="logo" className="logo" />
         </div>
       </Link>
-      <CountrySearch locations={locations} />
+      <CountrySearch disasters={disasters} />
     </Space>
   );
 };
