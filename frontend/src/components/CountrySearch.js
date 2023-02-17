@@ -2,18 +2,19 @@ import React from 'react';
 import { Select } from 'antd';
 import { useNavigate } from "react-router-dom";
 
-const CountrySearch = ({ locations }) => {
+const CountrySearch = ({ disasters }) => {
+
   // add label and value to display the option in search bar
-  const locationOptions = locations.map((location) => {
-    location.label = location.country;
-    location.value = location.country;
-    return location;
-  });
+  const locationOptions = disasters.map((item) => ({
+      ...item,
+      label: item.location,
+      value: item.location,
+  }))
 
   const navigate = useNavigate();
   const handleSelect = (value) => {
     const locationData = locationOptions.find(option => value === option.value);
-    navigate(`map/${locationData.disasterLocation.x}/${locationData.disasterLocation.y}`)
+    navigate(`map/${locationData.disasterCoordinates.coordinates[0]}/${locationData.disasterCoordinates.coordinates[1]}`)
     // refresh the page
     navigate(0)
   }

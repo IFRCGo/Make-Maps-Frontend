@@ -16,7 +16,7 @@ const ADD_PIN = 1;
 const ADD_POPUP = 2;
 const DO_NOTHING = 0;
 
-const CountryMap = ({ searchCountry, props, locations }) => {
+const CountryMap = ({ searchCountry }) => {
 	const { long, lat } = useParams();
 	const location = {
 		longitude: typeof long != "undefined" ? long : 16.62662018,
