@@ -203,9 +203,6 @@ const MapComponent = ({ searchCountry, props }) => {
 
 
 
-		console.log(maplibreMap.getStyle());
-
-
 		renderMap.once('idle', () => {
 			setTimeout(() => {
 				const canvasDataURL = renderMap.getCanvas().toDataURL();
