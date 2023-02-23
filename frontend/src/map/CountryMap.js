@@ -10,7 +10,11 @@ import Map, {
 	FullscreenControl,
 } from "react-map-gl";
 import ToolBar from "./ToolBar";
+import { Col, Divider, Row, Card, Avatar } from "antd";
 import { IoLocationSharp } from "react-icons/io5";
+import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
+
+const { Meta } = Card;
 
 const ADD_PIN = 1;
 const ADD_POPUP = 2;
@@ -43,6 +47,15 @@ const CountryMap = ({ searchCountry, disasters }) => {
 	const [brushSize, setBrushSize] = useState(10);
 	const [painting, setPainting] = useState(false);
 	const [paintButton, setPaintButton] = useState(false);
+
+	const gridStyle: React.CSSProperties = {
+		width: "50%",
+		textAlign: "center",
+		display: "flex",
+		alignContent: "center",
+		justifyContent: "center",
+		alignItems: "center",
+	};
 
 	const handlePaintButtonToggle = (event) => {
 		setPaintButton(!paintButton);
@@ -112,7 +125,149 @@ const CountryMap = ({ searchCountry, disasters }) => {
 
 	return (
 		<div className="map-wrap">
-			<Map
+			<Row>
+				<Col
+					flex="auto"
+					style={{
+						margin: 20,
+						display: "flex",
+						alignContent: "center",
+						justifyContent: "center",
+						alignItems: "center",
+					}}
+				>
+					<div className="underline">
+						<h1 style={{ fontSize: 35 }}>{countryData.location}</h1>
+					</div>
+				</Col>
+			</Row>
+			<Row>
+				<Col
+					flex="auto"
+					style={{
+						marginRight: 500,
+						marginLeft: 500,
+						padding: 31,
+						alignContent: "center",
+						justifyContent: "center",
+						alignItems: "center",
+					}}
+				>
+					<Card>
+						<Card.Grid hoverable={false} style={gridStyle}>
+							<div
+								style={{
+									flexDirection: "row",
+									flex: 1,
+									justifyContent: "space-around",
+								}}
+							>
+								<GiReceiveMoney style={{ color: "red", fontSize: "4em" }} />
+								<Meta
+									title={new Intl.NumberFormat("en-US").format(
+										parseInt(countryData.amount_requested)
+									)}
+									description="Amount Requested (CHF)"
+								/>
+							</div>
+						</Card.Grid>
+						<Card.Grid hoverable={false} style={gridStyle}>
+							<div
+								style={{
+									flexDirection: "row",
+									flex: 1,
+									justifyContent: "space-around",
+								}}
+							>
+								<GiPayMoney style={{ color: "red", fontSize: "4em" }} />
+								<Meta
+									title={new Intl.NumberFormat("en-US").format(
+										parseInt(countryData.amount_funded)
+									)}
+									description="Amount Funded (CHF)"
+								/>
+							</div>
+						</Card.Grid>
+					</Card>
+				</Col>
+			</Row>
+			<Row>
+				<Col
+					flex={3} // 3/5
+					style={{ padding: 20 }}
+				>
+					<Map
+						mapLib={maplibregl}
+						initialViewState={mapLocation}
+						style={{ width: "100%", height: " calc(100vh - 400px)" }}
+						onMouseMove={painting ? handleDrawPoint : ""}
+						onClick={paintButton ? handlePaintButton : handleMapClick}
+						mapStyle={mapType}
+					>
+						<NavigationControl position="top-left" />
+						{pins.map((pin, index) => (
+							<Marker
+								key={index}
+								draggable={true}
+								onDragEnd={(e) => handlePinDragEnd(e, index)}
+								longitude={pin[0]}
+								latitude={pin[1]}
+							>
+								<div>
+									<IoLocationSharp style={{ color: "red", fontSize: "2em" }} />
+								</div>
+							</Marker>
+						))}
+						{popupList.map((popu, index) => (
+							<Marker
+								key={index}
+								draggable={true}
+								onDragEnd={(e) => handlePinDragEnd(e, index)}
+								longitude={popu[0]}
+								latitude={popu[1]}
+							>
+								<div>
+									<button>{popu[2]}</button>
+								</div>
+							</Marker>
+						))}
+
+						{lineStrings.map((lineString, index) => (
+							<Source
+								key={index}
+								id={`user-drawn-line-${index}`}
+								type="geojson"
+								data={lineString}
+							>
+								<Layer
+									id={`brush-layer-${index}`}
+									type="line"
+									source={`user-drawn-line-${index}`}
+									paint={{
+										"line-color": brushColor,
+										"line-width": brushSize,
+									}}
+									before="waterway-label"
+								/>
+							</Source>
+						))}
+						<FullscreenControl />
+					</Map>
+				</Col>
+				<Col
+					flex={2} // 2/5
+					style={{ padding: 20 }}
+				>
+					<Card>wut</Card>
+				</Col>
+			</Row>
+			<Divider orientation="left">Emergency Overview</Divider>
+			<Row>
+				<Col flex="1 1 200px">1 1 200px</Col>
+				<Col flex="0 1 300px">0 1 300px</Col>
+			</Row>
+			{/* Need to figure how to resize map */}
+			{/* <Map
 				mapLib={maplibregl}
 				initialViewState={mapLocation}
 				style={{ width: "100%", height: " calc(100vh - 64px)" }}
@@ -174,7 +329,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
 				handleTextButton={handleTextButton}
 				setMapType={setMapType}
 				handlePaintButton={handlePaintButtonToggle}
-			/>
+			/> */}
 		</div>
 	);
 };
