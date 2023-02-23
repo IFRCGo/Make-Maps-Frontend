@@ -7,14 +7,14 @@ import "./Home.css";
 const Home = ({ disasters }) => {
 	const navigate = useNavigate();
 
-	const countryLink = (country, _id) => {
-		// Look into why _id is the entire disaster object
-		// console.log(_id);
+	const countryLink = (country, disaster) => {
+		// Look into why disaster is the entire disaster object
+		// console.log(disaster);
 
-		let locationData = _id.disasterCoordinates;
+		let locationData = disaster.disasterCoordinates;
 		navigate(
-			`map/${_id._id}/${locationData.coordinates[0]}/${locationData.coordinates[1]}`,
-			{ state: { countryData: _id } }
+			`map/${disaster._id}/${locationData.coordinates[0]}/${locationData.coordinates[1]}`,
+			{ state: { countryData: disaster } }
 		);
 	};
 
@@ -58,13 +58,13 @@ const Home = ({ disasters }) => {
 		{
 			title: "Country",
 			dataIndex: "location",
-			render: (country, _id) => (
+			render: (country, disaster) => (
 				<Button
 					danger
 					type="link"
 					style={{ padding: 0, minWidth: 100, textAlign: "left" }}
 					onClick={() => {
-						countryLink(country, _id);
+						countryLink(country, disaster);
 					}}
 				>
 					{country}

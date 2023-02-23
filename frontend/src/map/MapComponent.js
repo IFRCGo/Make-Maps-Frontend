@@ -8,13 +8,13 @@ import { IoLocationSharp } from "react-icons/io5";
 import { useLocation, useParams } from "react-router-dom";
 import { Modal, Button } from "antd";
 
-import { LAYERS, API_KEY, MAP_STATUS, LAYER_STATUS } from "./constant"
+import { LAYERS, API_KEY, MAP_STATUS, LAYER_STATUS } from "./constant";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import PaintMode from "mapbox-gl-draw-paint-mode";
 import "maplibre-gl/dist/maplibre-gl.css";
 import ToolDetail from "./ToolDetail";
-import jsPDF from 'jspdf';
+import jsPDF from "jspdf";
 
 const MapComponent = ({ searchCountry, props }) => {
 	// Destructuring
@@ -71,8 +71,7 @@ const MapComponent = ({ searchCountry, props }) => {
 		if (status === MAP_STATUS.ADD_PIN) {
 			setPins([...pins, [event.lngLat.lng, event.lngLat.lat]]);
 			setStatus(MAP_STATUS.DO_NOTHING);
-		}
-		else if (status === MAP_STATUS.ADD_POPUP) {
+		} else if (status === MAP_STATUS.ADD_POPUP) {
 			setPopupList([
 				...popupList,
 				[
@@ -82,15 +81,13 @@ const MapComponent = ({ searchCountry, props }) => {
 				],
 			]);
 			setStatus(MAP_STATUS.DO_NOTHING);
-		}
-		else if (status === MAP_STATUS.CHOSEN) {
-			setCardOpen(true)
-			setDrag(true)
-			setStatus(MAP_STATUS.DO_NOTHING)
-		}
-		else {
-			setCardOpen(false)
-			setDrag(false)
+		} else if (status === MAP_STATUS.CHOSEN) {
+			setCardOpen(true);
+			setDrag(true);
+			setStatus(MAP_STATUS.DO_NOTHING);
+		} else {
+			setCardOpen(false);
+			setDrag(false);
 		}
 	};
 
@@ -101,10 +98,9 @@ const MapComponent = ({ searchCountry, props }) => {
 	const updateLayerStatus = (layerName, status) => {
 		setLayerStatus({
 			...layerStatus,
-			[layerName]: status
+			[layerName]: status,
 		});
 	};
-
 
 	const handlePinDragEnd = (event, index) => {
 		const newPins = [...pins];
@@ -113,7 +109,11 @@ const MapComponent = ({ searchCountry, props }) => {
 	};
 	const handlePopupDragEnd = (event, index) => {
 		const newPopupList = [...popupList];
-		newPopupList[index] = [event.lngLat.lng, event.lngLat.lat, newPopupList[index][2]];
+		newPopupList[index] = [
+			event.lngLat.lng,
+			event.lngLat.lat,
+			newPopupList[index][2],
+		];
 		setPopupList(newPopupList);
 	};
 
@@ -149,10 +149,6 @@ const MapComponent = ({ searchCountry, props }) => {
 		// do something
 	}, []);
 
-
-
-
-
 	const handlePinButton = () => {
 		setStatus(MAP_STATUS.ADD_PIN);
 	};
@@ -163,22 +159,20 @@ const MapComponent = ({ searchCountry, props }) => {
 	const addLayer = (layerName) => {
 		const maplibreMap = mapRef.current.getMap();
 
-		const layer = LAYERS.find(layer => layer.name === layerName);
+		const layer = LAYERS.find((layer) => layer.name === layerName);
 
 		maplibreMap.addSource(layerName, {
-			type: 'raster',
-			tiles: [
-				layer.url
-			],
-			tileSize: 256
+			type: "raster",
+			tiles: [layer.url],
+			tileSize: 256,
 		});
 		maplibreMap.addLayer({
 			id: layerName,
-			type: 'raster',
+			type: "raster",
 			source: layerName,
 			paint: {
-				'raster-opacity': 1
-			}
+				"raster-opacity": 1,
+			},
 		});
 
 		updateLayerStatus(layerName, LAYER_STATUS.IS_RENDERING);
@@ -198,39 +192,39 @@ const MapComponent = ({ searchCountry, props }) => {
 			preserveDrawingBuffer: true,
 			fadeDuration: 0,
 			attributionControl: false,
-		})
+		});
 
-
-
-
-		renderMap.once('idle', () => {
+		renderMap.once("idle", () => {
 			setTimeout(() => {
 				const canvasDataURL = renderMap.getCanvas().toDataURL();
 				const link = document.createElement("a");
 				link.href = canvasDataURL;
 				link.download = "map-export.png";
-				const pdf = new jsPDF('l', 'mm', 'a4');
+				const pdf = new jsPDF("l", "mm", "a4");
 
 				// Add the map image to the PDF document
-				pdf.addImage(canvasDataURL, 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
+				pdf.addImage(
+					canvasDataURL,
+					"PNG",
+					0,
+					0,
+					pdf.internal.pageSize.getWidth(),
+					pdf.internal.pageSize.getHeight()
+				);
 
 				// Save the PDF file
-				pdf.save('map-export.pdf');
+				pdf.save("map-export.pdf");
 				link.click();
 				link.remove();
-			}, 1000)
-		})
+			}, 1000);
+		});
 
-
-
-
-		renderMap.once('idle', () => {
+		renderMap.once("idle", () => {
 			setTimeout(() => {
 				renderMap.remove();
-			}, 1000)
-		})
-
-	}
+			}, 1000);
+		});
+	};
 
 	const removeLayer = (layerName) => {
 		const maplibreMap = mapRef.current.getMap();
@@ -239,9 +233,7 @@ const MapComponent = ({ searchCountry, props }) => {
 		maplibreMap.removeSource(layerName);
 
 		updateLayerStatus(layerName, LAYER_STATUS.NOT_RENDERING);
-	}
-
-
+	};
 
 	const changeOpacity = (event, LayerName) => {
 		const value = event.target.value;
@@ -252,10 +244,15 @@ const MapComponent = ({ searchCountry, props }) => {
 
 	return (
 		<div className="map-wrap">
-			<button type="primary" onClick={showModal}>
+			{/* <button type="primary" onClick={showModal}>
 				Edit Layer
-			</button>
-			<Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+			</button> */}
+			<Modal
+				title="Basic Modal"
+				open={isModalOpen}
+				onOk={handleOk}
+				onCancel={handleCancel}
+			>
 				{LAYERS.map((item, index) => (
 					<div key={index}>
 						<div>{item.name}</div>
@@ -265,12 +262,16 @@ const MapComponent = ({ searchCountry, props }) => {
 									type="range"
 									min="0"
 									max="100"
-									onChange={e => changeOpacity(e, item.name)}
+									onChange={(e) => changeOpacity(e, item.name)}
 								/>
-								<button onClick={e => removeLayer(item.name)}>Remove this layer</button>
+								<button onClick={(e) => removeLayer(item.name)}>
+									Remove this layer
+								</button>
 							</>
 						) : (
-							<button onClick={e => addLayer(item.name)}>Add this layer</button>
+							<button onClick={(e) => addLayer(item.name)}>
+								Add this layer
+							</button>
 						)}
 					</div>
 				))}
@@ -296,7 +297,7 @@ const MapComponent = ({ searchCountry, props }) => {
 						key={index}
 						draggable={drag}
 						onClick={() => {
-							setStatus(MAP_STATUS.CHOSEN)
+							setStatus(MAP_STATUS.CHOSEN);
 						}}
 						onDragEnd={(e) => handlePinDragEnd(e, index)}
 						longitude={pin[0]}
@@ -313,7 +314,7 @@ const MapComponent = ({ searchCountry, props }) => {
 						key={index}
 						draggable={drag}
 						onClick={() => {
-							setStatus(MAP_STATUS.CHOSEN)
+							setStatus(MAP_STATUS.CHOSEN);
 						}}
 						onDragEnd={(e) => handlePopupDragEnd(e, index)}
 						longitude={popu[0]}
