@@ -258,13 +258,29 @@ const CountryMap = ({ searchCountry, disasters }) => {
 					flex={2} // 2/5
 					style={{ padding: 20 }}
 				>
-					<Card>wut</Card>
+					<Card>Description...</Card>
 				</Col>
 			</Row>
-			<Divider orientation="left">Emergency Overview</Divider>
+			{/* <Divider orientation="left">Emergency Overview</Divider> */}
 			<Row>
-				<Col flex="1 1 200px">1 1 200px</Col>
-				<Col flex="0 1 300px">0 1 300px</Col>
+				<Col
+					flex="auto"
+					style={{
+						alignContent: "center",
+						justifyContent: "center",
+						alignItems: "center",
+					}}
+				>
+					<Card
+						title="Emergency Overview"
+						style={{
+							textAlign: "center",
+							width: "100%",
+						}}
+					>
+						Information...
+					</Card>
+				</Col>
 			</Row>
 			{/* Need to figure how to resize map */}
 			{/* <Map
