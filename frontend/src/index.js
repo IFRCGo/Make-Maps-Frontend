@@ -7,20 +7,20 @@ import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 
 const client = new ApolloClient({
-  uri: "http://localhost:9092/graphql",
-  cache: new InMemoryCache(),
+	uri: "https://ifrc-go-make-maps-backend.azurewebsites.net/graphql",
+	cache: new InMemoryCache(),
 });
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
-  <React.StrictMode>
-    <ApolloProvider client={client}>
-      <Router>
-        <Routes>
-          <Route path="/*" element={<App />} />
-        </Routes>
-      </Router>
-    </ApolloProvider>
-  </React.StrictMode>
+	<React.StrictMode>
+		<ApolloProvider client={client}>
+			<Router>
+				<Routes>
+					<Route path="/*" element={<App />} />
+				</Routes>
+			</Router>
+		</ApolloProvider>
+	</React.StrictMode>
 );

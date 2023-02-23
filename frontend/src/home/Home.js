@@ -7,15 +7,17 @@ import "./Home.css";
 const Home = ({ disasters }) => {
 	const navigate = useNavigate();
 
-	const countryLink = (country) => {
-		let locationFound = disasters.filter(
-			(disaster) => disaster["location"].toLowerCase() === country.toLowerCase()
+	const countryLink = (country, _id) => {
+		// Look into why _id is the entire disaster object
+		// console.log(_id);
+
+		let locationData = _id.disasterCoordinates;
+		navigate(
+			`map/${_id._id}/${locationData.coordinates[0]}/${locationData.coordinates[1]}`
 		);
-		let locationData = locationFound[0].disasterCoordinates;
-		navigate(`map/${locationData.coordinates[0]}/${locationData.coordinates[1]}`);
 	};
 
-	const disasterType = disasters.map((disaster) => disaster.disasterType)
+	const disasterType = disasters.map((disaster) => disaster.disasterType);
 
 	const columns = [
 		{
@@ -55,13 +57,13 @@ const Home = ({ disasters }) => {
 		{
 			title: "Country",
 			dataIndex: "location",
-			render: (country) => (
+			render: (country, _id) => (
 				<Button
 					danger
 					type="link"
 					style={{ padding: 0, minWidth: 100, textAlign: "left" }}
 					onClick={() => {
-						countryLink(country);
+						countryLink(country, _id);
 					}}
 				>
 					{country}
