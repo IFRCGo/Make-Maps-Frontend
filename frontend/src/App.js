@@ -10,30 +10,27 @@ import { useQuery } from "@apollo/client";
 import * as Query from "./API/AllQueries";
 
 function App() {
-  const [disasters, setDisasters] = useState([]);
-  const { loading, error, data } = useQuery(Query.GET_DISASTERS);
+	const [disasters, setDisasters] = useState([]);
+	const { loading, error, data } = useQuery(Query.GET_DISASTERS);
 
-  useEffect(() => {
-    if (data) {
-      setDisasters(data.disasterMany);
-    }
-  }, [data])
+	useEffect(() => {
+		if (data) {
+			setDisasters(data.disasterMany);
+		}
+	}, [data]);
 
-  return (
-    <Routes>
-      <Route path="/" element={<Layout disasters={disasters} />}>
-        <Route index element={<Home disasters={disasters} />} />
-        <Route path="map">
-          <Route index element={<MapComponent />} />
-          <Route
-            path=":long?/:lat?"
-            element={<CountryMap />}
-          />
-        </Route>
-      </Route>
-      <Route path="/test" element={<TestAPI />} />
-    </Routes>
-  );
+	return (
+		<Routes>
+			<Route path="/" element={<Layout disasters={disasters} />}>
+				<Route index element={<Home disasters={disasters} />} />
+				<Route path="map">
+					<Route index element={<MapComponent />} />
+					<Route path=":id?/:long?/:lat?" element={<CountryMap />} />
+				</Route>
+			</Route>
+			<Route path="/test" element={<TestAPI />} />
+		</Routes>
+	);
 }
 
 export default App;
