@@ -13,7 +13,8 @@ const Home = ({ disasters }) => {
 
 		let locationData = _id.disasterCoordinates;
 		navigate(
-			`map/${_id._id}/${locationData.coordinates[0]}/${locationData.coordinates[1]}`
+			`map/${_id._id}/${locationData.coordinates[0]}/${locationData.coordinates[1]}`,
+			{ state: { countryData: _id } }
 		);
 	};
 
