@@ -13,8 +13,11 @@ const CountrySearch = ({ disasters }) => {
 
   const navigate = useNavigate();
   const handleSelect = (value) => {
-    const locationData = locationOptions.find(option => value === option.value);
-    navigate(`map/${locationData.disasterCoordinates.coordinates[0]}/${locationData.disasterCoordinates.coordinates[1]}`)
+    const disaster = locationOptions.find(option => value === option.value);
+    navigate(
+      `map/${disaster._id}/${disaster.disasterCoordinates.coordinates[0]}/${disaster.disasterCoordinates.coordinates[1]}`, 
+      { state: { countryData: disaster } },
+    )
     // refresh the page
     navigate(0)
   }
