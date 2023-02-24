@@ -17,3 +17,18 @@ export const GET_DISASTERS = gql`
     }
   }
 `;
+
+export const GET_PINS = gql`
+  query PinQuery($filter: FilterFindManyPinInput) {
+    pinMany(filter: $filter) {
+      disaster
+      pinText
+      date
+      pinCoordinates {
+        coordinates
+      }
+      createdBy
+      _id
+    }
+  }
+`;
