@@ -14,6 +14,10 @@ const Layout = ({ disasters }) => {
         <Header
           style={{
             padding: 0,
+            position: 'sticky', 
+            top: 0, 
+            zIndex: 1, 
+            width: '100%',
             background: colorBgContainer,
           }}
         >
