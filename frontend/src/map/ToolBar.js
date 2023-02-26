@@ -1,32 +1,33 @@
-import React from "react";
-import { Drawer, FloatButton, Button, Space, Popover } from "antd";
-import { useState } from "react";
+import React, { useState } from "react";
+import { 
+  Drawer, 
+  FloatButton, 
+  Button, Space, 
+  Tooltip, 
+  Divider 
+} from "antd";
 import {
   PushpinOutlined,
   LinkOutlined,
   DownloadOutlined,
-  FormatPainterOutlined,
   LineOutlined,
-  LineChartOutlined,
   ExportOutlined,
 } from "@ant-design/icons";
-import { FiLayers } from "react-icons/fi";
 import { CgToolbox } from "react-icons/cg";
+import { BiShapePolygon, BiPaint, BiLayer } from "react-icons/bi";
 import "./ToolBar.css";
 
 const ToolBar = ({
   handlePinButton,
-  handleTextButton,
+  showModal,
   handlePaintButton,
   handleLineButton,
   handlePolygonButton,
   handleDownloadButton,
-  setMapStyle,
   handleExportButton,
 }) => {
   const [open, setOpen] = useState(true);
   const [visual, setVisual] = useState(true);
-  const [select, setSelect] = useState("Default");
 
   const showDrawer = () => {
     open === false ? setOpen(true) : setOpen(false);
@@ -41,105 +42,13 @@ const ToolBar = ({
     setVisual(false);
   };
 
-  const layerContent = (
-    <div>
-      <Space>
-        <Space.Compact direction="vertical">
-          <Button
-            className="layer-button"
-            type={select === "Default" ? "primary" : "text"}
-            onClick={() => {
-              setMapStyle(
-                "https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
-              );
-              setSelect("Default");
-            }}
-          >
-            <Space>
-              <img
-                className="layer-img"
-                src="https://cloud.maptiler.com/static/img/maps/basic-v2.png?t=1663665773"
-                width="40"
-                height="40"
-                alt="basic"
-              />
-              <p>Default</p>
-            </Space>
-          </Button>
-          <Button
-            className="layer-button"
-            type={select === "Street" ? "primary" : "text"}
-            onClick={() => {
-              setMapStyle(
-                "https://api.maptiler.com/maps/streets-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
-              );
-              setSelect("Street");
-            }}
-          >
-            <Space>
-              <img
-                className="layer-img"
-                src="https://cloud.maptiler.com/static/img/maps/streets-v2.png?t=1663665773"
-                width="40"
-                height="40"
-                alt="basic"
-              />
-              <p>Street</p>
-            </Space>
-          </Button>
-          <Button
-            className="layer-button"
-            type={select === "Open" ? "primary" : "text"}
-            onClick={() => {
-              setMapStyle(
-                "https://api.maptiler.com/maps/openstreetmap/style.json?key=HMeYX3yPwK7wfZQDqdeC"
-              );
-              setSelect("Open");
-            }}
-          >
-            <Space>
-              <img
-                className="layer-img"
-                src="https://cloud.maptiler.com/static/img/maps/openstreetmap.png?t=1663665773"
-                width="40"
-                height="40"
-                alt="basic"
-              />
-              <p>Open Street</p>
-            </Space>
-          </Button>
-          <Button
-            className="layer-button"
-            type={select === "Satellite" ? "primary" : "text"}
-            onClick={() => {
-              setMapStyle(
-                "https://api.maptiler.com/maps/hybrid/style.json?key=HMeYX3yPwK7wfZQDqdeC"
-              );
-              setSelect("Satellite");
-            }}
-          >
-            <Space>
-              <img
-                className="layer-img"
-                src="https://cloud.maptiler.com/static/img/maps/hybrid.png?t=1663665773"
-                width="40"
-                height="40"
-                alt="basic"
-              />
-              <p>Satellite</p>
-            </Space>
-          </Button>
-        </Space.Compact>
-      </Space>
-    </div>
-  );
-
   return (
     <>
       <FloatButton
         shape="square"
         style={{ right: 24, marginBottom: -10 }}
         icon={<CgToolbox />}
+        tooltip={<div>Tool Bar</div>}
         onClick={showDrawer}
       />
       <div
@@ -158,48 +67,59 @@ const ToolBar = ({
         >
           <div className="tool-button">
             <Space>
-              <Button
-                type="text"
-                size="large"
-                icon={<PushpinOutlined onClick={handlePinButton} />}
-              />
-              <Button
-                type="text"
-                size="large"
-                icon={<FormatPainterOutlined onClick={handlePaintButton} />}
-              />
-              <Button
-                type="text"
-                size="large"
-                icon={<LineOutlined onClick={handleLineButton} />}
-              />
-              <Button
-                type="text"
-                size="large"
-                icon={<LineChartOutlined onClick={handlePolygonButton} />}
-              />
-              <Button type="text" size="large" icon={<LinkOutlined />} />
-              <Button
-                type="text"
-                size="large"
-                icon={<DownloadOutlined onClick={handleDownloadButton} />}
-              />
-              <Button
-                type="text"
-                size="large"
-                icon={<ExportOutlined onClick={handleExportButton} />}
-              />
-              <Popover
-                placement="topLeft"
-                content={layerContent}
-                trigger="click"
-              >
+              <Tooltip placement="top" title={<span>Pin</span>}>
                 <Button
                   type="text"
                   size="large"
-                  icon={<FiLayers style={{ verticalAlign: "text-top" }} />}
+                  icon={<PushpinOutlined onClick={handlePinButton} />}
                 />
-              </Popover>
+              </Tooltip>
+              <Tooltip placement="top" title={<span>Layer</span>}>
+                <Button
+                  type="text"
+                  size="large"
+                  icon={<BiLayer onClick={showModal} />}
+                />
+              </Tooltip>
+              <Tooltip placement="top" title={<span>Draw</span>}>
+                <Button
+                  type="text"
+                  size="large"
+                  icon={<BiPaint onClick={handlePaintButton} />}
+                />
+              </Tooltip>
+              <Tooltip placement="top" title={<span>Line</span>}>
+                <Button
+                  type="text"
+                  size="large"
+                  icon={<LineOutlined onClick={handleLineButton} />}
+                />
+              </Tooltip>
+              <Tooltip placement="top" title={<span>Polygon</span>}>
+                <Button
+                  type="text"
+                  size="large"
+                  icon={<BiShapePolygon onClick={handlePolygonButton} />}
+                />
+              </Tooltip>
+              <Divider type="vertical" style={{ height: "2em", }}/>
+              <Tooltip placement="top" title={<span>Link</span>}>
+                <Button type="text" size="large" icon={<LinkOutlined />} />
+              </Tooltip>
+              <Tooltip placement="top" title={<span>Download</span>}>
+                <Button
+                  type="text"
+                  size="large"
+                  icon={<DownloadOutlined onClick={handleDownloadButton} />} 
+                />
+              </Tooltip>
+              <Tooltip placement="top" title={<span>Export GeoJson</span>}>
+                <Button
+                  type="text"
+                  size="large"
+                  icon={<ExportOutlined onClick={handleExportButton} />} 
+                />
+              </Tooltip>
             </Space>
           </div>
         </Drawer>
