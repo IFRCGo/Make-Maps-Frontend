@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import maplibregl from "maplibre-gl";
+import maplibregl, { Map as map1 } from "maplibre-gl";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import PaintMode from "mapbox-gl-draw-paint-mode";
@@ -493,6 +493,23 @@ const MapComponent = ({ searchCountry, props }) => {
         handleLineButton={handleLineButton}
         handlePolygonButton={handlePolygonButton}
         handleDownloadButton={handleDownloadButton}
+        handleExportButton={() => {
+          const json = mapboxDrawRef.current.getAll();
+
+          const filename = "data.json";
+
+          const blob = new Blob([JSON.stringify(json, null, 2)], {
+            type: "application/json",
+          });
+
+          const url = URL.createObjectURL(blob);
+
+          const link = document.createElement("a");
+          link.setAttribute("download", filename);
+          link.setAttribute("href", url);
+
+          link.click();
+        }}
       />
     </div>
   );

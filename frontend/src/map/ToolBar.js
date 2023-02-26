@@ -8,6 +8,7 @@ import {
   FormatPainterOutlined,
   LineOutlined,
   LineChartOutlined,
+  ExportOutlined,
 } from "@ant-design/icons";
 import { FiLayers } from "react-icons/fi";
 import { CgToolbox } from "react-icons/cg";
@@ -21,6 +22,7 @@ const ToolBar = ({
   handlePolygonButton,
   handleDownloadButton,
   setMapStyle,
+  handleExportButton,
 }) => {
   const [open, setOpen] = useState(true);
   const [visual, setVisual] = useState(true);
@@ -181,6 +183,11 @@ const ToolBar = ({
                 type="text"
                 size="large"
                 icon={<DownloadOutlined onClick={handleDownloadButton} />}
+              />
+              <Button
+                type="text"
+                size="large"
+                icon={<ExportOutlined onClick={handleExportButton} />}
               />
               <Popover
                 placement="topLeft"
