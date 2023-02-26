@@ -23,18 +23,14 @@ const ADD_POPUP = 2;
 const DO_NOTHING = 0;
 
 const CountryMap = ({ searchCountry, disasters }) => {
-  const { id, long, lat } = useParams();
-  const { state } = useLocation();
-  const { countryData } = state || {};
-  const location = {
-    longitude: typeof long != "undefined" ? long : 16.62662018,
-    latitude: typeof lat != "undefined" ? lat : 49.2125578,
-    zoom: typeof long != "undefined" ? 9 : 0,
-  };
-
-  console.log(countryData);
-  // console.log(id);
-  // console.log(disasters);
+	const { id, long, lat } = useParams();
+	const { state } = useLocation();
+	const { countryData } = state || {};
+	const location = {
+		longitude: typeof long != "undefined" ? long : 16.62662018,
+		latitude: typeof lat != "undefined" ? lat : 49.2125578,
+		zoom: typeof long != "undefined" ? 9 : 0,
+	};
 
   const [mapLocation, setMapLocation] = useState(location);
   const [pins, setPins] = useState([]);

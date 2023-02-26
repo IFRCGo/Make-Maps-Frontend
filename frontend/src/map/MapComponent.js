@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import maplibregl, { Map as map1 } from "maplibre-gl";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
@@ -17,6 +17,8 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import jsPDF from "jspdf";
 import { CgToolbox } from "react-icons/cg";
 import { CgTrash } from "react-icons/cg";
+import StyleButton from "./StyleButton";
+import LayerCard from "./LayerCard";
 
 const MapComponent = ({ searchCountry, props }) => {
   // Destructuring
@@ -387,24 +389,10 @@ const MapComponent = ({ searchCountry, props }) => {
     }
     mapRef.current.setStyle(mapStyle);
   }, [mapStyle]);
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
 
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
-  const checkLayerStatus = (layerName) => {
-    return layerStatus[layerName];
-  };
-
-  const updateLayerStatus = (layerName, status) => {
-    setLayerStatus({
-      ...layerStatus,
-      [layerName]: status,
-    });
-  };
+  const showModal = () => {
+    setIsModalOpen(true);
+  }
 
   const handlePinButton = () => {
     mapboxDrawRef.current.changeMode("draw_point_with_text_mode");
@@ -412,34 +400,11 @@ const MapComponent = ({ searchCountry, props }) => {
   const handlePaintButton = () => {
     mapboxDrawRef.current.changeMode("draw_paint_mode");
   };
-
   const handleLineButton = () => {
     mapboxDrawRef.current.changeMode("draw_line_string");
   };
   const handlePolygonButton = () => {
     mapboxDrawRef.current.changeMode("draw_polygon");
-  };
-
-  const addLayer = (layerName) => {
-    const maplibreMap = mapRef.current.getMap();
-
-    const layer = LAYERS.find((layer) => layer.name === layerName);
-
-    maplibreMap.addSource(layerName, {
-      type: "raster",
-      tiles: [layer.url],
-      tileSize: 256,
-    });
-    maplibreMap.addLayer({
-      id: layerName,
-      type: "raster",
-      source: layerName,
-      paint: {
-        "raster-opacity": 1,
-      },
-    });
-
-    updateLayerStatus(layerName, LAYER_STATUS.IS_RENDERING);
   };
 
   const handleDownloadButton = () => {
@@ -490,24 +455,27 @@ const MapComponent = ({ searchCountry, props }) => {
     });
   };
 
-  const removeLayer = (layerName) => {
-    const maplibreMap = mapRef.current.getMap();
+  const handleExportButton = () => {
+    const json = mapboxDrawRef.current.getAll();
 
-    maplibreMap.removeLayer(layerName);
-    maplibreMap.removeSource(layerName);
+    const filename = "data.json";
 
-    updateLayerStatus(layerName, LAYER_STATUS.NOT_RENDERING);
-  };
+    const blob = new Blob([JSON.stringify(json, null, 2)], {
+      type: "application/json",
+    });
 
-  const changeOpacity = (event, LayerName) => {
-    const value = event.target.value;
-    const opacity = value / 100;
-    const maplibreMap = mapRef.current.getMap();
-    maplibreMap.setPaintProperty(LayerName, "raster-opacity", opacity);
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.setAttribute("download", filename);
+    link.setAttribute("href", url);
+
+    link.click();
   };
 
   return (
     <div className="map-wrap">
+      <div ref={mapContainer} style={{ width: "100vw", height: "100vh" }} />
       <FloatButton
         shape="square"
         style={{ right: 100, marginBottom: -10 }}
@@ -537,61 +505,20 @@ const MapComponent = ({ searchCountry, props }) => {
           });
         }}
       />
-
-      <Modal
-        title="Basic Modal"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        {LAYERS.map((item, index) => (
-          <div key={index}>
-            <div>{item.name}</div>
-            {checkLayerStatus(item.name) === LAYER_STATUS.IS_RENDERING ? (
-              <>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  onChange={(e) => changeOpacity(e, item.name)}
-                />
-                <button onClick={(e) => removeLayer(item.name)}>
-                  Remove this layer
-                </button>
-              </>
-            ) : (
-              <button onClick={(e) => addLayer(item.name)}>
-                Add this layer
-              </button>
-            )}
-          </div>
-        ))}
-      </Modal>
-      <div ref={mapContainer} style={{ width: "100vw", height: "100vh" }} />
+      <LayerCard 
+        mapRef={mapRef}
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+      />
+      <StyleButton setMapStyle={setMapStyle}/>
       <ToolBar
         handlePinButton={handlePinButton}
-        setMapStyle={setMapStyle}
+        showModal={showModal}
         handlePaintButton={handlePaintButton}
         handleLineButton={handleLineButton}
         handlePolygonButton={handlePolygonButton}
         handleDownloadButton={handleDownloadButton}
-        handleExportButton={() => {
-          const json = mapboxDrawRef.current.getAll();
-
-          const filename = "data.json";
-
-          const blob = new Blob([JSON.stringify(json, null, 2)], {
-            type: "application/json",
-          });
-
-          const url = URL.createObjectURL(blob);
-
-          const link = document.createElement("a");
-          link.setAttribute("download", filename);
-          link.setAttribute("href", url);
-
-          link.click();
-        }}
+        handleExportButton={handleExportButton}
       />
     </div>
   );
