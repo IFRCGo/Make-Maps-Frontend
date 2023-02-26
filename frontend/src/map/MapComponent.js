@@ -15,6 +15,7 @@ import PaintMode from "mapbox-gl-draw-paint-mode";
 import "maplibre-gl/dist/maplibre-gl.css";
 import ToolDetail from "./ToolDetail";
 import jsPDF from "jspdf";
+import StyleButton from "./StyleButton";
 
 const MapComponent = ({ searchCountry, props }) => {
 	// Destructuring
@@ -247,6 +248,7 @@ const MapComponent = ({ searchCountry, props }) => {
 			<button type="primary" onClick={showModal}>
 				Edit Layer
 			</button>
+			<StyleButton setMapType={setMapType} />
 			<Modal
 				title="Basic Modal"
 				open={isModalOpen}
@@ -329,7 +331,6 @@ const MapComponent = ({ searchCountry, props }) => {
 			<ToolBar
 				handlePinButton={handlePinButton}
 				handleTextButton={handleTextButton}
-				setMapType={setMapType}
 				handlePaintButton={handlePaintButton}
 				handleLineButton={handleLineButton}
 				handlePolygonButton={handlePolygonButton}
