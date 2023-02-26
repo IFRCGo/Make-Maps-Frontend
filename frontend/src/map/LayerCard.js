@@ -1,9 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { Modal } from "antd";
 import { LAYERS, LAYER_STATUS } from "./constant";
 
-const LayerCard = ({ mapRef, layerStatus, setLayerStatus, isModalOpen, setIsModalOpen }) => {
-  
+const LayerCard = ({ 
+  mapRef, 
+  isModalOpen, 
+  setIsModalOpen 
+}) => {
+  const [layerStatus, setLayerStatus] = useState(() => {
+		return LAYERS.reduce((acc, layer) => {
+			acc[layer.name] = LAYER_STATUS.NOT_RENDERING;
+			return acc;
+		}, {});
+	});
 
   const addLayer = (layerName) => {
 		const maplibreMap = mapRef.current.getMap();

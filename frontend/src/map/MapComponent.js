@@ -6,7 +6,6 @@ import Map, { NavigationControl, Marker } from "react-map-gl";
 import ToolBar from "./ToolBar";
 import { IoLocationSharp } from "react-icons/io5";
 import { useParams } from "react-router-dom";
-import { Modal, Button } from "antd";
 
 import { LAYERS, API_KEY, MAP_STATUS, LAYER_STATUS } from "./constant";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
@@ -20,12 +19,6 @@ import LayerCard from "./LayerCard";
 
 const MapComponent = ({ searchCountry, props }) => {
 	// Destructuring
-	const [layerStatus, setLayerStatus] = useState(() => {
-		return LAYERS.reduce((acc, layer) => {
-			acc[layer.name] = LAYER_STATUS.NOT_RENDERING;
-			return acc;
-		}, {});
-	});
 	const { long, lat } = useParams();
 	const location = {
 		longitude: typeof long != "undefined" ? long : 16.62662018,
@@ -190,14 +183,6 @@ const MapComponent = ({ searchCountry, props }) => {
 
 	return (
 		<div className="map-wrap">
-			<StyleButton setMapType={setMapType} />
-			<LayerCard 
-				mapRef={mapRef} 
-				layerStatus={layerStatus} 
-				setLayerStatus={setLayerStatus} 
-				isModalOpen={isModalOpen}
-				setIsModalOpen={setIsModalOpen}
-			/>
 			<Map
 				mapLib={maplibregl}
 				onLoad={onMapLoad}
@@ -248,6 +233,12 @@ const MapComponent = ({ searchCountry, props }) => {
 					</Marker>
 				))}
 			</Map>
+			<StyleButton setMapType={setMapType} />
+			<LayerCard 
+				mapRef={mapRef} 
+				isModalOpen={isModalOpen}
+				setIsModalOpen={setIsModalOpen}
+			/>
 			<ToolBar
 				handlePinButton={handlePinButton}
 				handleTextButton={handleTextButton}
