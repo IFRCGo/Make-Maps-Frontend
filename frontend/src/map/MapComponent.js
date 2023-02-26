@@ -91,6 +91,10 @@ const MapComponent = ({ searchCountry, props }) => {
         textarea.cols = 1;
         textarea.style.lineHeight = textarea.style.height;
         textarea.style.width = "180px";
+        var zoom = mapRef.current.getZoom();
+
+        textarea.style.fontSize = 5 + (zoom - 10) * 1 + "px"; //
+
         textarea.style.height = "auto";
         textarea.style.resize = "none";
         textarea.style.overflow = "auto";
@@ -153,6 +157,7 @@ const MapComponent = ({ searchCountry, props }) => {
         mapRef.current.on("zoom", function () {
           var zoom = mapRef.current.getZoom();
           var fontSize = 5 + (zoom - 10) * 1;
+
           textarea.style.fontSize = fontSize + "px";
           textarea.style.height = "auto";
           textarea.style.minHeight =
