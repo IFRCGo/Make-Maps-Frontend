@@ -10,13 +10,11 @@ import {
   PushpinOutlined,
   LinkOutlined,
   DownloadOutlined,
-  FormatPainterOutlined,
   LineOutlined,
-  ControlOutlined,
   ExportOutlined,
 } from "@ant-design/icons";
 import { CgToolbox } from "react-icons/cg";
-import { BiShapePolygon } from "react-icons/bi";
+import { BiShapePolygon, BiPaint, BiLayer } from "react-icons/bi";
 import "./ToolBar.css";
 
 const ToolBar = ({
@@ -80,14 +78,14 @@ const ToolBar = ({
                 <Button
                   type="text"
                   size="large"
-                  icon={<ControlOutlined onClick={showModal} />}
+                  icon={<BiLayer onClick={showModal} />}
                 />
               </Tooltip>
               <Tooltip placement="top" title={<span>Draw</span>}>
                 <Button
                   type="text"
                   size="large"
-                  icon={<FormatPainterOutlined onClick={handlePaintButton} />}
+                  icon={<BiPaint onClick={handlePaintButton} />}
                 />
               </Tooltip>
               <Tooltip placement="top" title={<span>Line</span>}>
