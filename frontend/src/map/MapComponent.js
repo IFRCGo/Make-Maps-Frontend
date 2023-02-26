@@ -9,12 +9,14 @@ import "./CustomMarker.css";
 import "./MapComponent.css";
 import ToolBar from "./ToolBar";
 import { useParams } from "react-router-dom";
-import { Modal } from "antd";
+import { FloatButton, Modal } from "antd";
 
 import { LAYERS, API_KEY, MAP_STATUS, LAYER_STATUS } from "./constant";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 import jsPDF from "jspdf";
+import { CgToolbox } from "react-icons/cg";
+import { CgTrash } from "react-icons/cg";
 
 const MapComponent = ({ searchCountry, props }) => {
   // Destructuring
@@ -40,6 +42,10 @@ const MapComponent = ({ searchCountry, props }) => {
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
   const mapboxDrawRef = useRef(null);
+
+  const [selectedLayer, setSelectedLayer] = useState(null);
+  const [showTrash, setShowTrash] = useState(false);
+
   useEffect(() => {
     if (!mapContainer) {
       return;
@@ -55,8 +61,8 @@ const MapComponent = ({ searchCountry, props }) => {
       displayControlsDefault: false,
       controls: {
         polygon: false,
-        trash: false,
         line_string: false,
+        trash: false,
       },
       modes: {
         ...MapboxDraw.modes,
@@ -420,6 +426,36 @@ const MapComponent = ({ searchCountry, props }) => {
 
   return (
     <div className="map-wrap">
+      <FloatButton
+        shape="square"
+        style={{ right: 100, marginBottom: -10 }}
+        icon={<CgTrash />}
+        onClick={() => {
+          const selectedFeatures = mapboxDrawRef.current.getSelected().features;
+          selectedFeatures.forEach((feature) => {
+            let state = feature;
+            if (state.geometry.type === "Point") {
+              let container = document.getElementById(
+                `text-container-${state.id}`
+              );
+              if (container) {
+                console.log("Found container element:", container);
+                setTimeout(() => {
+                  container.remove();
+                }, 0);
+              } else {
+                console.log(
+                  `Could not find container with ID 'text-container-${state.id}'`
+                );
+              }
+              mapboxDrawRef.current.trash();
+            } else {
+              mapboxDrawRef.current.trash();
+            }
+          });
+        }}
+      />
+
       <Modal
         title="Basic Modal"
         open={isModalOpen}
