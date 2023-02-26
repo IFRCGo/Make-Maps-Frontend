@@ -1,342 +1,465 @@
 import React, { useEffect, useRef, useState } from "react";
-import maplibregl, { Map as map1 } from "maplibre-gl";
-import "./MapComponent.css";
-import { Tag } from "antd";
-import Map, { NavigationControl, Marker } from "react-map-gl";
-import ToolBar from "./ToolBar";
-import { IoLocationSharp } from "react-icons/io5";
-import { useLocation, useParams } from "react-router-dom";
-import { Modal, Button } from "antd";
-
-import { LAYERS, API_KEY, MAP_STATUS, LAYER_STATUS } from "./constant";
+import maplibregl from "maplibre-gl";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import PaintMode from "mapbox-gl-draw-paint-mode";
+import DrawPointWithText from "mapbox-gl-draw-point-with-text-mode";
+import "./CustomMarker.css";
+
+import "./MapComponent.css";
+import ToolBar from "./ToolBar";
+import { useParams } from "react-router-dom";
+import { Modal } from "antd";
+
+import { LAYERS, API_KEY, MAP_STATUS, LAYER_STATUS } from "./constant";
+
 import "maplibre-gl/dist/maplibre-gl.css";
-import ToolDetail from "./ToolDetail";
 import jsPDF from "jspdf";
 
 const MapComponent = ({ searchCountry, props }) => {
-	// Destructuring
-	const [layerStatus, setLayerStatus] = useState(() => {
-		return LAYERS.reduce((acc, layer) => {
-			acc[layer.name] = LAYER_STATUS.NOT_RENDERING;
-			return acc;
-		}, {});
-	});
-	const { long, lat } = useParams();
-	const location = {
-		longitude: typeof long != "undefined" ? long : 16.62662018,
-		latitude: typeof lat != "undefined" ? lat : 49.2125578,
-		zoom: typeof long != "undefined" ? 9 : 0,
-	};
-	const [mapLocation, setMapLocation] = useState(location);
-	const [pins, setPins] = useState([]);
-	const [status, setStatus] = useState(MAP_STATUS.DO_NOTHING);
-	const [popupList, setPopupList] = useState([]);
-	const [drag, setDrag] = useState(false);
-	const [cardOpen, setCardOpen] = useState(false);
-	const [mapType, setMapType] = useState(
-		"https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
-	);
-	const [userDrawnLines, setUserDrawnLines] = useState([]);
-	const [currentLine, setCurrentLine] = useState([]);
-	const [brushColor, setBrushColor] = useState("#ffa500");
-	const [brushSize, setBrushSize] = useState(10);
-	const [painting, setPainting] = useState(false);
-	const [paintButton, setPaintButton] = useState(false);
+  // Destructuring
+  const [layerStatus, setLayerStatus] = useState(() => {
+    return LAYERS.reduce((acc, layer) => {
+      acc[layer.name] = LAYER_STATUS.NOT_RENDERING;
+      return acc;
+    }, {});
+  });
+  const { long, lat } = useParams();
+  const location = {
+    longitude: typeof long != "undefined" ? long : 16.62662018,
+    latitude: typeof lat != "undefined" ? lat : 49.2125578,
+    zoom: typeof long != "undefined" ? 9 : 0,
+  };
 
-	const [isModalOpen, setIsModalOpen] = useState(false);
+  const [mapStyle, setMapStyle] = useState(
+    "https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
+  );
 
-	const mapboxDrawRef = useRef(null);
-	const showModal = () => {
-		setIsModalOpen(true);
-	};
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-	const handleOk = () => {
-		setIsModalOpen(false);
-	};
+  const mapContainer = useRef(null);
+  const mapRef = useRef(null);
+  const mapboxDrawRef = useRef(null);
+  useEffect(() => {
+    if (!mapContainer) {
+      return;
+    }
+    mapRef.current = new maplibregl.Map({
+      container: mapContainer.current,
+      style: mapStyle,
+      center: [16.62662018, 49.2125578],
+      zoom: 14,
+    });
 
-	const handleCancel = () => {
-		setIsModalOpen(false);
-	};
+    mapboxDrawRef.current = new MapboxDraw({
+      displayControlsDefault: false,
+      controls: {
+        polygon: false,
+        trash: false,
+        line_string: false,
+      },
+      modes: {
+        ...MapboxDraw.modes,
+        draw_paint_mode: PaintMode,
+        draw_point_with_text_mode: DrawPointWithText,
+      },
+    });
 
-	const mapRef = useRef(null);
+    mapRef.current.addControl(mapboxDrawRef.current);
 
-	const handlePaintButtonToggle = (event) => {
-		setPaintButton(!paintButton);
-	};
+    mapRef.current.on("draw.create", function (e) {
+      if (e.features[0].geometry.type === "Point") {
+        var pointId = e.features[0].id;
+        var container = document.getElementById(`text-container-${pointId}`);
+        if (!container) {
+          container = document.createElement("div");
+          container.style.position = "absolute";
+          container.style.zIndex = "100";
+          container.classList.add("text-container"); // add a CSS class
+          container.id = `text-container-${pointId}`;
+          console.log(container.id);
 
-	const handleMapClick = (event) => {
-		if (status === MAP_STATUS.ADD_PIN) {
-			setPins([...pins, [event.lngLat.lng, event.lngLat.lat]]);
-			setStatus(MAP_STATUS.DO_NOTHING);
-		} else if (status === MAP_STATUS.ADD_POPUP) {
-			setPopupList([
-				...popupList,
-				[
-					event.lngLat.lng,
-					event.lngLat.lat,
-					prompt("Your input", "My Text Data"),
-				],
-			]);
-			setStatus(MAP_STATUS.DO_NOTHING);
-		} else if (status === MAP_STATUS.CHOSEN) {
-			setCardOpen(true);
-			setDrag(true);
-			setStatus(MAP_STATUS.DO_NOTHING);
-		} else {
-			setCardOpen(false);
-			setDrag(false);
-		}
-	};
+          mapRef.current.getCanvasContainer().appendChild(container);
+        }
+        var textarea = document.createElement("textarea");
+        textarea.cols = 1;
+        textarea.style.lineHeight = textarea.style.height; // set line height to match height
+        textarea.style.width = "180px";
+        textarea.style.height = "auto";
+        textarea.style.resize = "none";
+        textarea.style.overflow = "auto";
+        textarea.placeholder =
+          "Please enter your text for the marker added... ";
+        textarea.style.boxSizing = "border-box";
+        textarea.classList.add("custom_text_area"); // add a CSS class
+        textarea.maxLength = 100;
 
-	const checkLayerStatus = (layerName) => {
-		return layerStatus[layerName];
-	};
+        // Set initial value of textarea to feature's property.text
+        textarea.value = e.features[0].properties.text || "";
 
-	const updateLayerStatus = (layerName, status) => {
-		setLayerStatus({
-			...layerStatus,
-			[layerName]: status,
-		});
-	};
+        // handle textarea input events
+        textarea.addEventListener("input", function () {
+          textarea.style.height = "auto";
+          textarea.style.height = textarea.scrollHeight + "px";
+          textarea.setAttribute("contenteditable", true);
 
-	const handlePinDragEnd = (event, index) => {
-		const newPins = [...pins];
-		newPins[index] = [event.lngLat.lng, event.lngLat.lat];
-		setPins(newPins);
-	};
-	const handlePopupDragEnd = (event, index) => {
-		const newPopupList = [...popupList];
-		newPopupList[index] = [
-			event.lngLat.lng,
-			event.lngLat.lat,
-			newPopupList[index][2],
-		];
-		setPopupList(newPopupList);
-	};
+          var screenCoordinates = mapRef.current.project(
+            e.features[0].geometry.coordinates
+          );
+          console.log(screenCoordinates);
+          container.style.left =
+            screenCoordinates.x + textarea.clientHeight / 4 + "px";
+          container.style.top =
+            screenCoordinates.y - textarea.clientHeight / 2 + "px";
 
-	const handlePaintButton = () => {
-		mapboxDrawRef.current.changeMode("draw_paint_mode");
-	};
-	const handleLineButton = () => {
-		mapboxDrawRef.current.changeMode("draw_line_string");
-	};
-	const handlePolygonButton = () => {
-		mapboxDrawRef.current.changeMode("draw_polygon");
-	};
+          // Update feature's property.text with new textarea value
+          mapboxDrawRef.current.setFeatureProperty(
+            pointId,
+            "text",
+            textarea.value
+          );
+        });
 
-	const onMapLoad = React.useCallback(() => {
-		console.log(mapRef.current);
-		if (!mapRef.current) {
-			return;
-		}
+        // handle keyup events
+        textarea.addEventListener("keyup", function () {
+          textarea.dispatchEvent(new Event("input"));
+        });
 
-		mapboxDrawRef.current = new MapboxDraw({
-			displayControlsDefault: false,
-			controls: {
-				polygon: false,
-				trash: false,
-			},
-			modes: {
-				...MapboxDraw.modes,
-				draw_paint_mode: PaintMode,
-			},
-		});
+        container.appendChild(textarea);
 
-		mapRef.current.addControl(mapboxDrawRef.current);
-		// do something
-	}, []);
+        var screenCoordinates = mapRef.current.project(
+          e.features[0].geometry.coordinates
+        );
+        container.style.top =
+          screenCoordinates.y - textarea.clientHeight / 2 + "px"; // set the initial top property
+        container.style.left =
+          screenCoordinates.x + textarea.clientHeight / 4 + "px";
+        textarea.focus(); // give focus to the textarea so the user can start typing
+        // Update font-size when zoom changes
+        mapRef.current.on("zoom", function () {
+          var zoom = mapRef.current.getZoom();
+          textarea.style.fontSize = 5 + (zoom - 10) * 2 + "px"; // increase font-size by 2px for every 1 zoom level above 10
+        });
+        mapRef.current.on("move", () => {
+          var screenCoordinates = mapRef.current.project(
+            e.features[0].geometry.coordinates
+          );
+          console.log(screenCoordinates);
+          container.style.left =
+            screenCoordinates.x + textarea.clientHeight / 4 + "px";
+          container.style.top =
+            screenCoordinates.y - textarea.clientHeight / 2 + "px";
+        });
+      }
+    });
 
-	const handlePinButton = () => {
-		setStatus(MAP_STATUS.ADD_PIN);
-	};
-	const handleTextButton = () => {
-		setStatus(MAP_STATUS.ADD_POPUP);
-	};
+    mapRef.current.on("draw.update", function (e) {
+      if (e.features[0].geometry.type === "Point") {
+        console.log("inside");
+        var pointId = e.features[0].id;
+        var container = document.getElementById(`text-container-${pointId}`);
+        if (container) {
+          var textarea = container.querySelector("textarea");
+          if (textarea) {
+            var screenCoordinates = mapRef.current.project(
+              e.features[0].geometry.coordinates
+            );
+            container.style.top =
+              screenCoordinates.y - textarea.clientHeight / 2 + "px";
+            container.style.left =
+              screenCoordinates.x + textarea.clientHeight / 4 + "px";
+            mapRef.current.on("move", () => {
+              var screenCoordinates = mapRef.current.project(
+                e.features[0].geometry.coordinates
+              );
+              container.style.left =
+                screenCoordinates.x + textarea.clientHeight / 4 + "px";
+              container.style.top =
+                screenCoordinates.y - textarea.clientHeight / 2 + "px";
+            });
+          }
+          mapRef.current.on("zoom", function () {
+            var zoom = mapRef.current.getZoom();
+            textarea.style.fontSize = 12 + (zoom - 10) * 2 + "px"; // increase font-size by 2px for every 1 zoom level above 10
+          });
+        }
+      }
+    });
+  }, []);
 
-	const addLayer = (layerName) => {
-		const maplibreMap = mapRef.current.getMap();
+  useEffect(() => {
+    mapRef.current.on("load", function () {
+      var point = {
+        id: "5a4e96f71cb30de68d56cdcddf0d7674",
+        type: "Feature",
+        properties: {
+          text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy",
+        },
+        geometry: {
+          coordinates: [16.623707510200177, 49.21385178384901],
+          type: "Point",
+        },
+      };
+      // Add the point feature to the map using the "draw_point" mode
+      mapboxDrawRef.current.add(point);
 
-		const layer = LAYERS.find((layer) => layer.name === layerName);
+      var pointId = point.id;
+      var container = document.getElementById(`text-container-${pointId}`);
+      if (!container) {
+        container = document.createElement("div");
+        container.style.position = "absolute";
+        container.style.zIndex = "100";
+        container.classList.add("text-container"); // add a CSS class
+        container.id = `text-container-${pointId}`;
+        console.log(container.id);
 
-		maplibreMap.addSource(layerName, {
-			type: "raster",
-			tiles: [layer.url],
-			tileSize: 256,
-		});
-		maplibreMap.addLayer({
-			id: layerName,
-			type: "raster",
-			source: layerName,
-			paint: {
-				"raster-opacity": 1,
-			},
-		});
+        mapRef.current.getCanvasContainer().appendChild(container);
+        var textarea = document.createElement("textarea");
+        textarea.cols = 1;
+        textarea.style.lineHeight = textarea.style.height; // set line height to match height
+        textarea.style.width = "180px";
+        textarea.style.height = "auto";
+        textarea.style.resize = "none";
+        textarea.style.overflow = "auto";
+        textarea.placeholder =
+          "Please enter your text for the marker added... ";
+        textarea.style.boxSizing = "border-box";
+        textarea.classList.add("custom_text_area"); // add a CSS class
+        textarea.maxLength = 100;
 
-		updateLayerStatus(layerName, LAYER_STATUS.IS_RENDERING);
-	};
+        // Set initial value of textarea to feature's property.text
+        textarea.value = point.properties.text || "";
 
-	const handleDownloadButton = () => {
-		const maplibreMap = mapRef.current.getMap();
+        // handle textarea input events
+        textarea.addEventListener("input", function () {
+          textarea.style.height = "auto";
+          textarea.style.height = textarea.scrollHeight + "px";
+          textarea.setAttribute("contenteditable", true);
 
-		const renderMap = new map1({
-			container: maplibreMap.getContainer(),
-			style: maplibreMap.getStyle(),
-			center: maplibreMap.getCenter(),
-			zoom: maplibreMap.getZoom(),
-			bearing: maplibreMap.getBearing(),
-			pitch: maplibreMap.getPitch(),
-			interactive: false,
-			preserveDrawingBuffer: true,
-			fadeDuration: 0,
-			attributionControl: false,
-		});
+          var screenCoordinates = mapRef.current.project(
+            point.geometry.coordinates
+          );
+          container.style.left =
+            screenCoordinates.x + textarea.clientHeight / 4 + "px";
+          container.style.top =
+            screenCoordinates.y - textarea.clientHeight / 2 + "px";
 
-		renderMap.once("idle", () => {
-			setTimeout(() => {
-				const canvasDataURL = renderMap.getCanvas().toDataURL();
-				const link = document.createElement("a");
-				link.href = canvasDataURL;
-				link.download = "map-export.png";
-				const pdf = new jsPDF("l", "mm", "a4");
+          // Update feature's property.text with new textarea value
+          mapboxDrawRef.current.setFeatureProperty(
+            pointId,
+            "text",
+            textarea.value
+          );
+        });
 
-				// Add the map image to the PDF document
-				pdf.addImage(
-					canvasDataURL,
-					"PNG",
-					0,
-					0,
-					pdf.internal.pageSize.getWidth(),
-					pdf.internal.pageSize.getHeight()
-				);
+        // handle keyup events
+        textarea.addEventListener("keyup", function () {
+          textarea.dispatchEvent(new Event("input"));
+        });
+        mapRef.current.on("zoom", function () {
+          var zoom = mapRef.current.getZoom();
+          textarea.style.fontSize = 5 + (zoom - 10) * 2 + "px"; // increase font-size by 2px for every 1 zoom level above 10
+        });
+        container.appendChild(textarea);
+      }
 
-				// Save the PDF file
-				pdf.save("map-export.pdf");
-				link.click();
-				link.remove();
-			}, 1000);
-		});
+      var screenCoordinates = mapRef.current.project(
+        point.geometry.coordinates
+      );
+      container.style.top =
+        screenCoordinates.y -
+        container.querySelector("textarea").clientHeight / 2 +
+        "px"; // set the initial top property
+      container.style.left =
+        screenCoordinates.x +
+        container.querySelector("textarea").clientHeight / 4 +
+        "px";
+      container.querySelector("textarea").focus(); // give focus to the textarea so the user can start typing
 
-		renderMap.once("idle", () => {
-			setTimeout(() => {
-				renderMap.remove();
-			}, 1000);
-		});
-	};
+      mapRef.current.on("move", () => {
+        var screenCoordinates = mapRef.current.project(
+          point.geometry.coordinates
+        );
+        console.log(screenCoordinates);
+        container.style.left =
+          screenCoordinates.x +
+          container.querySelector("textarea").clientHeight / 4 +
+          "px";
+        container.style.top =
+          screenCoordinates.y -
+          container.querySelector("textarea").clientHeight / 2 +
+          "px";
+      });
+    });
+  }, []);
 
-	const removeLayer = (layerName) => {
-		const maplibreMap = mapRef.current.getMap();
+  useEffect(() => {
+    if (!mapContainer) {
+      return;
+    }
+    mapRef.current.setStyle(mapStyle);
+  }, [mapStyle]);
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
 
-		maplibreMap.removeLayer(layerName);
-		maplibreMap.removeSource(layerName);
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
-		updateLayerStatus(layerName, LAYER_STATUS.NOT_RENDERING);
-	};
+  const checkLayerStatus = (layerName) => {
+    return layerStatus[layerName];
+  };
 
-	const changeOpacity = (event, LayerName) => {
-		const value = event.target.value;
-		const opacity = value / 100;
-		const maplibreMap = mapRef.current.getMap();
-		maplibreMap.setPaintProperty(LayerName, "raster-opacity", opacity);
-	};
+  const updateLayerStatus = (layerName, status) => {
+    setLayerStatus({
+      ...layerStatus,
+      [layerName]: status,
+    });
+  };
 
-	return (
-		<div className="map-wrap">
-			{/* <button type="primary" onClick={showModal}>
-				Edit Layer
-			</button> */}
-			<Modal
-				title="Basic Modal"
-				open={isModalOpen}
-				onOk={handleOk}
-				onCancel={handleCancel}
-			>
-				{LAYERS.map((item, index) => (
-					<div key={index}>
-						<div>{item.name}</div>
-						{checkLayerStatus(item.name) === LAYER_STATUS.IS_RENDERING ? (
-							<>
-								<input
-									type="range"
-									min="0"
-									max="100"
-									onChange={(e) => changeOpacity(e, item.name)}
-								/>
-								<button onClick={(e) => removeLayer(item.name)}>
-									Remove this layer
-								</button>
-							</>
-						) : (
-							<button onClick={(e) => addLayer(item.name)}>
-								Add this layer
-							</button>
-						)}
-					</div>
-				))}
-			</Modal>
-			<Map
-				mapLib={maplibregl}
-				onLoad={onMapLoad}
-				ref={mapRef}
-				initialViewState={{
-					longitude: 16.62662018,
-					latitude: 49.2125578,
-					zoom: 0,
-				}}
-				onClick={handleMapClick}
-				style={{ width: "100%", height: " calc(100vh - 64px)" }}
-				mapStyle={mapType}
-			>
-				<NavigationControl position="top-left" />
-				<ToolDetail cardOpen={cardOpen} />
-				{pins.map((pin, index) => (
-					<Marker
-						style={{ cursor: "pointer" }}
-						key={index}
-						draggable={drag}
-						onClick={() => {
-							setStatus(MAP_STATUS.CHOSEN);
-						}}
-						onDragEnd={(e) => handlePinDragEnd(e, index)}
-						longitude={pin[0]}
-						latitude={pin[1]}
-					>
-						<div>
-							<IoLocationSharp style={{ color: "red", fontSize: "2em" }} />
-						</div>
-					</Marker>
-				))}
-				{popupList.map((popu, index) => (
-					<Marker
-						style={{ cursor: "pointer" }}
-						key={index}
-						draggable={drag}
-						onClick={() => {
-							setStatus(MAP_STATUS.CHOSEN);
-						}}
-						onDragEnd={(e) => handlePopupDragEnd(e, index)}
-						longitude={popu[0]}
-						latitude={popu[1]}
-					>
-						<div>
-							<Tag color="magenta">{popu[2]}</Tag>
-						</div>
-					</Marker>
-				))}
-			</Map>
-			<ToolBar
-				handlePinButton={handlePinButton}
-				handleTextButton={handleTextButton}
-				setMapType={setMapType}
-				handlePaintButton={handlePaintButton}
-				handleLineButton={handleLineButton}
-				handlePolygonButton={handlePolygonButton}
-				handleDownloadButton={handleDownloadButton}
-			/>
-		</div>
-	);
+  const handlePinButton = () => {
+    mapboxDrawRef.current.changeMode("draw_point_with_text_mode");
+  };
+  const handlePaintButton = () => {
+    mapboxDrawRef.current.changeMode("draw_paint_mode");
+  };
+
+  const handleLineButton = () => {
+    mapboxDrawRef.current.changeMode("draw_line_string");
+  };
+  const handlePolygonButton = () => {
+    mapboxDrawRef.current.changeMode("draw_polygon");
+  };
+
+  const addLayer = (layerName) => {
+    const maplibreMap = mapRef.current.getMap();
+
+    const layer = LAYERS.find((layer) => layer.name === layerName);
+
+    maplibreMap.addSource(layerName, {
+      type: "raster",
+      tiles: [layer.url],
+      tileSize: 256,
+    });
+    maplibreMap.addLayer({
+      id: layerName,
+      type: "raster",
+      source: layerName,
+      paint: {
+        "raster-opacity": 1,
+      },
+    });
+
+    updateLayerStatus(layerName, LAYER_STATUS.IS_RENDERING);
+  };
+
+  const handleDownloadButton = () => {
+    const maplibreMap = mapRef.current.getMap();
+
+    const renderMap = new map1({
+      container: maplibreMap.getContainer(),
+      style: maplibreMap.getStyle(),
+      center: maplibreMap.getCenter(),
+      zoom: maplibreMap.getZoom(),
+      bearing: maplibreMap.getBearing(),
+      pitch: maplibreMap.getPitch(),
+      interactive: false,
+      preserveDrawingBuffer: true,
+      fadeDuration: 0,
+      attributionControl: false,
+    });
+
+    renderMap.once("idle", () => {
+      setTimeout(() => {
+        const canvasDataURL = renderMap.getCanvas().toDataURL();
+        const link = document.createElement("a");
+        link.href = canvasDataURL;
+        link.download = "map-export.png";
+        const pdf = new jsPDF("l", "mm", "a4");
+
+        // Add the map image to the PDF document
+        pdf.addImage(
+          canvasDataURL,
+          "PNG",
+          0,
+          0,
+          pdf.internal.pageSize.getWidth(),
+          pdf.internal.pageSize.getHeight()
+        );
+
+        // Save the PDF file
+        pdf.save("map-export.pdf");
+        link.click();
+        link.remove();
+      }, 1000);
+    });
+
+    renderMap.once("idle", () => {
+      setTimeout(() => {
+        renderMap.remove();
+      }, 1000);
+    });
+  };
+
+  const removeLayer = (layerName) => {
+    const maplibreMap = mapRef.current.getMap();
+
+    maplibreMap.removeLayer(layerName);
+    maplibreMap.removeSource(layerName);
+
+    updateLayerStatus(layerName, LAYER_STATUS.NOT_RENDERING);
+  };
+
+  const changeOpacity = (event, LayerName) => {
+    const value = event.target.value;
+    const opacity = value / 100;
+    const maplibreMap = mapRef.current.getMap();
+    maplibreMap.setPaintProperty(LayerName, "raster-opacity", opacity);
+  };
+
+  return (
+    <div className="map-wrap">
+      <Modal
+        title="Basic Modal"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        {LAYERS.map((item, index) => (
+          <div key={index}>
+            <div>{item.name}</div>
+            {checkLayerStatus(item.name) === LAYER_STATUS.IS_RENDERING ? (
+              <>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  onChange={(e) => changeOpacity(e, item.name)}
+                />
+                <button onClick={(e) => removeLayer(item.name)}>
+                  Remove this layer
+                </button>
+              </>
+            ) : (
+              <button onClick={(e) => addLayer(item.name)}>
+                Add this layer
+              </button>
+            )}
+          </div>
+        ))}
+      </Modal>
+      <div ref={mapContainer} style={{ width: "100vw", height: "100vh" }} />
+      <ToolBar
+        handlePinButton={handlePinButton}
+        setMapStyle={setMapStyle}
+        handlePaintButton={handlePaintButton}
+        handleLineButton={handleLineButton}
+        handlePolygonButton={handlePolygonButton}
+        handleDownloadButton={handleDownloadButton}
+      />
+    </div>
+  );
 };
 
 export default MapComponent;

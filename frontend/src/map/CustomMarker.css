@@ -1,0 +1,15 @@
+.custom_text_area {
+  background-color: transparent;
+  font-weight: bold;
+  color: rgb(0, 0, 0) !important;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  outline: none;
+  border: black;
+}
+
+.custom_text_area::placeholder {
+  color: #7b7b7b;
+  font-style: italic;
+}

@@ -21,7 +21,7 @@ const ToolBar = ({
   handleLineButton,
   handlePolygonButton,
   handleDownloadButton,
-  setMapType,
+  setMapStyle,
 }) => {
   const [open, setOpen] = useState(true);
   const [visual, setVisual] = useState(true);
@@ -32,8 +32,8 @@ const ToolBar = ({
     visual === false
       ? setVisual(true)
       : setTimeout(() => {
-        setVisual(false);
-      }, 300);
+          setVisual(false);
+        }, 300);
   };
   const onClose = () => {
     setOpen(false);
@@ -48,7 +48,7 @@ const ToolBar = ({
             className="layer-button"
             type={select === "Default" ? "primary" : "text"}
             onClick={() => {
-              setMapType(
+              setMapStyle(
                 "https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
               );
               setSelect("Default");
@@ -69,7 +69,7 @@ const ToolBar = ({
             className="layer-button"
             type={select === "Street" ? "primary" : "text"}
             onClick={() => {
-              setMapType(
+              setMapStyle(
                 "https://api.maptiler.com/maps/streets-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
               );
               setSelect("Street");
@@ -90,7 +90,7 @@ const ToolBar = ({
             className="layer-button"
             type={select === "Open" ? "primary" : "text"}
             onClick={() => {
-              setMapType(
+              setMapStyle(
                 "https://api.maptiler.com/maps/openstreetmap/style.json?key=HMeYX3yPwK7wfZQDqdeC"
               );
               setSelect("Open");
@@ -111,7 +111,7 @@ const ToolBar = ({
             className="layer-button"
             type={select === "Satellite" ? "primary" : "text"}
             onClick={() => {
-              setMapType(
+              setMapStyle(
                 "https://api.maptiler.com/maps/hybrid/style.json?key=HMeYX3yPwK7wfZQDqdeC"
               );
               setSelect("Satellite");
@@ -165,11 +165,6 @@ const ToolBar = ({
               <Button
                 type="text"
                 size="large"
-                icon={<FormOutlined onClick={handleTextButton} />}
-              />
-              <Button
-                type="text"
-                size="large"
                 icon={<FormatPainterOutlined onClick={handlePaintButton} />}
               />
               <Button
@@ -186,7 +181,8 @@ const ToolBar = ({
               <Button
                 type="text"
                 size="large"
-                icon={<DownloadOutlined onClick={handleDownloadButton} />} />
+                icon={<DownloadOutlined onClick={handleDownloadButton} />}
+              />
               <Popover
                 placement="topLeft"
                 content={layerContent}
