@@ -14,7 +14,6 @@ import {
   LineOutlined,
   ControlOutlined,
   ExportOutlined,
-  FormOutlined,
 } from "@ant-design/icons";
 import { CgToolbox } from "react-icons/cg";
 import { BiShapePolygon } from "react-icons/bi";
@@ -114,6 +113,13 @@ const ToolBar = ({
                   type="text"
                   size="large"
                   icon={<DownloadOutlined onClick={handleDownloadButton} />} 
+                />
+              </Tooltip>
+              <Tooltip placement="top" title={<span>Export GeoJson</span>}>
+                <Button
+                  type="text"
+                  size="large"
+                  icon={<ExportOutlined onClick={handleExportButton} />} 
                 />
               </Tooltip>
             </Space>

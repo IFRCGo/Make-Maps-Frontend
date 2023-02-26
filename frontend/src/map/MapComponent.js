@@ -5,48 +5,23 @@ import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import PaintMode from "mapbox-gl-draw-paint-mode";
 import DrawPointWithText from "mapbox-gl-draw-point-with-text-mode";
 import "./CustomMarker.css";
-
 import "./MapComponent.css";
 import ToolBar from "./ToolBar";
-import { useParams } from "react-router-dom";
-import { FloatButton, Modal } from "antd";
-
-import { LAYERS, API_KEY, MAP_STATUS, LAYER_STATUS } from "./constant";
-
+import { FloatButton } from "antd";
 import "maplibre-gl/dist/maplibre-gl.css";
 import jsPDF from "jspdf";
-import { CgToolbox } from "react-icons/cg";
 import { CgTrash } from "react-icons/cg";
 import StyleButton from "./StyleButton";
 import LayerCard from "./LayerCard";
 
 const MapComponent = ({ searchCountry, props }) => {
-  // Destructuring
-  const [layerStatus, setLayerStatus] = useState(() => {
-    return LAYERS.reduce((acc, layer) => {
-      acc[layer.name] = LAYER_STATUS.NOT_RENDERING;
-      return acc;
-    }, {});
-  });
-  const { long, lat } = useParams();
-  const location = {
-    longitude: typeof long != "undefined" ? long : 16.62662018,
-    latitude: typeof lat != "undefined" ? lat : 49.2125578,
-    zoom: typeof long != "undefined" ? 9 : 0,
-  };
-
   const [mapStyle, setMapStyle] = useState(
     "https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
   );
-
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
   const mapboxDrawRef = useRef(null);
-
-  const [selectedLayer, setSelectedLayer] = useState(null);
-  const [showTrash, setShowTrash] = useState(false);
 
   useEffect(() => {
     if (!mapContainer) {
@@ -252,7 +227,7 @@ const MapComponent = ({ searchCountry, props }) => {
         }
       }
     });
-  }, []);
+  }, [mapStyle]);
 
   useEffect(() => {
     mapRef.current.on("load", function () {
