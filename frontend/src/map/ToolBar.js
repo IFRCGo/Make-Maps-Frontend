@@ -1,5 +1,5 @@
 import React from "react";
-import { Drawer, FloatButton, Button, Space } from "antd";
+import { Drawer, FloatButton, Button, Space, Tooltip } from "antd";
 import { useState } from "react";
 import {
   PushpinOutlined,
@@ -9,8 +9,10 @@ import {
   FormatPainterOutlined,
   LineOutlined,
   LineChartOutlined,
+  ControlOutlined,
 } from "@ant-design/icons";
 import { CgToolbox } from "react-icons/cg";
+import { FiLayers } from "react-icons/fi";
 import "./ToolBar.css";
 
 const ToolBar = ({
@@ -62,36 +64,58 @@ const ToolBar = ({
         >
           <div className="tool-button">
             <Space>
-              <Button
-                type="text"
-                size="large"
-                icon={<PushpinOutlined onClick={handlePinButton} />}
-              />
-              <Button
-                type="text"
-                size="large"
-                icon={<FormOutlined onClick={handleTextButton} />}
-              />
-              <Button
-                type="text"
-                size="large"
-                icon={<FormatPainterOutlined onClick={handlePaintButton} />}
-              />
-              <Button
-                type="text"
-                size="large"
-                icon={<LineOutlined onClick={handleLineButton} />}
-              />
-              <Button
-                type="text"
-                size="large"
-                icon={<LineChartOutlined onClick={handlePolygonButton} />}
-              />
-              <Button type="text" size="large" icon={<LinkOutlined />} />
-              <Button
-                type="text"
-                size="large"
-                icon={<DownloadOutlined onClick={handleDownloadButton} />} />
+              <Tooltip placement="top" title={<span>Pin</span>}>
+                <Button
+                  type="text"
+                  size="large"
+                  icon={<PushpinOutlined onClick={handlePinButton} />}
+                />
+              </Tooltip>
+              <Tooltip placement="top" title={<span>Text</span>}>
+                <Button
+                  type="text"
+                  size="large"
+                  icon={<FormOutlined onClick={handleTextButton} />}
+                />
+              </Tooltip>
+              <Tooltip placement="top" title={<span>Layer</span>}>
+                <Button
+                  type="text"
+                  size="large"
+                  icon={<ControlOutlined />}
+                />
+              </Tooltip>
+              <Tooltip placement="top" title={<span>Draw</span>}>
+                <Button
+                  type="text"
+                  size="large"
+                  icon={<FormatPainterOutlined onClick={handlePaintButton} />}
+                />
+              </Tooltip>
+              <Tooltip placement="top" title={<span>Line</span>}>
+                <Button
+                  type="text"
+                  size="large"
+                  icon={<LineOutlined onClick={handleLineButton} />}
+                />
+              </Tooltip>
+              <Tooltip placement="top" title={<span>Polygon</span>}>
+                <Button
+                  type="text"
+                  size="large"
+                  icon={<LineChartOutlined onClick={handlePolygonButton} />}
+                />
+              </Tooltip>
+              <Tooltip placement="top" title={<span>Link</span>}>
+                <Button type="text" size="large" icon={<LinkOutlined />} />
+              </Tooltip>
+              <Tooltip placement="top" title={<span>Download</span>}>
+                <Button
+                  type="text"
+                  size="large"
+                  icon={<DownloadOutlined onClick={handleDownloadButton} />} 
+                />
+              </Tooltip>
             </Space>
           </div>
         </Drawer>
