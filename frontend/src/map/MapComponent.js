@@ -286,6 +286,9 @@ const MapComponent = ({ searchCountry, props }) => {
         textarea.style.lineHeight = textarea.style.height; // set line height to match height
         textarea.style.width = "180px";
         textarea.style.height = "auto";
+        textarea.style.height = "100px"; // or any other maximum height that you want
+
+        textarea.style.height = "auto";
         textarea.style.resize = "none";
         textarea.style.overflow = "auto";
         textarea.placeholder =
@@ -307,57 +310,74 @@ const MapComponent = ({ searchCountry, props }) => {
           var screenCoordinates = mapRef.current.project(
             point.geometry.coordinates
           );
-          container.style.left =
-            screenCoordinates.x + textarea.clientHeight / 4 + "px";
+          container.style.left = screenCoordinates.x;
           container.style.top =
             screenCoordinates.y - textarea.clientHeight / 2 + "px";
 
-          // Update feature's property.text with new textarea value
           mapboxDrawRef.current.setFeatureProperty(
             pointId,
             "text",
             textarea.value
           );
+
+          container.style.left = screenCoordinates.x;
+          container.style.top =
+            screenCoordinates.y - container.clientHeight / 2 + "px";
         });
 
-        // handle keyup events
         textarea.addEventListener("keyup", function () {
           textarea.dispatchEvent(new Event("input"));
         });
-        mapRef.current.on("zoom", function () {
-          var zoom = mapRef.current.getZoom();
-          textarea.style.fontSize = 5 + (zoom - 10) * 2 + "px"; // increase font-size by 2px for every 1 zoom level above 10
+        const MAX_LINES = 2;
+
+        textarea.addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+            const lines = textarea.value.split(/\r*\n/).length;
+            if (lines >= MAX_LINES) {
+              event.preventDefault();
+            }
+          }
         });
+
         container.appendChild(textarea);
-      }
 
-      var screenCoordinates = mapRef.current.project(
-        point.geometry.coordinates
-      );
-      container.style.top =
-        screenCoordinates.y -
-        container.querySelector("textarea").clientHeight / 2 +
-        "px"; // set the initial top property
-      container.style.left =
-        screenCoordinates.x +
-        container.querySelector("textarea").clientHeight / 4 +
-        "px";
-      container.querySelector("textarea").focus(); // give focus to the textarea so the user can start typing
-
-      mapRef.current.on("move", () => {
         var screenCoordinates = mapRef.current.project(
           point.geometry.coordinates
         );
-        console.log(screenCoordinates);
-        container.style.left =
-          screenCoordinates.x +
-          container.querySelector("textarea").clientHeight / 4 +
-          "px";
         container.style.top =
-          screenCoordinates.y -
-          container.querySelector("textarea").clientHeight / 2 +
-          "px";
-      });
+          screenCoordinates.y - textarea.offsetHeight / 2 + "px";
+        container.style.left =
+          screenCoordinates.x + textarea.clientHeight / 5 + "px";
+        textarea.focus();
+
+        mapRef.current.on("zoom", function () {
+          var zoom = mapRef.current.getZoom();
+          var fontSize = 5 + (zoom - 10) * 1;
+          textarea.style.fontSize = fontSize + "px";
+          textarea.style.height = "auto";
+          textarea.style.minHeight =
+            parseInt(textarea.style.fontSize) * 2 + "px";
+          textarea.style.maxHeight = "200px"; // Set the maximum height to 200 pixels
+
+          // Adjust position of text area based on font size
+          var screenCoordinates = mapRef.current.project(
+            point.geometry.coordinates
+          );
+          container.style.left = screenCoordinates.x;
+          container.style.top =
+            screenCoordinates.y - textarea.clientHeight / 2 + "px";
+        });
+        mapRef.current.on("move", () => {
+          var screenCoordinates = mapRef.current.project(
+            point.geometry.coordinates
+          );
+          console.log(screenCoordinates);
+          container.style.left =
+            screenCoordinates.x + textarea.clientHeight / 5 + "px";
+          container.style.top =
+            screenCoordinates.y - textarea.clientHeight / 2 + "px";
+        });
+      }
     });
   }, []);
 
