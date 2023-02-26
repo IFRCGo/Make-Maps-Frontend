@@ -1,6 +1,11 @@
-import React from "react";
-import { Drawer, FloatButton, Button, Space, Tooltip } from "antd";
-import { useState } from "react";
+import React, { useState } from "react";
+import { 
+  Drawer, 
+  FloatButton, 
+  Button, Space, 
+  Tooltip, 
+  Divider 
+} from "antd";
 import {
   PushpinOutlined,
   FormOutlined,
@@ -8,16 +13,16 @@ import {
   DownloadOutlined,
   FormatPainterOutlined,
   LineOutlined,
-  LineChartOutlined,
   ControlOutlined,
 } from "@ant-design/icons";
 import { CgToolbox } from "react-icons/cg";
-import { FiLayers } from "react-icons/fi";
+import { BiShapePolygon } from "react-icons/bi";
 import "./ToolBar.css";
 
 const ToolBar = ({
   handlePinButton,
   handleTextButton,
+  showModal,
   handlePaintButton,
   handleLineButton,
   handlePolygonButton,
@@ -82,7 +87,7 @@ const ToolBar = ({
                 <Button
                   type="text"
                   size="large"
-                  icon={<ControlOutlined />}
+                  icon={<ControlOutlined onClick={showModal}/>}
                 />
               </Tooltip>
               <Tooltip placement="top" title={<span>Draw</span>}>
@@ -103,9 +108,10 @@ const ToolBar = ({
                 <Button
                   type="text"
                   size="large"
-                  icon={<LineChartOutlined onClick={handlePolygonButton} />}
+                  icon={<BiShapePolygon onClick={handlePolygonButton} />}
                 />
               </Tooltip>
+              <Divider type="vertical" style={{ height: "2em", }}/>
               <Tooltip placement="top" title={<span>Link</span>}>
                 <Button type="text" size="large" icon={<LinkOutlined />} />
               </Tooltip>

@@ -5,7 +5,7 @@ import { Tag } from "antd";
 import Map, { NavigationControl, Marker } from "react-map-gl";
 import ToolBar from "./ToolBar";
 import { IoLocationSharp } from "react-icons/io5";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Modal, Button } from "antd";
 
 import { LAYERS, API_KEY, MAP_STATUS, LAYER_STATUS } from "./constant";
@@ -16,6 +16,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import ToolDetail from "./ToolDetail";
 import jsPDF from "jspdf";
 import StyleButton from "./StyleButton";
+import LayerCard from "./LayerCard";
 
 const MapComponent = ({ searchCountry, props }) => {
 	// Destructuring
@@ -46,21 +47,10 @@ const MapComponent = ({ searchCountry, props }) => {
 	const [brushSize, setBrushSize] = useState(10);
 	const [painting, setPainting] = useState(false);
 	const [paintButton, setPaintButton] = useState(false);
-
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const mapboxDrawRef = useRef(null);
-	const showModal = () => {
-		setIsModalOpen(true);
-	};
-
-	const handleOk = () => {
-		setIsModalOpen(false);
-	};
-
-	const handleCancel = () => {
-		setIsModalOpen(false);
-	};
+	
 
 	const mapRef = useRef(null);
 
@@ -90,17 +80,6 @@ const MapComponent = ({ searchCountry, props }) => {
 			setCardOpen(false);
 			setDrag(false);
 		}
-	};
-
-	const checkLayerStatus = (layerName) => {
-		return layerStatus[layerName];
-	};
-
-	const updateLayerStatus = (layerName, status) => {
-		setLayerStatus({
-			...layerStatus,
-			[layerName]: status,
-		});
 	};
 
 	const handlePinDragEnd = (event, index) => {
@@ -157,28 +136,6 @@ const MapComponent = ({ searchCountry, props }) => {
 		setStatus(MAP_STATUS.ADD_POPUP);
 	};
 
-	const addLayer = (layerName) => {
-		const maplibreMap = mapRef.current.getMap();
-
-		const layer = LAYERS.find((layer) => layer.name === layerName);
-
-		maplibreMap.addSource(layerName, {
-			type: "raster",
-			tiles: [layer.url],
-			tileSize: 256,
-		});
-		maplibreMap.addLayer({
-			id: layerName,
-			type: "raster",
-			source: layerName,
-			paint: {
-				"raster-opacity": 1,
-			},
-		});
-
-		updateLayerStatus(layerName, LAYER_STATUS.IS_RENDERING);
-	};
-
 	const handleDownloadButton = () => {
 		const maplibreMap = mapRef.current.getMap();
 
@@ -227,57 +184,20 @@ const MapComponent = ({ searchCountry, props }) => {
 		});
 	};
 
-	const removeLayer = (layerName) => {
-		const maplibreMap = mapRef.current.getMap();
-
-		maplibreMap.removeLayer(layerName);
-		maplibreMap.removeSource(layerName);
-
-		updateLayerStatus(layerName, LAYER_STATUS.NOT_RENDERING);
-	};
-
-	const changeOpacity = (event, LayerName) => {
-		const value = event.target.value;
-		const opacity = value / 100;
-		const maplibreMap = mapRef.current.getMap();
-		maplibreMap.setPaintProperty(LayerName, "raster-opacity", opacity);
+	const showModal = () => {
+		setIsModalOpen(true);
 	};
 
 	return (
 		<div className="map-wrap">
-			<button type="primary" onClick={showModal}>
-				Edit Layer
-			</button>
 			<StyleButton setMapType={setMapType} />
-			<Modal
-				title="Basic Modal"
-				open={isModalOpen}
-				onOk={handleOk}
-				onCancel={handleCancel}
-			>
-				{LAYERS.map((item, index) => (
-					<div key={index}>
-						<div>{item.name}</div>
-						{checkLayerStatus(item.name) === LAYER_STATUS.IS_RENDERING ? (
-							<>
-								<input
-									type="range"
-									min="0"
-									max="100"
-									onChange={(e) => changeOpacity(e, item.name)}
-								/>
-								<button onClick={(e) => removeLayer(item.name)}>
-									Remove this layer
-								</button>
-							</>
-						) : (
-							<button onClick={(e) => addLayer(item.name)}>
-								Add this layer
-							</button>
-						)}
-					</div>
-				))}
-			</Modal>
+			<LayerCard 
+				mapRef={mapRef} 
+				layerStatus={layerStatus} 
+				setLayerStatus={setLayerStatus} 
+				isModalOpen={isModalOpen}
+				setIsModalOpen={setIsModalOpen}
+			/>
 			<Map
 				mapLib={maplibregl}
 				onLoad={onMapLoad}
@@ -331,6 +251,7 @@ const MapComponent = ({ searchCountry, props }) => {
 			<ToolBar
 				handlePinButton={handlePinButton}
 				handleTextButton={handleTextButton}
+				showModal={showModal}
 				handlePaintButton={handlePaintButton}
 				handleLineButton={handleLineButton}
 				handlePolygonButton={handlePolygonButton}
