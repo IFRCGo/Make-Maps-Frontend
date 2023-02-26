@@ -32,10 +32,6 @@ const CountryMap = ({ searchCountry, disasters }) => {
 		zoom: typeof long != "undefined" ? 9 : 0,
 	};
 
-	console.log(countryData);
-	// console.log(id);
-	// console.log(disasters);
-
 	const [mapLocation, setMapLocation] = useState(location);
 	const [pins, setPins] = useState([]);
 	const [status, setStatus] = useState(DO_NOTHING);

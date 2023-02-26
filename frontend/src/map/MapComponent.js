@@ -244,9 +244,9 @@ const MapComponent = ({ searchCountry, props }) => {
 
 	return (
 		<div className="map-wrap">
-			{/* <button type="primary" onClick={showModal}>
+			<button type="primary" onClick={showModal}>
 				Edit Layer
-			</button> */}
+			</button>
 			<Modal
 				title="Basic Modal"
 				open={isModalOpen}
