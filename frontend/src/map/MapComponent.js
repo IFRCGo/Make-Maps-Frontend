@@ -1,12 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import maplibregl, { Map as map1 } from "maplibre-gl";
 import "./MapComponent.css";
 import { Tag } from "antd";
 import Map, { NavigationControl, Marker } from "react-map-gl";
 import ToolBar from "./ToolBar";
 import { IoLocationSharp } from "react-icons/io5";
-import { useParams } from "react-router-dom";
-
 import { LAYERS, API_KEY, MAP_STATUS, LAYER_STATUS } from "./constant";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
@@ -18,14 +16,6 @@ import StyleButton from "./StyleButton";
 import LayerCard from "./LayerCard";
 
 const MapComponent = ({ searchCountry, props }) => {
-	// Destructuring
-	const { long, lat } = useParams();
-	const location = {
-		longitude: typeof long != "undefined" ? long : 16.62662018,
-		latitude: typeof lat != "undefined" ? lat : 49.2125578,
-		zoom: typeof long != "undefined" ? 9 : 0,
-	};
-	const [mapLocation, setMapLocation] = useState(location);
 	const [pins, setPins] = useState([]);
 	const [status, setStatus] = useState(MAP_STATUS.DO_NOTHING);
 	const [popupList, setPopupList] = useState([]);
