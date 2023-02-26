@@ -81,7 +81,7 @@ const MapComponent = ({ searchCountry, props }) => {
           container = document.createElement("div");
           container.style.position = "absolute";
           container.style.zIndex = "100";
-          container.classList.add("text-container"); // add a CSS class
+          container.classList.add("text-container");
           container.id = `text-container-${pointId}`;
           console.log(container.id);
 
@@ -89,7 +89,7 @@ const MapComponent = ({ searchCountry, props }) => {
         }
         var textarea = document.createElement("textarea");
         textarea.cols = 1;
-        textarea.style.lineHeight = textarea.style.height; // set line height to match height
+        textarea.style.lineHeight = textarea.style.height;
         textarea.style.width = "180px";
         textarea.style.height = "auto";
         textarea.style.resize = "none";
@@ -97,13 +97,11 @@ const MapComponent = ({ searchCountry, props }) => {
         textarea.placeholder =
           "Please enter your text for the marker added... ";
         textarea.style.boxSizing = "border-box";
-        textarea.classList.add("custom_text_area"); // add a CSS class
+        textarea.classList.add("custom_text_area");
         textarea.maxLength = 100;
 
-        // Set initial value of textarea to feature's property.text
         textarea.value = e.features[0].properties.text || "";
 
-        // handle textarea input events
         textarea.addEventListener("input", function () {
           textarea.style.height = "auto";
           textarea.style.height = textarea.scrollHeight + "px";
@@ -112,23 +110,33 @@ const MapComponent = ({ searchCountry, props }) => {
           var screenCoordinates = mapRef.current.project(
             e.features[0].geometry.coordinates
           );
-          console.log(screenCoordinates);
-          container.style.left =
-            screenCoordinates.x + textarea.clientHeight / 4 + "px";
+          container.style.left = screenCoordinates.x;
           container.style.top =
             screenCoordinates.y - textarea.clientHeight / 2 + "px";
 
-          // Update feature's property.text with new textarea value
           mapboxDrawRef.current.setFeatureProperty(
             pointId,
             "text",
             textarea.value
           );
+
+          container.style.left = screenCoordinates.x;
+          container.style.top =
+            screenCoordinates.y - container.clientHeight / 2 + "px";
         });
 
-        // handle keyup events
         textarea.addEventListener("keyup", function () {
           textarea.dispatchEvent(new Event("input"));
+        });
+        const MAX_LINES = 2;
+
+        textarea.addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+            const lines = textarea.value.split(/\r*\n/).length;
+            if (lines >= MAX_LINES) {
+              event.preventDefault();
+            }
+          }
         });
 
         container.appendChild(textarea);
@@ -137,14 +145,27 @@ const MapComponent = ({ searchCountry, props }) => {
           e.features[0].geometry.coordinates
         );
         container.style.top =
-          screenCoordinates.y - textarea.clientHeight / 2 + "px"; // set the initial top property
+          screenCoordinates.y - textarea.offsetHeight / 2 + "px";
         container.style.left =
-          screenCoordinates.x + textarea.clientHeight / 4 + "px";
-        textarea.focus(); // give focus to the textarea so the user can start typing
-        // Update font-size when zoom changes
+          screenCoordinates.x + textarea.clientHeight / 5 + "px";
+        textarea.focus();
+
         mapRef.current.on("zoom", function () {
           var zoom = mapRef.current.getZoom();
-          textarea.style.fontSize = 5 + (zoom - 10) * 2 + "px"; // increase font-size by 2px for every 1 zoom level above 10
+          var fontSize = 5 + (zoom - 10) * 1;
+          textarea.style.fontSize = fontSize + "px";
+          textarea.style.height = "auto";
+          textarea.style.minHeight =
+            parseInt(textarea.style.fontSize) * 2 + "px";
+          textarea.style.maxHeight = "200px"; // Set the maximum height to 200 pixels
+
+          // Adjust position of text area based on font size
+          var screenCoordinates = mapRef.current.project(
+            e.features[0].geometry.coordinates
+          );
+          container.style.left = screenCoordinates.x;
+          container.style.top =
+            screenCoordinates.y - textarea.clientHeight / 2 + "px";
         });
         mapRef.current.on("move", () => {
           var screenCoordinates = mapRef.current.project(
@@ -152,7 +173,7 @@ const MapComponent = ({ searchCountry, props }) => {
           );
           console.log(screenCoordinates);
           container.style.left =
-            screenCoordinates.x + textarea.clientHeight / 4 + "px";
+            screenCoordinates.x + textarea.clientHeight / 5 + "px";
           container.style.top =
             screenCoordinates.y - textarea.clientHeight / 2 + "px";
         });
@@ -174,19 +195,57 @@ const MapComponent = ({ searchCountry, props }) => {
               screenCoordinates.y - textarea.clientHeight / 2 + "px";
             container.style.left =
               screenCoordinates.x + textarea.clientHeight / 4 + "px";
+
             mapRef.current.on("move", () => {
               var screenCoordinates = mapRef.current.project(
                 e.features[0].geometry.coordinates
               );
+              console.log(screenCoordinates);
               container.style.left =
-                screenCoordinates.x + textarea.clientHeight / 4 + "px";
+                screenCoordinates.x + textarea.clientHeight / 5 + "px";
               container.style.top =
                 screenCoordinates.y - textarea.clientHeight / 2 + "px";
             });
           }
           mapRef.current.on("zoom", function () {
             var zoom = mapRef.current.getZoom();
-            textarea.style.fontSize = 12 + (zoom - 10) * 2 + "px"; // increase font-size by 2px for every 1 zoom level above 10
+            var fontSize = 5 + (zoom - 10) * 1;
+            textarea.style.fontSize = fontSize + "px";
+            textarea.style.height = "auto";
+            textarea.style.minHeight =
+              parseInt(textarea.style.fontSize) * 2 + "px";
+            textarea.style.maxHeight = "200px"; // Set the maximum height to 200 pixels
+
+            // Adjust position of text area based on font size
+            var screenCoordinates = mapRef.current.project(
+              e.features[0].geometry.coordinates
+            );
+            container.style.left = screenCoordinates.x;
+            container.style.top =
+              screenCoordinates.y - textarea.clientHeight / 2 + "px";
+          });
+
+          textarea.addEventListener("input", function () {
+            textarea.style.height = "auto";
+            textarea.style.height = textarea.scrollHeight + "px";
+            textarea.setAttribute("contenteditable", true);
+
+            var screenCoordinates = mapRef.current.project(
+              e.features[0].geometry.coordinates
+            );
+            container.style.left = screenCoordinates.x;
+            container.style.top =
+              screenCoordinates.y - textarea.clientHeight / 2 + "px";
+
+            mapboxDrawRef.current.setFeatureProperty(
+              pointId,
+              "text",
+              textarea.value
+            );
+
+            container.style.left = screenCoordinates.x;
+            container.style.top =
+              screenCoordinates.y - container.clientHeight / 2 + "px";
           });
         }
       }
@@ -222,6 +281,8 @@ const MapComponent = ({ searchCountry, props }) => {
         mapRef.current.getCanvasContainer().appendChild(container);
         var textarea = document.createElement("textarea");
         textarea.cols = 1;
+        var zoom = mapRef.current.getZoom();
+        textarea.style.fontSize = 5 + (zoom - 10) * 1 + "px"; //
         textarea.style.lineHeight = textarea.style.height; // set line height to match height
         textarea.style.width = "180px";
         textarea.style.height = "auto";
@@ -229,6 +290,7 @@ const MapComponent = ({ searchCountry, props }) => {
         textarea.style.overflow = "auto";
         textarea.placeholder =
           "Please enter your text for the marker added... ";
+
         textarea.style.boxSizing = "border-box";
         textarea.classList.add("custom_text_area"); // add a CSS class
         textarea.maxLength = 100;
