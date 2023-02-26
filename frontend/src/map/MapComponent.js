@@ -7,12 +7,11 @@ import DrawPointWithText from "mapbox-gl-draw-point-with-text-mode";
 import "./CustomMarker.css";
 import "./MapComponent.css";
 import ToolBar from "./ToolBar";
-import { FloatButton } from "antd";
 import "maplibre-gl/dist/maplibre-gl.css";
 import jsPDF from "jspdf";
-import { CgTrash } from "react-icons/cg";
 import StyleButton from "./StyleButton";
 import LayerCard from "./LayerCard";
+import TrashButton from "./TrashButton";
 
 const MapComponent = ({ searchCountry, props }) => {
   const [mapStyle, setMapStyle] = useState(
@@ -451,35 +450,7 @@ const MapComponent = ({ searchCountry, props }) => {
   return (
     <div className="map-wrap">
       <div ref={mapContainer} style={{ width: "100vw", height: "100vh" }} />
-      <FloatButton
-        shape="square"
-        style={{ right: 100, marginBottom: -10 }}
-        icon={<CgTrash />}
-        onClick={() => {
-          const selectedFeatures = mapboxDrawRef.current.getSelected().features;
-          selectedFeatures.forEach((feature) => {
-            let state = feature;
-            if (state.geometry.type === "Point") {
-              let container = document.getElementById(
-                `text-container-${state.id}`
-              );
-              if (container) {
-                console.log("Found container element:", container);
-                setTimeout(() => {
-                  container.remove();
-                }, 0);
-              } else {
-                console.log(
-                  `Could not find container with ID 'text-container-${state.id}'`
-                );
-              }
-              mapboxDrawRef.current.trash();
-            } else {
-              mapboxDrawRef.current.trash();
-            }
-          });
-        }}
-      />
+      <TrashButton mapboxDrawRef={mapboxDrawRef} />
       <LayerCard 
         mapRef={mapRef}
         isModalOpen={isModalOpen}
