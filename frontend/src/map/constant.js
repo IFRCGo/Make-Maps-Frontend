@@ -1,14 +1,45 @@
 export const API_KEY = "HMeYX3yPwK7wfZQDqdeC";
 export const LAYERS = [
   {
-    name: "OpenRailWayMap",
+    name: "Open Rail Way Map",
     url: "https://a.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png",
     type: "TMS",
   },
   {
-    name: "name2",
+    name: "OSM Inspector: Places",
+    url: "http://tools.geofabrik.de/osmi/tiles/places/{z}/{x}/{y}.png",
+    type: "TMS",
+  },
+  {
+    name: "ESRI World Topo",
+    url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+    type: "TMS",
+  },
+  {
+    name: "Toner",
     url:
       "https://api.maptiler.com/maps/toner-v2/{z}/{x}/{y}.png?key=" + API_KEY,
+    type: "TMS",
+  },
+
+  {
+    name: "Thunderforest",
+    url: "https://tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=6050c913919243db8c4ffb1bad6730c0",
+    type: "TMS",
+  },
+  {
+    name: "Waymarked Trails: Cycling",
+    url: "http://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png",
+    type: "TMS",
+  },
+  {
+    name: "Free worldwide topographic map",
+    url: "https://tile.opentopomap.org/{z}/{x}/{y}.png",
+    type: "TMS",
+  },
+  {
+    name: "Waze (World)",
+    url: "https://worldtiles3.waze.com/tiles/{z}/{x}/{y}.png",
     type: "TMS",
   },
 ];

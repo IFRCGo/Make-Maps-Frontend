@@ -9,3 +9,8 @@
   width: 100%;
   height: 100%;
 }
+
+.ant-modal-body {
+  max-height: 200px;
+  overflow-y: scroll;
+}

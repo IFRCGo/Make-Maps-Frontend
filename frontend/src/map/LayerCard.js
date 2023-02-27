@@ -13,6 +13,7 @@ const LayerCard = ({ mapRef, isModalOpen, setIsModalOpen }) => {
   const addLayer = (layerName) => {
     const maplibreMap = mapRef.current;
     const layer = LAYERS.find((layer) => layer.name === layerName);
+
     maplibreMap.addSource(layerName, {
       type: "raster",
       tiles: [layer.url],
@@ -78,10 +79,24 @@ const LayerCard = ({ mapRef, isModalOpen, setIsModalOpen }) => {
       open={isModalOpen}
       onOk={handleOk}
       onCancel={handleCancel}
+      style={{ maxHeight: "300px" }}
     >
       {LAYERS.map((item, index) => (
-        <div key={index}>
-          <div>{item.name}</div>
+        <div
+          key={index}
+          style={{
+            border: "2px ",
+            borderRadius: "5px",
+            padding: "10px",
+          }}
+        >
+          <div
+            style={{
+              fontWeight: "bold",
+            }}
+          >
+            {item.name}
+          </div>
           {checkLayerStatus(item.name) === LAYER_STATUS.IS_RENDERING ? (
             <>
               <input
