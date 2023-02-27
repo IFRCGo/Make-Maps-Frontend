@@ -109,6 +109,7 @@ const StyleButton = ({ setMapStyle }) => {
         style={{
           right: 24,
           marginBottom: 45,
+          zIndex: 999,
         }}
         icon={<HiOutlineMap />}
         tooltip={<div>Backgrounds</div>}

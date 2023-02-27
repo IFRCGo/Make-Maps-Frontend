@@ -46,14 +46,14 @@ const ToolBar = ({
     <>
       <FloatButton
         shape="square"
-        style={{ right: 24, marginBottom: -10 }}
+        style={{ right: 24, marginBottom: -10, zIndex: 999 }}
         icon={<CgToolbox />}
         tooltip={<div>Tool Bar</div>}
         onClick={showDrawer}
       />
       <div
         className="tool-area"
-        style={{ display: visual === false ? "none" : "initial" }}
+        style={{ display: visual === false ? "none" : "initial", zIndex: 999 }}
       >
         <Drawer
           autoFocus={false}
