@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import maplibregl, { Map as map1 } from "maplibre-gl";
+import maplibregl, { Map } from "maplibre-gl";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import PaintMode from "mapbox-gl-draw-paint-mode";
@@ -59,7 +59,7 @@ const MapComponent = ({ searchCountry, props }) => {
           container.style.zIndex = "100";
           container.classList.add("text-container");
           container.id = `text-container-${pointId}`;
-          console.log(container.id);
+          //console.log(container.id);
 
           mapRef.current.getCanvasContainer().appendChild(container);
         }
@@ -152,7 +152,7 @@ const MapComponent = ({ searchCountry, props }) => {
           var screenCoordinates = mapRef.current.project(
             e.features[0].geometry.coordinates
           );
-          console.log(screenCoordinates);
+          //console.log(screenCoordinates);
           container.style.left =
             screenCoordinates.x + textarea.clientHeight / 5 + "px";
           container.style.top =
@@ -163,7 +163,7 @@ const MapComponent = ({ searchCountry, props }) => {
 
     mapRef.current.on("draw.update", function (e) {
       if (e.features[0].geometry.type === "Point") {
-        console.log("inside");
+        //console.log("inside");
         var pointId = e.features[0].id;
         var container = document.getElementById(`text-container-${pointId}`);
         if (container) {
@@ -181,7 +181,7 @@ const MapComponent = ({ searchCountry, props }) => {
               var screenCoordinates = mapRef.current.project(
                 e.features[0].geometry.coordinates
               );
-              console.log(screenCoordinates);
+              //console.log(screenCoordinates);
               container.style.left =
                 screenCoordinates.x + textarea.clientHeight / 5 + "px";
               container.style.top =
@@ -257,7 +257,7 @@ const MapComponent = ({ searchCountry, props }) => {
         container.style.zIndex = "100";
         container.classList.add("text-container"); // add a CSS class
         container.id = `text-container-${pointId}`;
-        console.log(container.id);
+        //console.log(container.id);
 
         mapRef.current.getCanvasContainer().appendChild(container);
         var textarea = document.createElement("textarea");
@@ -352,7 +352,7 @@ const MapComponent = ({ searchCountry, props }) => {
           var screenCoordinates = mapRef.current.project(
             point.geometry.coordinates
           );
-          console.log(screenCoordinates);
+          //console.log(screenCoordinates);
           container.style.left =
             screenCoordinates.x + textarea.clientHeight / 5 + "px";
           container.style.top =
@@ -371,7 +371,7 @@ const MapComponent = ({ searchCountry, props }) => {
 
   const showModal = () => {
     setIsModalOpen(true);
-  }
+  };
 
   const handlePinButton = () => {
     mapboxDrawRef.current.changeMode("draw_point_with_text_mode");
@@ -387,9 +387,9 @@ const MapComponent = ({ searchCountry, props }) => {
   };
 
   const handleDownloadButton = () => {
-    const maplibreMap = mapRef.current.getMap();
+    const maplibreMap = mapRef.current;
 
-    const renderMap = new map1({
+    const renderMap = new Map({
       container: maplibreMap.getContainer(),
       style: maplibreMap.getStyle(),
       center: maplibreMap.getCenter(),
@@ -434,7 +434,7 @@ const MapComponent = ({ searchCountry, props }) => {
     });
   };
 
-  const handleExportButton = () => {
+  const handleExportButtonToJSON = () => {
     const json = mapboxDrawRef.current.getAll();
 
     const filename = "data.json";
@@ -456,12 +456,12 @@ const MapComponent = ({ searchCountry, props }) => {
     <div className="map-wrap">
       <div ref={mapContainer} style={{ width: "100vw", height: "100vh" }} />
       <TrashButton mapboxDrawRef={mapboxDrawRef} />
-      <LayerCard 
+      <LayerCard
         mapRef={mapRef}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
       />
-      <StyleButton setMapStyle={setMapStyle}/>
+      <StyleButton setMapStyle={setMapStyle} />
       <ToolBar
         handlePinButton={handlePinButton}
         showModal={showModal}
@@ -469,7 +469,7 @@ const MapComponent = ({ searchCountry, props }) => {
         handleLineButton={handleLineButton}
         handlePolygonButton={handlePolygonButton}
         handleDownloadButton={handleDownloadButton}
-        handleExportButton={handleExportButton}
+        handleExportButton={handleExportButtonToJSON}
       />
     </div>
   );

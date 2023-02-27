@@ -17,7 +17,7 @@ const TrashButton = ({ mapboxDrawRef }) => {
               `text-container-${state.id}`
             );
             if (container) {
-              console.log("Found container element:", container);
+              // console.log("Found container element:", container);
               setTimeout(() => {
                 container.remove();
               }, 0);
@@ -33,7 +33,7 @@ const TrashButton = ({ mapboxDrawRef }) => {
         });
       }}
     />
-  )
-}
+  );
+};
 
-export default TrashButton
+export default TrashButton;
