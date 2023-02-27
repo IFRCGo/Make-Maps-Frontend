@@ -13,20 +13,49 @@ const LayerCard = ({ mapRef, isModalOpen, setIsModalOpen }) => {
   const addLayer = (layerName) => {
     const maplibreMap = mapRef.current;
     const layer = LAYERS.find((layer) => layer.name === layerName);
+    if (layer.type === "TMS") {
+      maplibreMap.addSource(layerName, {
+        type: "raster",
+        tiles: [layer.url],
+        tileSize: 256,
+      });
+      maplibreMap.addLayer({
+        id: layerName,
+        type: "raster",
+        source: layerName,
+        paint: {
+          "raster-opacity": 1,
+        },
+      });
+    } else if (layer.type === "geojson") {
+      maplibreMap.loadImage(
+        require("./../images/IFRC.jpeg"),
+        function (error, image) {
+          if (error) throw error;
+          maplibreMap.addImage("custom-marker", image);
+          // Add a GeoJSON source with 15 points
+          maplibreMap.addSource(layerName, {
+            type: "geojson",
+            data: {
+              type: "FeatureCollection",
+              features: layer.data,
+            },
+          });
 
-    maplibreMap.addSource(layerName, {
-      type: "raster",
-      tiles: [layer.url],
-      tileSize: 256,
-    });
-    maplibreMap.addLayer({
-      id: layerName,
-      type: "raster",
-      source: layerName,
-      paint: {
-        "raster-opacity": 1,
-      },
-    });
+          // Add a symbol layer
+          maplibreMap.addLayer({
+            id: layerName,
+            type: "symbol",
+            source: layerName,
+            layout: {
+              "icon-image": "custom-marker",
+              // get the year from the source's "year" property
+              "icon-size": 0.1,
+            },
+          });
+        }
+      );
+    }
 
     const layers = mapRef.current.getStyle().layers;
 

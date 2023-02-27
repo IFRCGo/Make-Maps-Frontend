@@ -42,6 +42,27 @@ export const LAYERS = [
     url: "https://worldtiles3.waze.com/tiles/{z}/{x}/{y}.png",
     type: "TMS",
   },
+  {
+    name: "IFRC Points",
+    image: "./../images/IFRC.jpg",
+    data: [
+      {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [16.62662018, 49.2125578],
+        },
+      },
+      {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [55.8718047, 12.3982],
+        },
+      },
+    ],
+    type: "geojson",
+  },
 ];
 export const MAP_STATUS = {
   ADD_PIN: 1,
