@@ -26,6 +26,7 @@ const MapComponent = ({ searchCountry, props }) => {
     if (!mapContainer) {
       return;
     }
+
     mapRef.current = new maplibregl.Map({
       container: mapContainer.current,
       style: mapStyle,
@@ -233,7 +234,7 @@ const MapComponent = ({ searchCountry, props }) => {
         }
       }
     });
-  }, [mapStyle]);
+  }, []);
 
   useEffect(() => {
     mapRef.current.on("load", function () {
