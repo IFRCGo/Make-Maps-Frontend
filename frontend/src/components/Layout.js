@@ -16,7 +16,7 @@ const Layout = ({ disasters }) => {
             padding: 0,
             position: 'sticky', 
             top: 0, 
-            zIndex: 1, 
+            zIndex: 999, 
             width: '100%',
             background: colorBgContainer,
           }}
