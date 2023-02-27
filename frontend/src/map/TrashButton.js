@@ -6,7 +6,7 @@ const TrashButton = ({ mapboxDrawRef }) => {
   return (
     <FloatButton
       shape="square"
-      style={{ right: 24, top: 90, height: "40px" }}
+      style={{ right: 24, top: 90, height: "40px", zIndex: 999 }}
       icon={<CgTrash />}
       onClick={() => {
         const selectedFeatures = mapboxDrawRef.current.getSelected().features;
