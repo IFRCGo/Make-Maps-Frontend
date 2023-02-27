@@ -26,6 +26,16 @@ const LayerCard = ({ mapRef, isModalOpen, setIsModalOpen }) => {
         "raster-opacity": 1,
       },
     });
+
+    const layers = mapRef.current.getStyle().layers;
+
+    const drawLayers = layers.filter((layer) => layer.id.startsWith("gl-draw"));
+
+    drawLayers.forEach((layer) => {
+      mapRef.current.moveLayer(layerName, layer.id);
+    });
+    mapRef.current.moveLayer(layerName, "gl-draw-polygon-fill-inactive.cold");
+    mapRef.current.moveLayer(layerName, "gl-draw-polygon-stroke-inactive.cold");
     updateLayerStatus(layerName, LAYER_STATUS.IS_RENDERING);
   };
 
@@ -36,11 +46,11 @@ const LayerCard = ({ mapRef, isModalOpen, setIsModalOpen }) => {
     updateLayerStatus(layerName, LAYER_STATUS.NOT_RENDERING);
   };
 
-  const changeOpacity = (event, LayerName) => {
+  const changeOpacity = (event, layerName) => {
     const value = event.target.value;
     const opacity = value / 100;
     const maplibreMap = mapRef.current;
-    maplibreMap.setPaintProperty(LayerName, "raster-opacity", opacity);
+    maplibreMap.setPaintProperty(layerName, "raster-opacity", opacity);
   };
 
   const checkLayerStatus = (layerName) => {

@@ -50,6 +50,8 @@ const MapComponent = ({ searchCountry, props }) => {
     mapRef.current.addControl(mapboxDrawRef.current);
 
     mapRef.current.on("draw.create", function (e) {
+      console.log(mapboxDrawRef.current);
+
       if (e.features[0].geometry.type === "Point") {
         var pointId = e.features[0].id;
         var container = document.getElementById(`text-container-${pointId}`);
