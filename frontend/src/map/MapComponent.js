@@ -12,6 +12,7 @@ import jsPDF from "jspdf";
 import StyleButton from "./StyleButton";
 import LayerCard from "./LayerCard";
 import TrashButton from "./TrashButton";
+import DrawStyles from "./DrawStyles";
 
 const MapComponent = ({ searchCountry, props }) => {
   const [mapStyle, setMapStyle] = useState(
@@ -46,6 +47,7 @@ const MapComponent = ({ searchCountry, props }) => {
         draw_paint_mode: PaintMode,
         draw_point_with_text_mode: DrawPointWithText,
       },
+      //styles: DrawStyles,
     });
 
     mapRef.current.addControl(mapboxDrawRef.current);
