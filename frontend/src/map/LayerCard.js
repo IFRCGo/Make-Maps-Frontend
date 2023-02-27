@@ -49,7 +49,6 @@ const LayerCard = ({ mapRef, isModalOpen, setIsModalOpen }) => {
             source: layerName,
             layout: {
               "icon-image": "custom-marker",
-              // get the year from the source's "year" property
               "icon-size": 0.1,
             },
           });
