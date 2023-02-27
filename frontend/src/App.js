@@ -5,6 +5,7 @@ import MapComponent from "./map/MapComponent";
 import Layout from "./components/Layout";
 import Home from "./home/Home";
 import CountryMap from "./map/CountryMap";
+import Login from "./login/Login";
 import TestAPI from "./TestAPI";
 import { useQuery } from "@apollo/client";
 import * as Query from "./API/AllQueries";
@@ -22,6 +23,9 @@ function App() {
 	return (
 		<Routes>
 			<Route path="/" element={<Layout disasters={disasters} />}>
+				<Route path="login">
+					<Route index element={<Login />} />
+				</Route>
 				<Route index element={<Home disasters={disasters} />} />
 				<Route path="map">
 					<Route index element={<MapComponent />} />
