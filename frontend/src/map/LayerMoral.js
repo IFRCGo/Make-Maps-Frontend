@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Modal } from "antd";
 import { LAYERS, LAYER_STATUS } from "./constant";
 
-const LayerCard = ({ mapRef, isModalOpen, setIsModalOpen }) => {
+const LayerMoral = ({ mapRef, isModalOpen, setIsModalOpen }) => {
   const [layerStatus, setLayerStatus] = useState(() => {
     return LAYERS.reduce((acc, layer) => {
       acc[layer.name] = LAYER_STATUS.NOT_RENDERING;
@@ -155,4 +155,4 @@ const LayerCard = ({ mapRef, isModalOpen, setIsModalOpen }) => {
   );
 };
 
-export default LayerCard;
+export default LayerMoral;

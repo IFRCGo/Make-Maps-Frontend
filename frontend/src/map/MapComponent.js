@@ -10,7 +10,7 @@ import ToolBar from "./ToolBar";
 import "maplibre-gl/dist/maplibre-gl.css";
 import jsPDF from "jspdf";
 import StyleButton from "./StyleButton";
-import LayerCard from "./LayerCard";
+import LayerMoral from "./LayerMoral";
 import TrashButton from "./TrashButton";
 import DrawStyles from "./DrawStyles";
 
@@ -461,7 +461,7 @@ const MapComponent = ({ searchCountry, props }) => {
     <div className="map-wrap">
       <div ref={mapContainer} style={{ width: "100vw", height: "100vh" }} />
       <TrashButton mapboxDrawRef={mapboxDrawRef} />
-      <LayerCard
+      <LayerMoral
         mapRef={mapRef}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
