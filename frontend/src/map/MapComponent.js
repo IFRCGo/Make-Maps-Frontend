@@ -413,7 +413,7 @@ const MapComponent = ({ searchCountry, props }) => {
         const link = document.createElement("a");
         link.href = canvasDataURL;
         link.download = "map-export.png";
-        const pdf = new jsPDF("l", "mm", "a4");
+        const pdf = new jsPDF("l", "mm", [1728,1212]);
 
         // Add the map image to the PDF document
         pdf.addImage(
