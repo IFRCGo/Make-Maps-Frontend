@@ -1,11 +1,30 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Table, Button, Space } from "antd";
+import { Table, Button, Space, Row, Col } from "antd";
 import moment from "moment";
+import maplibregl, { Map } from "maplibre-gl";
 import "./Home.css";
 
 const Home = ({ disasters }) => {
 	const navigate = useNavigate();
+	const mapContainer = useRef(null);
+	const mapRef = useRef(null);
+	const [mapStyle, setMapStyle] = useState(
+		"https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
+	);
+
+	useEffect(() => {
+		if (!mapContainer) {
+			return;
+		}
+
+		mapRef.current = new maplibregl.Map({
+			container: mapContainer.current,
+			style: mapStyle,
+			center: [16.62662018, 49.2125578],
+			zoom: 0,
+		});
+	}, []);
 
 	const countryLink = (country, disaster) => {
 		// Look into why disaster is the entire disaster object
@@ -78,28 +97,61 @@ const Home = ({ disasters }) => {
 	};
 
 	return (
-		<main
-			style={{
-				margin: 100,
-				display: "flex",
-				alignContent: "center",
-				justifyContent: "center",
-				alignItems: "center",
-			}}
-		>
-			<Space direction="vertical" size="large">
-				<div className="underline">
-					<h1 style={{ fontSize: 35, marginBottom: 10 }}>Disaster Locations</h1>
-				</div>
-				<Table
-					rowKey="_id"
-					dataSource={disasters}
-					columns={columns}
-					onChange={onChange}
-					bordered={true}
-				/>
-			</Space>
-		</main>
+		<div style={{ justifyContent: "center" }}>
+			<Row>
+				<Col
+					flex="auto"
+					style={{
+						display: "flex",
+						alignContent: "center",
+						justifyContent: "center",
+						alignItems: "center",
+					}}
+				>
+					<div className="underline">
+						<h1 style={{ fontSize: 35, marginBottom: 10 }}>
+							Disaster Locations
+						</h1>
+					</div>
+				</Col>
+			</Row>
+			<Row>
+				<Col
+					flex="auto"
+					style={{
+						margin: 10,
+						display: "flex",
+						alignContent: "center",
+						justifyContent: "center",
+						alignItems: "center",
+					}}
+				>
+					<div ref={mapContainer} style={{ width: "50vw", height: "50vh" }} />
+				</Col>
+			</Row>
+			<Row>
+				<Col
+					flex="auto"
+					style={{
+						margin: 20,
+						display: "flex",
+						alignContent: "center",
+						justifyContent: "center",
+						alignItems: "center",
+					}}
+				>
+					<Space direction="Vertical" size="large">
+						<Table
+							rowKey="_id"
+							dataSource={disasters}
+							columns={columns}
+							onChange={onChange}
+							bordered={true}
+						/>
+					</Space>
+				</Col>
+			</Row>
+		</div>
 	);
 };
 

@@ -518,130 +518,97 @@ const CountryMap = ({ searchCountry, disasters }) => {
 
   return (
     <div className="map-wrap">
-      <div ref={mapContainer} style={{ width: "100vw", height: "100vh" }} />
-      <DisasterInfoCard />
-      <TrashButton mapboxDrawRef={mapboxDrawRef} />
-      <LayerMoral
-        mapRef={mapRef}
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
-      />
-      <StyleButton setMapStyle={setMapStyle} />
-      <ToolBar
-        handlePinButton={handlePinButton}
-        showModal={showModal}
-        handlePaintButton={handlePaintButton}
-        handleLineButton={handleLineButton}
-        handlePolygonButton={handlePolygonButton}
-        handleDownloadButton={handleDownloadButton}
-        handleExportButton={handleExportButtonToJSON}
-      />
-    </div>
-    // <div className="map-wrap">
-    //   <Row>
-    //     <Col
-    //       flex="auto"
-    //       style={{
-    //         margin: 20,
-    //         display: "flex",
-    //         alignContent: "center",
-    //         justifyContent: "center",
-    //         alignItems: "center",
-    //       }}
-    //     >
-    //       <div className="underline">
-    //         <h1 style={{ fontSize: 35 }}>{countryData.location}</h1>
-    //       </div>
-    //     </Col>
-    //   </Row>
-    //   <Row
-    //     flex="auto"
-    //     style={{
-    //       marginBottom: 15,
-    //       marginRight: 65,
-    //       display: "flex",
-    //       alignContent: "right",
-    //       justifyContent: "right",
-    //       alignItems: "center",
-    //     }}
-    //   >
-    //     <>
-    //       <Button
-    //         type="primary"
-    //         onClick={showDrawer}
-    //         style={{ width: "auto", marginRight: 10 }}
-    //       >
-    //         Emergency Information
-    //       </Button>
-    //       <Drawer
-    //         title="Emergency Information"
-    //         placement="right"
-    //         onClose={onClose}
-    //         open={open}
-    //       >
-    //         {/* Emergency Information */}
-    //         <Card>
-    //           <Card.Grid hoverable={false} style={gridStyle}>
-    //             <div
-    //               style={{
-    //                 flexDirection: "row",
-    //                 flex: 1,
-    //                 justifyContent: "space-around",
-    //               }}
-    //             >
-    //               <GiReceiveMoney style={{ color: "red", fontSize: "4em" }} />
-    //               <Meta
-    //                 title={new Intl.NumberFormat("en-US").format(
-    //                   parseInt(countryData.amount_requested)
-    //                 )}
-    //                 description="Amount Requested (CHF)"
-    //               />
-    //             </div>
-    //           </Card.Grid>
-    //           <Card.Grid hoverable={false} style={gridStyle}>
-    //             <div
-    //               style={{
-    //                 flexDirection: "row",
-    //                 flex: 1,
-    //                 justifyConxtent: "space-around",
-    //               }}
-    //             >
-    //               <GiPayMoney style={{ color: "red", fontSize: "4em" }} />
-    //               <Meta
-    //                 title={new Intl.NumberFormat("en-US").format(
-    //                   parseInt(countryData.amount_funded)
-    //                 )}
-    //                 description="Amount Funded (CHF)"
-    //               />
-    //             </div>
-    //           </Card.Grid>
-    //         </Card>
-    //       </Drawer>
-    //     </>
-    //   </Row>
-    //   <Row style={{ justifyContent: "center" }}>
-    //     <div className="map-wrap">
-    //       <div ref={mapContainer} style={{ width: "100vw", height: "100vh" }} />
-    //       <TrashButton mapboxDrawRef={mapboxDrawRef} />
-    //       <LayerCard
-    //         mapRef={mapRef}
-    //         isModalOpen={isModalOpen}
-    //         setIsModalOpen={setIsModalOpen}
-    //       />
-    //       <StyleButton setMapStyle={setMapStyle} />
-    //       <ToolBar
-    //         handlePinButton={handlePinButton}
-    //         showModal={showModal}
-    //         handlePaintButton={handlePaintButton}
-    //         handleLineButton={handleLineButton}
-    //         handlePolygonButton={handlePolygonButton}
-    //         handleDownloadButton={handleDownloadButton}
-    //         handleExportButton={handleExportButtonToJSON}
-    //       />
-    //     </div>
-    //   </Row>
+      <Row style={{ justifyContent: "center" }}>
+        <div className="map-wrap" style={{ position: "relative" }}>
+          <div ref={mapContainer} style={{ width: "100vw", height: "100vh" }}>
+            <div style={{ position: "absolute", zIndex: 1 }}>
+              <Card>{countryData.location}</Card>
+              <>
+                <Button
+                  type="primary"
+                  onClick={showDrawer}
+                  style={{ width: "auto" }}
+                >
+                  Emergency Information
+                </Button>
+                <Drawer
+                  title="Emergency Information"
+                  placement="right"
+                  onClose={onClose}
+                  open={open}
+                >
+                  {/* Emergency Information */}
+                  <Card>
+                    <Card.Grid hoverable={false} style={gridStyle}>
+                      <div
+                        style={{
+                          flexDirection: "row",
+                          flex: 1,
+                          justifyContent: "space-around",
+                        }}
+                      >
+                        <GiReceiveMoney
+                          style={{ color: "red", fontSize: "4em" }}
+                        />
+                        <Meta
+                          title={new Intl.NumberFormat("en-US").format(
+                            parseInt(countryData.amount_requested)
+                          )}
+                          description="Amount Requested (CHF)"
+                        />
+                      </div>
+                    </Card.Grid>
+                    <Card.Grid hoverable={false} style={gridStyle}>
+                      <div
+                        style={{
+                          flexDirection: "row",
+                          flex: 1,
+                          justifyConxtent: "space-around",
+                        }}
+                      >
+                        <GiPayMoney style={{ color: "red", fontSize: "4em" }} />
+                        <Meta
+                          title={new Intl.NumberFormat("en-US").format(
+                            parseInt(countryData.amount_funded)
+                          )}
+                          description="Amount Funded (CHF)"
+                        />
+                      </div>
+                    </Card.Grid>
+                  </Card>
+                  <Card
+                    title="Emergency Overview"
+                    style={{
+                      textAlign: "center",
+                      width: "100%",
+                    }}
+                  >
+                    Information...
+                  </Card>
+                </Drawer>
+              </>
+            </div>
+          </div>
 
-    // </div>
+          <TrashButton mapboxDrawRef={mapboxDrawRef} />
+          <LayerCard
+            mapRef={mapRef}
+            isModalOpen={isModalOpen}
+            setIsModalOpen={setIsModalOpen}
+          />
+          <StyleButton setMapStyle={setMapStyle} />
+          <ToolBar
+            handlePinButton={handlePinButton}
+            showModal={showModal}
+            handlePaintButton={handlePaintButton}
+            handleLineButton={handleLineButton}
+            handlePolygonButton={handlePolygonButton}
+            handleDownloadButton={handleDownloadButton}
+            handleExportButton={handleExportButtonToJSON}
+          />
+        </div>
+      </Row>
+    </div>
   );
 };
 
