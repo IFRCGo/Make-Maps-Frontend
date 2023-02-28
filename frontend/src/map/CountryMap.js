@@ -5,7 +5,16 @@ import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import PaintMode from "mapbox-gl-draw-paint-mode";
 import DrawPointWithText from "mapbox-gl-draw-point-with-text-mode";
 import jsPDF from "jspdf";
-import { Col, Divider, Row, Card, Avatar, Drawer, Button } from "antd";
+import {
+  Col,
+  Divider,
+  Row,
+  Card,
+  Avatar,
+  Drawer,
+  Button,
+  Collapse,
+} from "antd";
 import { IoLocationSharp } from "react-icons/io5";
 import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
 import { useQuery } from "@apollo/client";
@@ -27,6 +36,13 @@ const { Meta } = Card;
 const ADD_PIN = 1;
 const ADD_POPUP = 2;
 const DO_NOTHING = 0;
+
+const { Panel } = Collapse;
+const text = `
+  A dog is a type of domesticated animal.
+  Known for its loyalty and faithfulness,
+  it can be found as a welcome guest in many households across the world.
+`;
 
 const CountryMap = ({ searchCountry, disasters }) => {
   const { id, long, lat } = useParams();
@@ -518,96 +534,93 @@ const CountryMap = ({ searchCountry, disasters }) => {
 
   return (
     <div className="map-wrap">
-      <Row style={{ justifyContent: "center" }}>
-        <div className="map-wrap" style={{ position: "relative" }}>
-          <div ref={mapContainer} style={{ width: "100vw", height: "100vh" }}>
-            <div style={{ position: "absolute", zIndex: 1 }}>
-              <Card>{countryData.location}</Card>
-              <>
-                <Button
-                  type="primary"
-                  onClick={showDrawer}
-                  style={{ width: "auto" }}
+      <div className="map-wrap" style={{ position: "relative" }}>
+        <div
+          ref={mapContainer}
+          style={{
+            width: "100vw",
+            height: "calc(100vh - 64px)",
+          }}
+        >
+          <div style={{ position: "absolute", zIndex: 1 }}>
+            <Collapse
+              expandIconPosition="end"
+              style={{ backgroundColor: "white", margin: 20 }}
+            >
+              <Panel
+                header={countryData.location}
+                key="1"
+                style={{ width: 300, fontSize: 18 }}
+              >
+                <Card>
+                  <Card.Grid hoverable={false} style={gridStyle}>
+                    <div
+                      style={{
+                        flexDirection: "row",
+                        flex: 1,
+                        justifyContent: "space-around",
+                      }}
+                    >
+                      <GiReceiveMoney
+                        style={{ color: "red", fontSize: "4em" }}
+                      />
+                      <Meta
+                        title={new Intl.NumberFormat("en-US").format(
+                          parseInt(countryData.amount_requested)
+                        )}
+                        description="Amount Requested (CHF)"
+                      />
+                    </div>
+                  </Card.Grid>
+                  <Card.Grid hoverable={false} style={gridStyle}>
+                    <div
+                      style={{
+                        flexDirection: "row",
+                        flex: 1,
+                        justifyConxtent: "space-around",
+                      }}
+                    >
+                      <GiPayMoney style={{ color: "red", fontSize: "4em" }} />
+                      <Meta
+                        title={new Intl.NumberFormat("en-US").format(
+                          parseInt(countryData.amount_funded)
+                        )}
+                        description="Amount Funded (CHF)"
+                      />
+                    </div>
+                  </Card.Grid>
+                </Card>
+                <Card
+                  title="Emergency Overview"
+                  style={{
+                    textAlign: "center",
+                    width: "100%",
+                  }}
                 >
-                  Emergency Information
-                </Button>
-                <Drawer
-                  title="Emergency Information"
-                  placement="right"
-                  onClose={onClose}
-                  open={open}
-                >
-                  {/* Emergency Information */}
-                  <Card>
-                    <Card.Grid hoverable={false} style={gridStyle}>
-                      <div
-                        style={{
-                          flexDirection: "row",
-                          flex: 1,
-                          justifyContent: "space-around",
-                        }}
-                      >
-                        <GiReceiveMoney
-                          style={{ color: "red", fontSize: "4em" }}
-                        />
-                        <Meta
-                          title={new Intl.NumberFormat("en-US").format(
-                            parseInt(countryData.amount_requested)
-                          )}
-                          description="Amount Requested (CHF)"
-                        />
-                      </div>
-                    </Card.Grid>
-                    <Card.Grid hoverable={false} style={gridStyle}>
-                      <div
-                        style={{
-                          flexDirection: "row",
-                          flex: 1,
-                          justifyConxtent: "space-around",
-                        }}
-                      >
-                        <GiPayMoney style={{ color: "red", fontSize: "4em" }} />
-                        <Meta
-                          title={new Intl.NumberFormat("en-US").format(
-                            parseInt(countryData.amount_funded)
-                          )}
-                          description="Amount Funded (CHF)"
-                        />
-                      </div>
-                    </Card.Grid>
-                  </Card>
-                  <Card
-                    title="Emergency Overview"
-                    style={{
-                      textAlign: "center",
-                      width: "100%",
-                    }}
-                  >
-                    Information...
-                  </Card>
-                </Drawer>
-              </>
-            </div>
+                  Information...
+                </Card>
+              </Panel>
+            </Collapse>
           </div>
-
-          <TrashButton mapboxDrawRef={mapboxDrawRef} />
-          <LayerMoral
-            mapRef={mapRef}
-            isModalOpen={isModalOpen}
-            setIsModalOpen={setIsModalOpen}
-          />
-          <StyleButton setMapStyle={setMapStyle} />
-          <ToolBar
-            handlePinButton={handlePinButton}
-            showModal={showModal}
-            handlePaintButton={handlePaintButton}
-            handleLineButton={handleLineButton}
-            handlePolygonButton={handlePolygonButton}
-            handleDownloadButton={handleDownloadButton}
-            handleExportButton={handleExportButtonToJSON}
-          />
         </div>
-      </Row>
+
+        <TrashButton mapboxDrawRef={mapboxDrawRef} />
+        <LayerMoral
+          mapRef={mapRef}
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+        />
+        <StyleButton setMapStyle={setMapStyle} />
+        <ToolBar
+          handlePinButton={handlePinButton}
+          showModal={showModal}
+          handlePaintButton={handlePaintButton}
+          handleLineButton={handleLineButton}
+          handlePolygonButton={handlePolygonButton}
+          handleDownloadButton={handleDownloadButton}
+          handleExportButton={handleExportButtonToJSON}
+        />
+      </div>
     </div>
   );
 };
