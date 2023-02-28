@@ -1,20 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import maplibregl from "maplibre-gl";
-import "./MapComponent.css";
-import Map, {
-	NavigationControl,
-	Marker,
-	Source,
-	Layer,
-	FullscreenControl,
-} from "react-map-gl";
-import ToolBar from "./ToolBar";
+import maplibregl, { Map } from "maplibre-gl";
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
+import PaintMode from "mapbox-gl-draw-paint-mode";
+import DrawPointWithText from "mapbox-gl-draw-point-with-text-mode";
+import jsPDF from "jspdf";
 import { Col, Divider, Row, Card, Avatar, Drawer, Button } from "antd";
 import { IoLocationSharp } from "react-icons/io5";
 import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
 import { useQuery } from "@apollo/client";
 import * as Query from "../API/AllQueries";
+import StyleButton from "./StyleButton";
+import LayerCard from "./LayerCard";
+import TrashButton from "./TrashButton";
+import DrawStyles from "./DrawStyles";
+import ToolBar from "./ToolBar";
+import "./CustomMarker.css";
+import "./MapComponent.css";
+import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
+import "maplibre-gl/dist/maplibre-gl.css";
 
 const { Meta } = Card;
 
@@ -23,274 +27,596 @@ const ADD_POPUP = 2;
 const DO_NOTHING = 0;
 
 const CountryMap = ({ searchCountry, disasters }) => {
-	const { id, long, lat } = useParams();
-	const { state } = useLocation();
-	const { countryData } = state || {};
-	const location = {
-		longitude: typeof long != "undefined" ? long : 16.62662018,
-		latitude: typeof lat != "undefined" ? lat : 49.2125578,
-		zoom: typeof long != "undefined" ? 9 : 0,
-	};
+  const { id, long, lat } = useParams();
+  const { state } = useLocation();
+  const { countryData } = state || {};
+  const location = {
+    longitude: typeof long != "undefined" ? long : 16.62662018,
+    latitude: typeof lat != "undefined" ? lat : 49.2125578,
+    zoom: typeof long != "undefined" ? 9 : 0,
+  };
+  const [mapLocation, setMapLocation] = useState(location);
+  const [open, setOpen] = useState(false);
 
-	const [mapLocation, setMapLocation] = useState(location);
-	const [pins, setPins] = useState([]);
-	const [status, setStatus] = useState(DO_NOTHING);
-	const [popupList, setPopupList] = useState([]);
-	const [mapType, setMapType] = useState(
-		"https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
-	);
-	const [userDrawnLines, setUserDrawnLines] = useState([]);
-	const [currentLine, setCurrentLine] = useState([]);
-	const [brushColor, setBrushColor] = useState("#ffa500");
-	const [brushSize, setBrushSize] = useState(10);
-	const [painting, setPainting] = useState(false);
-	const [paintButton, setPaintButton] = useState(false);
-	const [open, setOpen] = useState(false);
+  // new from 36 - 43
+  const [mapStyle, setMapStyle] = useState(
+    "https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
+  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const mapContainer = useRef(null);
+  const mapRef = useRef(null);
+  const mapboxDrawRef = useRef(null);
 
-	const showDrawer = () => {
-		setOpen(true);
-	};
+  const showDrawer = () => {
+    setOpen(true);
+  };
 
-	const onClose = () => {
-		setOpen(false);
-	};
+  const onClose = () => {
+    setOpen(false);
+  };
 
-	const { loading, error, data } = useQuery(Query.GET_PINS, {
-		variables: {
-			filter: {
-				disaster: countryData._id,
-			},
-		},
-	});
-	const gridStyle: React.CSSProperties = {
-		width: "50%",
-		textAlign: "center",
-		display: "flex",
-		alignContent: "center",
-		justifyContent: "center",
-		alignItems: "center",
-	};
+  const { loading, error, data } = useQuery(Query.GET_PINS, {
+    variables: {
+      filter: {
+        disaster: countryData._id,
+      },
+    },
+  });
 
-	useEffect(() => {
-		if (data) {
-			setPins(data.pinMany);
-		}
-	}, [data]);
+  const gridStyle: React.CSSProperties = {
+    width: "50%",
+    textAlign: "center",
+    display: "flex",
+    alignContent: "center",
+    justifyContent: "center",
+    alignItems: "center",
+  };
 
-	const handlePaintButtonToggle = (event) => {
-		setPaintButton(!paintButton);
-	};
+  // useEffect(() => {
+  // 	if (data) {
+  // 		setPins(data.pinMany);
+  // 	}
+  // }, [data]);
 
-	const handleDrawPoint = (event) => {
-		if (paintButton) {
-			if (painting) {
-				setCurrentLine((prev) => [
-					...prev,
-					[event.lngLat.lng, event.lngLat.lat],
-				]);
-			}
-		}
-	};
+  // new from 78 - 511
+  useEffect(() => {
+    if (!mapContainer) {
+      return;
+    }
 
-	const handlePaintButton = (event) => {
-		setPainting(!painting);
-		if (!painting) {
-			setUserDrawnLines((prev) => [...prev, currentLine]);
-			setCurrentLine([]);
-		} else {
-			setPaintButton(!paintButton);
-		}
-	};
+    mapRef.current = new maplibregl.Map({
+      container: mapContainer.current,
+      style: mapStyle,
+      center: [16.62662018, 49.2125578],
+      zoom: 14,
+    });
 
-	const lineStrings = [...userDrawnLines, currentLine].map((line, index) => {
-		return {
-			type: "Feature",
-			geometry: {
-				type: "MultiLineString",
-				coordinates: [line],
-			},
-		};
-	});
+    mapboxDrawRef.current = new MapboxDraw({
+      displayControlsDefault: false,
+      controls: {
+        polygon: false,
+        line_string: false,
+        trash: false,
+      },
+      modes: {
+        ...MapboxDraw.modes,
+        draw_paint_mode: PaintMode,
+        draw_point_with_text_mode: DrawPointWithText,
+      },
+      //styles: DrawStyles,
+    });
 
-	const handleMapClick = (event) => {
-		if (status === ADD_PIN) {
-			setPins([...pins, [event.lngLat.lng, event.lngLat.lat]]);
-			setStatus(DO_NOTHING);
-		}
+    mapRef.current.addControl(mapboxDrawRef.current);
 
-		if (status === ADD_POPUP) {
-			setPopupList([
-				...popupList,
-				[
-					event.lngLat.lng,
-					event.lngLat.lat,
-					prompt("Your input", "My Text Data"),
-				],
-			]);
-			setStatus(DO_NOTHING);
-		}
-	};
+    mapRef.current.on("draw.create", function (e) {
+      console.log(mapboxDrawRef.current);
 
-	const handlePinDragEnd = (event, index) => {
-		const newPins = [...pins];
-		newPins[index] = [event.lngLat.lng, event.lngLat.lat];
-		setPins(newPins);
-	};
-	const handlePinButton = () => {
-		setStatus(ADD_PIN);
-	};
-	const handleTextButton = () => {
-		setStatus(ADD_POPUP);
-	};
+      if (e.features[0].geometry.type === "Point") {
+        var pointId = e.features[0].id;
+        var container = document.getElementById(`text-container-${pointId}`);
+        if (!container) {
+          container = document.createElement("div");
+          container.style.position = "absolute";
+          container.style.zIndex = "100";
+          container.classList.add("text-container");
+          container.id = `text-container-${pointId}`;
+          //console.log(container.id);
 
-	return (
-		<div className="map-wrap">
-			<Row>
-				<Col
-					flex="auto"
-					style={{
-						margin: 20,
-						display: "flex",
-						alignContent: "center",
-						justifyContent: "center",
-						alignItems: "center",
-					}}
-				>
-					<div className="underline">
-						<h1 style={{ fontSize: 35 }}>{countryData.location}</h1>
-					</div>
-				</Col>
-			</Row>
-			<Row
-				flex="auto"
-				style={{
-					marginBottom: 15,
-					marginRight: 65,
-					display: "flex",
-					alignContent: "right",
-					justifyContent: "right",
-					alignItems: "center",
-				}}
-			>
-				<>
-					<Button
-						type="primary"
-						onClick={showDrawer}
-						style={{ width: "auto", marginRight: 10 }}
-					>
-						Emergency Information
-					</Button>
-					<Drawer
-						title="Emergency Information"
-						placement="right"
-						onClose={onClose}
-						open={open}
-					>
-						{/* Emergency Information */}
-						<Card>
-							<Card.Grid hoverable={false} style={gridStyle}>
-								<div
-									style={{
-										flexDirection: "row",
-										flex: 1,
-										justifyContent: "space-around",
-									}}
-								>
-									<GiReceiveMoney style={{ color: "red", fontSize: "4em" }} />
-									<Meta
-										title={new Intl.NumberFormat("en-US").format(
-											parseInt(countryData.amount_requested)
-										)}
-										description="Amount Requested (CHF)"
-									/>
-								</div>
-							</Card.Grid>
-							<Card.Grid hoverable={false} style={gridStyle}>
-								<div
-									style={{
-										flexDirection: "row",
-										flex: 1,
-										justifyConxtent: "space-around",
-									}}
-								>
-									<GiPayMoney style={{ color: "red", fontSize: "4em" }} />
-									<Meta
-										title={new Intl.NumberFormat("en-US").format(
-											parseInt(countryData.amount_funded)
-										)}
-										description="Amount Funded (CHF)"
-									/>
-								</div>
-							</Card.Grid>
-						</Card>
-					</Drawer>
-				</>
-			</Row>
-			<Row style={{ justifyContent: "center" }}>
-				<Map
-					mapLib={maplibregl}
-					initialViewState={mapLocation}
-					style={{ width: "90%", height: "90vh" }}
-					onMouseMove={painting ? handleDrawPoint : ""}
-					onClick={paintButton ? handlePaintButton : handleMapClick}
-					mapStyle={mapType}
-				>
-					<NavigationControl position="top-left" />
-					{pins.map((pin, index) => (
-						<Marker
-							key={index}
-							draggable={true}
-							onDragEnd={(e) => handlePinDragEnd(e, index)}
-							longitude={pin.pinCoordinates.coordinates[0]}
-							latitude={pin.pinCoordinates.coordinates[1]}
-						>
-							<div>
-								<IoLocationSharp style={{ color: "red", fontSize: "2em" }} />
-							</div>
-						</Marker>
-					))}
-					{popupList.map((popu, index) => (
-						<Marker
-							key={index}
-							draggable={true}
-							onDragEnd={(e) => handlePinDragEnd(e, index)}
-							longitude={popu[0]}
-							latitude={popu[1]}
-						>
-							<div>
-								<button>{popu[2]}</button>
-							</div>
-						</Marker>
-					))}
+          mapRef.current.getCanvasContainer().appendChild(container);
+        }
+        var textarea = document.createElement("textarea");
+        textarea.cols = 1;
+        textarea.style.lineHeight = textarea.style.height;
+        textarea.style.width = "180px";
+        var zoom = mapRef.current.getZoom();
 
-					{lineStrings.map((lineString, index) => (
-						<Source
-							key={index}
-							id={`user-drawn-line-${index}`}
-							type="geojson"
-							data={lineString}
-						>
-							<Layer
-								id={`brush-layer-${index}`}
-								type="line"
-								source={`user-drawn-line-${index}`}
-								paint={{
-									"line-color": brushColor,
-									"line-width": brushSize,
-								}}
-								before="waterway-label"
-							/>
-						</Source>
-					))}
-					<FullscreenControl />
-				</Map>
-				{/* <ToolBar
-					handlePinButton={handlePinButton}
-					handleTextButton={handleTextButton}
-					setMapType={setMapType}
-					handlePaintButton={handlePaintButtonToggle}
-				/> */}
-				{/* <Col
+        textarea.style.fontSize = 5 + (zoom - 10) * 1 + "px"; //
+
+        textarea.style.height = "auto";
+        textarea.style.resize = "none";
+        textarea.style.overflow = "auto";
+        textarea.placeholder =
+          "Please enter your text for the marker added... ";
+        textarea.style.boxSizing = "border-box";
+        textarea.classList.add("custom_text_area");
+        textarea.maxLength = 100;
+
+        textarea.value = e.features[0].properties.text || "";
+
+        textarea.addEventListener("input", function () {
+          textarea.style.height = "auto";
+          textarea.style.height = textarea.scrollHeight + "px";
+          textarea.setAttribute("contenteditable", true);
+
+          var screenCoordinates = mapRef.current.project(
+            e.features[0].geometry.coordinates
+          );
+          container.style.left = screenCoordinates.x;
+          container.style.top =
+            screenCoordinates.y - textarea.clientHeight / 2 + "px";
+
+          mapboxDrawRef.current.setFeatureProperty(
+            pointId,
+            "text",
+            textarea.value
+          );
+
+          container.style.left = screenCoordinates.x;
+          container.style.top =
+            screenCoordinates.y - container.clientHeight / 2 + "px";
+        });
+
+        textarea.addEventListener("keyup", function () {
+          textarea.dispatchEvent(new Event("input"));
+        });
+        const MAX_LINES = 2;
+
+        textarea.addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+            const lines = textarea.value.split(/\r*\n/).length;
+            if (lines >= MAX_LINES) {
+              event.preventDefault();
+            }
+          }
+        });
+
+        container.appendChild(textarea);
+
+        var screenCoordinates = mapRef.current.project(
+          e.features[0].geometry.coordinates
+        );
+        container.style.top =
+          screenCoordinates.y - textarea.offsetHeight / 2 + "px";
+        container.style.left =
+          screenCoordinates.x + textarea.clientHeight / 5 + "px";
+        textarea.focus();
+
+        mapRef.current.on("zoom", function () {
+          var zoom = mapRef.current.getZoom();
+          var fontSize = 5 + (zoom - 10) * 1;
+
+          textarea.style.fontSize = fontSize + "px";
+          textarea.style.height = "auto";
+          textarea.style.minHeight =
+            parseInt(textarea.style.fontSize) * 2 + "px";
+          textarea.style.maxHeight = "200px"; // Set the maximum height to 200 pixels
+
+          // Adjust position of text area based on font size
+          var screenCoordinates = mapRef.current.project(
+            e.features[0].geometry.coordinates
+          );
+          container.style.left = screenCoordinates.x;
+          container.style.top =
+            screenCoordinates.y - textarea.clientHeight / 2 + "px";
+        });
+        mapRef.current.on("move", () => {
+          var screenCoordinates = mapRef.current.project(
+            e.features[0].geometry.coordinates
+          );
+          //console.log(screenCoordinates);
+          container.style.left =
+            screenCoordinates.x + textarea.clientHeight / 5 + "px";
+          container.style.top =
+            screenCoordinates.y - textarea.clientHeight / 2 + "px";
+        });
+      }
+    });
+
+    mapRef.current.on("draw.update", function (e) {
+      if (e.features[0].geometry.type === "Point") {
+        //console.log("inside");
+        var pointId = e.features[0].id;
+        var container = document.getElementById(`text-container-${pointId}`);
+        if (container) {
+          var textarea = container.querySelector("textarea");
+          if (textarea) {
+            var screenCoordinates = mapRef.current.project(
+              e.features[0].geometry.coordinates
+            );
+            container.style.top =
+              screenCoordinates.y - textarea.clientHeight / 2 + "px";
+            container.style.left =
+              screenCoordinates.x + textarea.clientHeight / 4 + "px";
+
+            mapRef.current.on("move", () => {
+              var screenCoordinates = mapRef.current.project(
+                e.features[0].geometry.coordinates
+              );
+              //console.log(screenCoordinates);
+              container.style.left =
+                screenCoordinates.x + textarea.clientHeight / 5 + "px";
+              container.style.top =
+                screenCoordinates.y - textarea.clientHeight / 2 + "px";
+            });
+          }
+          mapRef.current.on("zoom", function () {
+            var zoom = mapRef.current.getZoom();
+            var fontSize = 5 + (zoom - 10) * 1;
+            textarea.style.fontSize = fontSize + "px";
+            textarea.style.height = "auto";
+            textarea.style.minHeight =
+              parseInt(textarea.style.fontSize) * 2 + "px";
+            textarea.style.maxHeight = "200px"; // Set the maximum height to 200 pixels
+
+            // Adjust position of text area based on font size
+            var screenCoordinates = mapRef.current.project(
+              e.features[0].geometry.coordinates
+            );
+            container.style.left = screenCoordinates.x;
+            container.style.top =
+              screenCoordinates.y - textarea.clientHeight / 2 + "px";
+          });
+
+          textarea.addEventListener("input", function () {
+            textarea.style.height = "auto";
+            textarea.style.height = textarea.scrollHeight + "px";
+            textarea.setAttribute("contenteditable", true);
+
+            var screenCoordinates = mapRef.current.project(
+              e.features[0].geometry.coordinates
+            );
+            container.style.left = screenCoordinates.x;
+            container.style.top =
+              screenCoordinates.y - textarea.clientHeight / 2 + "px";
+
+            mapboxDrawRef.current.setFeatureProperty(
+              pointId,
+              "text",
+              textarea.value
+            );
+
+            container.style.left = screenCoordinates.x;
+            container.style.top =
+              screenCoordinates.y - container.clientHeight / 2 + "px";
+          });
+        }
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    mapRef.current.on("load", function () {
+      var point = {
+        id: "5a4e96f71cb30de68d56cdcddf0d7674",
+        type: "Feature",
+        properties: {
+          text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy",
+        },
+        geometry: {
+          coordinates: [16.623707510200177, 49.21385178384901],
+          type: "Point",
+        },
+      };
+      // Add the point feature to the map using the "draw_point" mode
+      mapboxDrawRef.current.add(point);
+
+      var pointId = point.id;
+      var container = document.getElementById(`text-container-${pointId}`);
+      if (!container) {
+        container = document.createElement("div");
+        container.style.position = "absolute";
+        container.style.zIndex = "100";
+        container.classList.add("text-container"); // add a CSS class
+        container.id = `text-container-${pointId}`;
+        //console.log(container.id);
+
+        mapRef.current.getCanvasContainer().appendChild(container);
+        var textarea = document.createElement("textarea");
+        textarea.cols = 1;
+        var zoom = mapRef.current.getZoom();
+        textarea.style.fontSize = 5 + (zoom - 10) * 1 + "px"; //
+        textarea.style.lineHeight = textarea.style.height; // set line height to match height
+        textarea.style.width = "180px";
+        textarea.style.height = "auto";
+        textarea.style.height = "100px"; // or any other maximum height that you want
+
+        textarea.style.height = "auto";
+        textarea.style.resize = "none";
+        textarea.style.overflow = "auto";
+        textarea.placeholder =
+          "Please enter your text for the marker added... ";
+
+        textarea.style.boxSizing = "border-box";
+        textarea.classList.add("custom_text_area"); // add a CSS class
+        textarea.maxLength = 100;
+
+        // Set initial value of textarea to feature's property.text
+        textarea.value = point.properties.text || "";
+
+        // handle textarea input events
+        textarea.addEventListener("input", function () {
+          textarea.style.height = "auto";
+          textarea.style.height = textarea.scrollHeight + "px";
+          textarea.setAttribute("contenteditable", true);
+
+          var screenCoordinates = mapRef.current.project(
+            point.geometry.coordinates
+          );
+          container.style.left = screenCoordinates.x;
+          container.style.top =
+            screenCoordinates.y - textarea.clientHeight / 2 + "px";
+
+          mapboxDrawRef.current.setFeatureProperty(
+            pointId,
+            "text",
+            textarea.value
+          );
+
+          container.style.left = screenCoordinates.x;
+          container.style.top =
+            screenCoordinates.y - container.clientHeight / 2 + "px";
+        });
+
+        textarea.addEventListener("keyup", function () {
+          textarea.dispatchEvent(new Event("input"));
+        });
+        const MAX_LINES = 2;
+
+        textarea.addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+            const lines = textarea.value.split(/\r*\n/).length;
+            if (lines >= MAX_LINES) {
+              event.preventDefault();
+            }
+          }
+        });
+
+        container.appendChild(textarea);
+
+        var screenCoordinates = mapRef.current.project(
+          point.geometry.coordinates
+        );
+        container.style.top =
+          screenCoordinates.y - textarea.offsetHeight / 2 + "px";
+        container.style.left =
+          screenCoordinates.x + textarea.clientHeight / 5 + "px";
+        textarea.focus();
+
+        mapRef.current.on("zoom", function () {
+          var zoom = mapRef.current.getZoom();
+          var fontSize = 5 + (zoom - 10) * 1;
+          textarea.style.fontSize = fontSize + "px";
+          textarea.style.height = "auto";
+          textarea.style.minHeight =
+            parseInt(textarea.style.fontSize) * 2 + "px";
+          textarea.style.maxHeight = "200px"; // Set the maximum height to 200 pixels
+
+          // Adjust position of text area based on font size
+          var screenCoordinates = mapRef.current.project(
+            point.geometry.coordinates
+          );
+          container.style.left = screenCoordinates.x;
+          container.style.top =
+            screenCoordinates.y - textarea.clientHeight / 2 + "px";
+        });
+        mapRef.current.on("move", () => {
+          var screenCoordinates = mapRef.current.project(
+            point.geometry.coordinates
+          );
+          //console.log(screenCoordinates);
+          container.style.left =
+            screenCoordinates.x + textarea.clientHeight / 5 + "px";
+          container.style.top =
+            screenCoordinates.y - textarea.clientHeight / 2 + "px";
+        });
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!mapContainer) {
+      return;
+    }
+    mapRef.current.setStyle(mapStyle);
+  }, [mapStyle]);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handlePinButton = () => {
+    mapboxDrawRef.current.changeMode("draw_point_with_text_mode");
+  };
+  const handlePaintButton = () => {
+    mapboxDrawRef.current.changeMode("draw_paint_mode");
+  };
+  const handleLineButton = () => {
+    mapboxDrawRef.current.changeMode("draw_line_string");
+  };
+  const handlePolygonButton = () => {
+    mapboxDrawRef.current.changeMode("draw_polygon");
+  };
+
+  const handleDownloadButton = () => {
+    const maplibreMap = mapRef.current;
+
+    const renderMap = new Map({
+      container: maplibreMap.getContainer(),
+      style: maplibreMap.getStyle(),
+      center: maplibreMap.getCenter(),
+      zoom: maplibreMap.getZoom(),
+      bearing: maplibreMap.getBearing(),
+      pitch: maplibreMap.getPitch(),
+      interactive: false,
+      preserveDrawingBuffer: true,
+      fadeDuration: 0,
+      attributionControl: false,
+    });
+
+    renderMap.once("idle", () => {
+      setTimeout(() => {
+        const canvasDataURL = renderMap.getCanvas().toDataURL();
+        const link = document.createElement("a");
+        link.href = canvasDataURL;
+        link.download = "map-export.png";
+        const pdf = new jsPDF("l", "mm", "a4");
+
+        // Add the map image to the PDF document
+        pdf.addImage(
+          canvasDataURL,
+          "PNG",
+          0,
+          0,
+          pdf.internal.pageSize.getWidth(),
+          pdf.internal.pageSize.getHeight()
+        );
+
+        // Save the PDF file
+        pdf.save("map-export.pdf");
+        link.click();
+        link.remove();
+      }, 1000);
+    });
+
+    renderMap.once("idle", () => {
+      setTimeout(() => {
+        renderMap.remove();
+      }, 1000);
+    });
+  };
+
+  const handleExportButtonToJSON = () => {
+    const json = mapboxDrawRef.current.getAll();
+
+    const filename = "data.json";
+
+    const blob = new Blob([JSON.stringify(json, null, 2)], {
+      type: "application/json",
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.setAttribute("download", filename);
+    link.setAttribute("href", url);
+
+    link.click();
+  };
+
+  return (
+    <div className="map-wrap">
+      <Row>
+        <Col
+          flex="auto"
+          style={{
+            margin: 20,
+            display: "flex",
+            alignContent: "center",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div className="underline">
+            <h1 style={{ fontSize: 35 }}>{countryData.location}</h1>
+          </div>
+        </Col>
+      </Row>
+      <Row
+        flex="auto"
+        style={{
+          marginBottom: 15,
+          marginRight: 65,
+          display: "flex",
+          alignContent: "right",
+          justifyContent: "right",
+          alignItems: "center",
+        }}
+      >
+        <>
+          <Button
+            type="primary"
+            onClick={showDrawer}
+            style={{ width: "auto", marginRight: 10 }}
+          >
+            Emergency Information
+          </Button>
+          <Drawer
+            title="Emergency Information"
+            placement="right"
+            onClose={onClose}
+            open={open}
+          >
+            {/* Emergency Information */}
+            <Card>
+              <Card.Grid hoverable={false} style={gridStyle}>
+                <div
+                  style={{
+                    flexDirection: "row",
+                    flex: 1,
+                    justifyContent: "space-around",
+                  }}
+                >
+                  <GiReceiveMoney style={{ color: "red", fontSize: "4em" }} />
+                  <Meta
+                    title={new Intl.NumberFormat("en-US").format(
+                      parseInt(countryData.amount_requested)
+                    )}
+                    description="Amount Requested (CHF)"
+                  />
+                </div>
+              </Card.Grid>
+              <Card.Grid hoverable={false} style={gridStyle}>
+                <div
+                  style={{
+                    flexDirection: "row",
+                    flex: 1,
+                    justifyConxtent: "space-around",
+                  }}
+                >
+                  <GiPayMoney style={{ color: "red", fontSize: "4em" }} />
+                  <Meta
+                    title={new Intl.NumberFormat("en-US").format(
+                      parseInt(countryData.amount_funded)
+                    )}
+                    description="Amount Funded (CHF)"
+                  />
+                </div>
+              </Card.Grid>
+            </Card>
+          </Drawer>
+        </>
+      </Row>
+      <Row style={{ justifyContent: "center" }}>
+        <div className="map-wrap">
+          <div ref={mapContainer} style={{ width: "100vw", height: "100vh" }} />
+          <TrashButton mapboxDrawRef={mapboxDrawRef} />
+          <LayerCard
+            mapRef={mapRef}
+            isModalOpen={isModalOpen}
+            setIsModalOpen={setIsModalOpen}
+          />
+          <StyleButton setMapStyle={setMapStyle} />
+          <ToolBar
+            handlePinButton={handlePinButton}
+            showModal={showModal}
+            handlePaintButton={handlePaintButton}
+            handleLineButton={handleLineButton}
+            handlePolygonButton={handlePolygonButton}
+            handleDownloadButton={handleDownloadButton}
+            handleExportButton={handleExportButtonToJSON}
+          />
+        </div>
+        {/* <Col
 					flex="auto"
 					style={{
 						marginRight: 500,
@@ -301,105 +627,42 @@ const CountryMap = ({ searchCountry, disasters }) => {
 						alignItems: "center",
 					}}
 				></Col> */}
-			</Row>
-			<Row>
-				<Col
-					flex={3} // 3/5
-					style={{ padding: 20 }}
-				></Col>
-				<Col
-					flex={2} // 2/5
-					style={{ padding: 20 }}
-				>
-					{/* <Card>Description...</Card> */}
-				</Col>
-			</Row>
-			{/* <Divider orientation="left">Emergency Overview</Divider> */}
-			<Row>
-				<Col
-					flex="auto"
-					style={{
-						alignContent: "center",
-						justifyContent: "center",
-						alignItems: "center",
-					}}
-				>
-					<Card
-						title="Emergency Overview"
-						style={{
-							textAlign: "center",
-							width: "100%",
-						}}
-					>
-						Information...
-					</Card>
-				</Col>
-			</Row>
-			{/* Need to figure how to resize map */}
-			{/* <Map
-				mapLib={maplibregl}
-				initialViewState={mapLocation}
-				style={{ width: "100%", height: " calc(100vh - 64px)" }}
-				onMouseMove={painting ? handleDrawPoint : ""}
-				onClick={paintButton ? handlePaintButton : handleMapClick}
-				mapStyle={mapType}
-			>
-				<NavigationControl position="top-left" />
-				{pins.map((pin, index) => (
-					<Marker
-						key={index}
-						draggable={true}
-						onDragEnd={(e) => handlePinDragEnd(e, index)}
-						longitude={pin[0]}
-						latitude={pin[1]}
-					>
-						<div>
-							<IoLocationSharp style={{ color: "red", fontSize: "2em" }} />
-						</div>
-					</Marker>
-				))}
-				{popupList.map((popu, index) => (
-					<Marker
-						key={index}
-						draggable={true}
-						onDragEnd={(e) => handlePinDragEnd(e, index)}
-						longitude={popu[0]}
-						latitude={popu[1]}
-					>
-						<div>
-							<button>{popu[2]}</button>
-						</div>
-					</Marker>
-				))}
-				{lineStrings.map((lineString, index) => (
-					<Source
-						key={index}
-						id={`user-drawn-line-${index}`}
-						type="geojson"
-						data={lineString}
-					>
-						<Layer
-							id={`brush-layer-${index}`}
-							type="line"
-							source={`user-drawn-line-${index}`}
-							paint={{
-								"line-color": brushColor,
-								"line-width": brushSize,
-							}}
-							before="waterway-label"
-						/>
-					</Source>
-				))}
-				<FullscreenControl />
-			</Map>
-			<ToolBar
-				handlePinButton={handlePinButton}
-				handleTextButton={handleTextButton}
-				setMapType={setMapType}
-				handlePaintButton={handlePaintButtonToggle}
-			/> */}
-		</div>
-	);
+      </Row>
+      <Row>
+        <Col
+          flex={3} // 3/5
+          style={{ padding: 20 }}
+        ></Col>
+        <Col
+          flex={2} // 2/5
+          style={{ padding: 20 }}
+        >
+          {/* <Card>Description...</Card> */}
+        </Col>
+      </Row>
+      {/* <Divider orientation="left">Emergency Overview</Divider> */}
+      <Row>
+        <Col
+          flex="auto"
+          style={{
+            alignContent: "center",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Card
+            title="Emergency Overview"
+            style={{
+              textAlign: "center",
+              width: "100%",
+            }}
+          >
+            Information...
+          </Card>
+        </Col>
+      </Row>
+    </div>
+  );
 };
 
 export default CountryMap;
