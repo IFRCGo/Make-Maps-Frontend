@@ -38,11 +38,6 @@ const ADD_POPUP = 2;
 const DO_NOTHING = 0;
 
 const { Panel } = Collapse;
-const text = `
-  A dog is a type of domesticated animal.
-  Known for its loyalty and faithfulness,
-  it can be found as a welcome guest in many households across the world.
-`;
 
 const CountryMap = ({ searchCountry, disasters }) => {
   const { id, long, lat } = useParams();
@@ -128,6 +123,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
     mapRef.current.addControl(mapboxDrawRef.current);
 
     mapRef.current.on("draw.create", function (e) {
+      console.log(e.features);
       console.log(mapboxDrawRef.current);
 
       if (e.features[0].geometry.type === "Point") {
