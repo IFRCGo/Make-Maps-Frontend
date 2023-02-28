@@ -591,7 +591,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
           </div>
 
           <TrashButton mapboxDrawRef={mapboxDrawRef} />
-          <LayerCard
+          <LayerMoral
             mapRef={mapRef}
             isModalOpen={isModalOpen}
             setIsModalOpen={setIsModalOpen}
