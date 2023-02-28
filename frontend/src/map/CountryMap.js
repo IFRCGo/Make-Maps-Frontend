@@ -11,7 +11,7 @@ import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
 import { useQuery } from "@apollo/client";
 import * as Query from "../API/AllQueries";
 import StyleButton from "./StyleButton";
-import LayerCard from "./LayerCard";
+import LayerMoral from "./LayerMoral";
 import TrashButton from "./TrashButton";
 import DrawStyles from "./DrawStyles";
 import ToolBar from "./ToolBar";
@@ -19,6 +19,8 @@ import "./CustomMarker.css";
 import "./MapComponent.css";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import "maplibre-gl/dist/maplibre-gl.css";
+import DisasterInfoCard from "./DisasterInfoCard";
+import "./DisasterInfoCard.css";
 
 const { Meta } = Card;
 
@@ -87,8 +89,9 @@ const CountryMap = ({ searchCountry, disasters }) => {
     mapRef.current = new maplibregl.Map({
       container: mapContainer.current,
       style: mapStyle,
-      center: [16.62662018, 49.2125578],
-      zoom: 14,
+      // center: [16.62662018, 49.2125578],
+      center: [long, lat],
+      zoom: 9,
     });
 
     mapboxDrawRef.current = new MapboxDraw({
@@ -515,153 +518,130 @@ const CountryMap = ({ searchCountry, disasters }) => {
 
   return (
     <div className="map-wrap">
-      <Row>
-        <Col
-          flex="auto"
-          style={{
-            margin: 20,
-            display: "flex",
-            alignContent: "center",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <div className="underline">
-            <h1 style={{ fontSize: 35 }}>{countryData.location}</h1>
-          </div>
-        </Col>
-      </Row>
-      <Row
-        flex="auto"
-        style={{
-          marginBottom: 15,
-          marginRight: 65,
-          display: "flex",
-          alignContent: "right",
-          justifyContent: "right",
-          alignItems: "center",
-        }}
-      >
-        <>
-          <Button
-            type="primary"
-            onClick={showDrawer}
-            style={{ width: "auto", marginRight: 10 }}
-          >
-            Emergency Information
-          </Button>
-          <Drawer
-            title="Emergency Information"
-            placement="right"
-            onClose={onClose}
-            open={open}
-          >
-            {/* Emergency Information */}
-            <Card>
-              <Card.Grid hoverable={false} style={gridStyle}>
-                <div
-                  style={{
-                    flexDirection: "row",
-                    flex: 1,
-                    justifyContent: "space-around",
-                  }}
-                >
-                  <GiReceiveMoney style={{ color: "red", fontSize: "4em" }} />
-                  <Meta
-                    title={new Intl.NumberFormat("en-US").format(
-                      parseInt(countryData.amount_requested)
-                    )}
-                    description="Amount Requested (CHF)"
-                  />
-                </div>
-              </Card.Grid>
-              <Card.Grid hoverable={false} style={gridStyle}>
-                <div
-                  style={{
-                    flexDirection: "row",
-                    flex: 1,
-                    justifyConxtent: "space-around",
-                  }}
-                >
-                  <GiPayMoney style={{ color: "red", fontSize: "4em" }} />
-                  <Meta
-                    title={new Intl.NumberFormat("en-US").format(
-                      parseInt(countryData.amount_funded)
-                    )}
-                    description="Amount Funded (CHF)"
-                  />
-                </div>
-              </Card.Grid>
-            </Card>
-          </Drawer>
-        </>
-      </Row>
-      <Row style={{ justifyContent: "center" }}>
-        <div className="map-wrap">
-          <div ref={mapContainer} style={{ width: "100vw", height: "100vh" }} />
-          <TrashButton mapboxDrawRef={mapboxDrawRef} />
-          <LayerCard
-            mapRef={mapRef}
-            isModalOpen={isModalOpen}
-            setIsModalOpen={setIsModalOpen}
-          />
-          <StyleButton setMapStyle={setMapStyle} />
-          <ToolBar
-            handlePinButton={handlePinButton}
-            showModal={showModal}
-            handlePaintButton={handlePaintButton}
-            handleLineButton={handleLineButton}
-            handlePolygonButton={handlePolygonButton}
-            handleDownloadButton={handleDownloadButton}
-            handleExportButton={handleExportButtonToJSON}
-          />
-        </div>
-        {/* <Col
-					flex="auto"
-					style={{
-						marginRight: 500,
-						marginLeft: 500,
-						padding: 31,
-						alignContent: "center",
-						justifyContent: "center",
-						alignItems: "center",
-					}}
-				></Col> */}
-      </Row>
-      <Row>
-        <Col
-          flex={3} // 3/5
-          style={{ padding: 20 }}
-        ></Col>
-        <Col
-          flex={2} // 2/5
-          style={{ padding: 20 }}
-        >
-          {/* <Card>Description...</Card> */}
-        </Col>
-      </Row>
-      {/* <Divider orientation="left">Emergency Overview</Divider> */}
-      <Row>
-        <Col
-          flex="auto"
-          style={{
-            alignContent: "center",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Card
-            title="Emergency Overview"
-            style={{
-              textAlign: "center",
-              width: "100%",
-            }}
-          >
-            Information...
-          </Card>
-        </Col>
-      </Row>
+      <div ref={mapContainer} style={{ width: "100vw", height: "100vh" }} />
+      <DisasterInfoCard />
+      <TrashButton mapboxDrawRef={mapboxDrawRef} />
+      <LayerMoral
+        mapRef={mapRef}
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+      />
+      <StyleButton setMapStyle={setMapStyle} />
+      <ToolBar
+        handlePinButton={handlePinButton}
+        showModal={showModal}
+        handlePaintButton={handlePaintButton}
+        handleLineButton={handleLineButton}
+        handlePolygonButton={handlePolygonButton}
+        handleDownloadButton={handleDownloadButton}
+        handleExportButton={handleExportButtonToJSON}
+      />
     </div>
+    // <div className="map-wrap">
+    //   <Row>
+    //     <Col
+    //       flex="auto"
+    //       style={{
+    //         margin: 20,
+    //         display: "flex",
+    //         alignContent: "center",
+    //         justifyContent: "center",
+    //         alignItems: "center",
+    //       }}
+    //     >
+    //       <div className="underline">
+    //         <h1 style={{ fontSize: 35 }}>{countryData.location}</h1>
+    //       </div>
+    //     </Col>
+    //   </Row>
+    //   <Row
+    //     flex="auto"
+    //     style={{
+    //       marginBottom: 15,
+    //       marginRight: 65,
+    //       display: "flex",
+    //       alignContent: "right",
+    //       justifyContent: "right",
+    //       alignItems: "center",
+    //     }}
+    //   >
+    //     <>
+    //       <Button
+    //         type="primary"
+    //         onClick={showDrawer}
+    //         style={{ width: "auto", marginRight: 10 }}
+    //       >
+    //         Emergency Information
+    //       </Button>
+    //       <Drawer
+    //         title="Emergency Information"
+    //         placement="right"
+    //         onClose={onClose}
+    //         open={open}
+    //       >
+    //         {/* Emergency Information */}
+    //         <Card>
+    //           <Card.Grid hoverable={false} style={gridStyle}>
+    //             <div
+    //               style={{
+    //                 flexDirection: "row",
+    //                 flex: 1,
+    //                 justifyContent: "space-around",
+    //               }}
+    //             >
+    //               <GiReceiveMoney style={{ color: "red", fontSize: "4em" }} />
+    //               <Meta
+    //                 title={new Intl.NumberFormat("en-US").format(
+    //                   parseInt(countryData.amount_requested)
+    //                 )}
+    //                 description="Amount Requested (CHF)"
+    //               />
+    //             </div>
+    //           </Card.Grid>
+    //           <Card.Grid hoverable={false} style={gridStyle}>
+    //             <div
+    //               style={{
+    //                 flexDirection: "row",
+    //                 flex: 1,
+    //                 justifyConxtent: "space-around",
+    //               }}
+    //             >
+    //               <GiPayMoney style={{ color: "red", fontSize: "4em" }} />
+    //               <Meta
+    //                 title={new Intl.NumberFormat("en-US").format(
+    //                   parseInt(countryData.amount_funded)
+    //                 )}
+    //                 description="Amount Funded (CHF)"
+    //               />
+    //             </div>
+    //           </Card.Grid>
+    //         </Card>
+    //       </Drawer>
+    //     </>
+    //   </Row>
+    //   <Row style={{ justifyContent: "center" }}>
+    //     <div className="map-wrap">
+    //       <div ref={mapContainer} style={{ width: "100vw", height: "100vh" }} />
+    //       <TrashButton mapboxDrawRef={mapboxDrawRef} />
+    //       <LayerCard
+    //         mapRef={mapRef}
+    //         isModalOpen={isModalOpen}
+    //         setIsModalOpen={setIsModalOpen}
+    //       />
+    //       <StyleButton setMapStyle={setMapStyle} />
+    //       <ToolBar
+    //         handlePinButton={handlePinButton}
+    //         showModal={showModal}
+    //         handlePaintButton={handlePaintButton}
+    //         handleLineButton={handleLineButton}
+    //         handlePolygonButton={handlePolygonButton}
+    //         handleDownloadButton={handleDownloadButton}
+    //         handleExportButton={handleExportButtonToJSON}
+    //       />
+    //     </div>
+    //   </Row>
+
+    // </div>
   );
 };
 
