@@ -72,6 +72,9 @@ const LayerCard = ({ mapRef, isModalOpen, setIsModalOpen }) => {
     const maplibreMap = mapRef.current;
     maplibreMap.removeLayer(layerName);
     maplibreMap.removeSource(layerName);
+    if (maplibreMap.hasImage("custom-marker")) {
+      maplibreMap.removeImage("custom-marker");
+    }
     updateLayerStatus(layerName, LAYER_STATUS.NOT_RENDERING);
   };
 
@@ -79,7 +82,13 @@ const LayerCard = ({ mapRef, isModalOpen, setIsModalOpen }) => {
     const value = event.target.value;
     const opacity = value / 100;
     const maplibreMap = mapRef.current;
-    maplibreMap.setPaintProperty(layerName, "raster-opacity", opacity);
+    const layer = LAYERS.find((layer) => layer.name === layerName);
+    if (layer.type === "TMS") {
+      maplibreMap.setPaintProperty(layerName, "raster-opacity", opacity);
+    } else {
+      maplibreMap.setPaintProperty(layerName, "icon-opacity", opacity);
+
+    }
   };
 
   const checkLayerStatus = (layerName) => {
