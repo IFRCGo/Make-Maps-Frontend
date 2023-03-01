@@ -5,20 +5,7 @@ import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import PaintMode from "mapbox-gl-draw-paint-mode";
 import DrawPointWithText from "mapbox-gl-draw-point-with-text-mode";
 import jsPDF from "jspdf";
-<<<<<<< HEAD
-import {
-  Col,
-  Divider,
-  Row,
-  Card,
-  Avatar,
-  Drawer,
-  Button,
-  Collapse,
-} from "antd";
-=======
 import { Card, Collapse } from "antd";
->>>>>>> origin
 import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
 import { useQuery } from "@apollo/client";
 import * as Query from "../API/AllQueries";
@@ -258,11 +245,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
             });
 
             textarea.addEventListener("input", function () {
-<<<<<<< HEAD
               console.log("Update Input");
-=======
-              console.log("inputting");
->>>>>>> origin
               textarea.style.height = "auto";
               textarea.style.height = textarea.scrollHeight + "px";
               textarea.setAttribute("contenteditable", true);
