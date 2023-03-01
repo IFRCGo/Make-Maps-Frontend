@@ -15,7 +15,6 @@ import {
   Button,
   Collapse,
 } from "antd";
-import { IoLocationSharp } from "react-icons/io5";
 import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
 import { useQuery } from "@apollo/client";
 import * as Query from "../API/AllQueries";
@@ -173,6 +172,8 @@ const CountryMap = ({ searchCountry, disasters }) => {
           textarea.value = e.features[0].properties.text || "";
 
           textarea.addEventListener("input", function () {
+            console.log("Create Input");
+
             textarea.style.height = "auto";
             textarea.style.height = textarea.scrollHeight + "px";
             textarea.setAttribute("contenteditable", true);
@@ -286,7 +287,6 @@ const CountryMap = ({ searchCountry, disasters }) => {
               textarea.style.minHeight =
                 parseInt(textarea.style.fontSize) * 2 + "px";
               textarea.style.maxHeight = "200px"; // Set the maximum height to 200 pixels
-
               // Adjust position of text area based on font size
               var screenCoordinates = mapRef.current.project(
                 e.features[0].geometry.coordinates
@@ -297,6 +297,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
             });
 
             textarea.addEventListener("input", function () {
+              console.log("Update Input");
               textarea.style.height = "auto";
               textarea.style.height = textarea.scrollHeight + "px";
               textarea.setAttribute("contenteditable", true);
@@ -381,6 +382,8 @@ const CountryMap = ({ searchCountry, disasters }) => {
 
             // handle textarea input events
             textarea.addEventListener("input", function () {
+              console.log("Load Input");
+
               textarea.style.height = "auto";
               textarea.style.height = textarea.scrollHeight + "px";
               textarea.setAttribute("contenteditable", true);
