@@ -1,5 +1,5 @@
 # ==== CONFIGURE =====
-# Use a Node 16 base image
+# Use a Node 18 base image
 FROM node:18.9.1
 # Set the working directory to /app inside the container
 WORKDIR /usr/src/app
