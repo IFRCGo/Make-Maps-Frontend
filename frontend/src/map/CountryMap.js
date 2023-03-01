@@ -5,35 +5,18 @@ import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import PaintMode from "mapbox-gl-draw-paint-mode";
 import DrawPointWithText from "mapbox-gl-draw-point-with-text-mode";
 import jsPDF from "jspdf";
-import {
-  Col,
-  Divider,
-  Row,
-  Card,
-  Avatar,
-  Drawer,
-  Button,
-  Collapse,
-} from "antd";
-import { IoLocationSharp } from "react-icons/io5";
+import { Card, Collapse } from "antd";
 import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
 import { useQuery } from "@apollo/client";
 import * as Query from "../API/AllQueries";
 import StyleButton from "./StyleButton";
 import LayerMoral from "./LayerMoral";
 import TrashButton from "./TrashButton";
-import DrawStyles from "./DrawStyles";
 import ToolBar from "./ToolBar";
 import "./CustomMarker.css";
 import "./MapComponent.css";
-import DisasterInfoCard from "./DisasterInfoCard";
-import "./DisasterInfoCard.css";
 
 const { Meta } = Card;
-
-const ADD_PIN = 1;
-const ADD_POPUP = 2;
-const DO_NOTHING = 0;
 
 const { Panel } = Collapse;
 
@@ -41,14 +24,6 @@ const CountryMap = ({ searchCountry, disasters }) => {
   const { id, long, lat } = useParams();
   const { state } = useLocation();
   const { countryData } = state || {};
-  const location = {
-    longitude: typeof long != "undefined" ? long : 16.62662018,
-    latitude: typeof lat != "undefined" ? lat : 49.2125578,
-    zoom: typeof long != "undefined" ? 9 : 0,
-  };
-  const [mapLocation, setMapLocation] = useState(location);
-  const [open, setOpen] = useState(false);
-  const [pins, setPins] = useState([]);
 
   // new from 36 - 43
   const [mapStyle, setMapStyle] = useState(
@@ -58,14 +33,6 @@ const CountryMap = ({ searchCountry, disasters }) => {
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
   const mapboxDrawRef = useRef(null);
-
-  const showDrawer = () => {
-    setOpen(true);
-  };
-
-  const onClose = () => {
-    setOpen(false);
-  };
 
   const { loading, error, data } = useQuery(Query.GET_PINS, {
     variables: {
@@ -85,26 +52,6 @@ const CountryMap = ({ searchCountry, disasters }) => {
     alignItems: "center",
   };
 
-  // if (!loading && data) {
-  //   // console.log(data.pinMany);
-  //   const pinData = data.pinMany.map((item) => ({
-  //     id: item._id,
-  //     // Temporary placeholder
-  //     type: "Feature",
-  //     properties: {
-  //       text: item.pinText,
-  //     },
-  //     geometry: {
-  //       coordinates: item.pinCoordinates.coordinates,
-  //       // Temporary placeholder
-  //       type: item.pinCoordinates.type,
-  //     },
-  //   }));
-  //   console.log(pinData);
-  //   setPins(pinData);
-  // }
-
-  // new from 78 - 511
   useEffect(() => {
     if (!loading && data) {
       if (!mapContainer) {
@@ -114,7 +61,6 @@ const CountryMap = ({ searchCountry, disasters }) => {
       mapRef.current = new maplibregl.Map({
         container: mapContainer.current,
         style: mapStyle,
-        // center: [16.62662018, 49.2125578],
         center: [long, lat],
         zoom: 9,
       });
@@ -137,8 +83,8 @@ const CountryMap = ({ searchCountry, disasters }) => {
       mapRef.current.addControl(mapboxDrawRef.current);
 
       mapRef.current.on("draw.create", function (e) {
+        console.log("creating");
         console.log(e.features);
-        console.log(mapboxDrawRef.current);
 
         if (e.features[0].geometry.type === "Point") {
           var pointId = e.features[0].id;
@@ -252,6 +198,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
       });
 
       mapRef.current.on("draw.update", function (e) {
+        console.log("updating");
         if (e.features[0].geometry.type === "Point") {
           //console.log("inside");
           var pointId = e.features[0].id;
@@ -297,6 +244,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
             });
 
             textarea.addEventListener("input", function () {
+              console.log("inputting");
               textarea.style.height = "auto";
               textarea.style.height = textarea.scrollHeight + "px";
               textarea.setAttribute("contenteditable", true);
@@ -322,10 +270,11 @@ const CountryMap = ({ searchCountry, disasters }) => {
         }
       });
     }
-  }, [loading, data]);
+  }, [loading, data, long, lat, mapStyle]);
 
   useEffect(() => {
     if (!loading && data) {
+      // reformat the data fetched
       const pinData = data.pinMany.map((item) => ({
         id: item._id,
         // Temporary placeholder
@@ -335,15 +284,15 @@ const CountryMap = ({ searchCountry, disasters }) => {
         },
         geometry: {
           coordinates: item.pinCoordinates.coordinates,
-          // Temporary placeholder
           type: item.pinCoordinates.type,
         },
       }));
 
       mapRef.current.on("load", function () {
-        for (let index = 0; index < pinData.length; index++) {
+        console.log("loading");
+        pinData.forEach((pin) => {
           // Add the point feature to the map using the "draw_point" mode
-          var point = pinData[index];
+          var point = pin;
           mapboxDrawRef.current.add(point);
 
           var pointId = point.id;
@@ -354,7 +303,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
             container.style.zIndex = "100";
             container.classList.add("text-container"); // add a CSS class
             container.id = `text-container-${pointId}`;
-            //console.log(container.id);
+            // console.log(container.id);
 
             mapRef.current.getCanvasContainer().appendChild(container);
             var textarea = document.createElement("textarea");
@@ -456,7 +405,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
                 screenCoordinates.y - textarea.clientHeight / 2 + "px";
             });
           }
-        }
+        });
       });
     }
   }, [loading, data]);
