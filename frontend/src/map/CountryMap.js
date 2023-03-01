@@ -288,13 +288,14 @@ const CountryMap = ({ searchCountry, disasters }) => {
         },
       }));
 
+      console.log("PINDATA", pinData);
+
       mapRef.current.on("load", function () {
         console.log("loading");
         pinData.forEach((pin) => {
           // Add the point feature to the map using the "draw_point" mode
           var point = pin;
           mapboxDrawRef.current.add(point);
-
           var pointId = point.id;
           var container = document.getElementById(`text-container-${pointId}`);
           if (!container) {
@@ -377,7 +378,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
               screenCoordinates.x + textarea.clientHeight / 5 + "px";
             textarea.focus();
 
-            mapRef.current.on("zoom", function () {
+            mapRef.current.on("zoom", () => {
               var zoom = mapRef.current.getZoom();
               var fontSize = 5 + (zoom - 10) * 1;
               textarea.style.fontSize = fontSize + "px";
@@ -407,6 +408,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
           }
         });
       });
+      // Add the point feature to the map using the "draw_point" mode
     }
   }, [loading, data]);
 
