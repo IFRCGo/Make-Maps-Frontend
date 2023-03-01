@@ -7,8 +7,9 @@ import DrawPointWithText from "mapbox-gl-draw-point-with-text-mode";
 import jsPDF from "jspdf";
 import { Card, Collapse } from "antd";
 import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import * as Query from "../API/AllQueries";
+import * as Mutation from "../API/AllMutations";
 import StyleButton from "./StyleButton";
 import LayerMoral from "./LayerMoral";
 import TrashButton from "./TrashButton";
@@ -30,6 +31,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
     "https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
   const mapboxDrawRef = useRef(null);
@@ -41,7 +43,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
       },
     },
   });
-  // console.log(data);
+  const [addPin] = useMutation(Mutation.ADD_PIN);
 
   const gridStyle: React.CSSProperties = {
     width: "50%",
@@ -83,9 +85,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
       mapRef.current.addControl(mapboxDrawRef.current);
 
       mapRef.current.on("draw.create", function (e) {
-        console.log("creating");
-        console.log(e.features);
-
+        addPinData(e.features[0]);
         if (e.features[0].geometry.type === "Point") {
           var pointId = e.features[0].id;
           var container = document.getElementById(`text-container-${pointId}`);
@@ -288,8 +288,6 @@ const CountryMap = ({ searchCountry, disasters }) => {
           type: item.pinCoordinates.type,
         },
       }));
-
-      console.log("PINDATA", pinData);
 
       mapRef.current.on("load", function () {
         console.log("loading");
@@ -505,6 +503,22 @@ const CountryMap = ({ searchCountry, disasters }) => {
     link.setAttribute("href", url);
 
     link.click();
+  };
+
+  const addPinData = (newPin) => {
+    const pinTestData = {
+      disaster: id,
+      // pinText: newPin.properties.text,
+      pinText: "test text",
+      pinCoordinates: {
+        type: newPin.geometry.type,
+        coordinates: newPin.geometry.coordinates,
+      },
+      createdBy: "63d10ad4e30540f8a78a183f",
+    };
+    addPin({ variables: { record: pinTestData } }).catch((error) =>
+      alert(error.message)
+    );
   };
 
   return (

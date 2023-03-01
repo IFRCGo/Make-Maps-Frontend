@@ -7,3 +7,11 @@ export const ADD_PIN = gql`
     }
   }
 `;
+
+export const DELETE_PIN = gql`
+  mutation PinRemoveOne($filter: FilterRemoveOnePinInput) {
+    pinRemoveOne(filter: $filter) {
+      recordId
+    }
+  }
+`;
