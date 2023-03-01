@@ -55,10 +55,8 @@ jobs:
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
-        uses: azure/webapps-deploy@v1
+        uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FRONTEND }}
           images: 'ghcr.io/${{ env.REPO }}:${{ github.sha }}'
-          ports: 3000:3000
-          app-settings-json: '[{"WEBSITES_PORT": "3000"}]'
