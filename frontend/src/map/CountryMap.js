@@ -26,8 +26,6 @@ import DrawStyles from "./DrawStyles";
 import ToolBar from "./ToolBar";
 import "./CustomMarker.css";
 import "./MapComponent.css";
-import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
-import "maplibre-gl/dist/maplibre-gl.css";
 import DisasterInfoCard from "./DisasterInfoCard";
 import "./DisasterInfoCard.css";
 

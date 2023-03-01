@@ -6,7 +6,6 @@ import DrawPointWithText from "mapbox-gl-draw-point-with-text-mode";
 import "./CustomMarker.css";
 import "./MapComponent.css";
 import ToolBar from "./ToolBar";
-import "maplibre-gl/dist/maplibre-gl.css";
 import jsPDF from "jspdf";
 import StyleButton from "./StyleButton";
 import LayerMoral from "./LayerMoral";
