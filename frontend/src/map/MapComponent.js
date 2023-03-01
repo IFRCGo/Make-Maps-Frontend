@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
-import maplibregl, { Map } from "maplibre-gl";
+import maplibregl, { Map } from "!maplibre-gl"; // eslint-disable-line import/no-webpack-loader-syntax
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import PaintMode from "mapbox-gl-draw-paint-mode";
 import DrawPointWithText from "mapbox-gl-draw-point-with-text-mode";
 import "./CustomMarker.css";
@@ -413,7 +412,7 @@ const MapComponent = ({ searchCountry, props }) => {
         const link = document.createElement("a");
         link.href = canvasDataURL;
         link.download = "map-export.png";
-        const pdf = new jsPDF("l", "mm", [1728,1212]);
+        const pdf = new jsPDF("l", "mm", [1728, 1212]);
 
         // Add the map image to the PDF document
         pdf.addImage(

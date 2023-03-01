@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import maplibregl, { Map } from "maplibre-gl";
+import maplibregl, { Map } from "!maplibre-gl"; // eslint-disable-line import/no-webpack-loader-syntax
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import PaintMode from "mapbox-gl-draw-paint-mode";
 import DrawPointWithText from "mapbox-gl-draw-point-with-text-mode";
