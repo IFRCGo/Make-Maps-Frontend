@@ -71,7 +71,6 @@ const CountryMap = ({ searchCountry, disasters }) => {
 
   function textAreaInput(textarea, mapRef, mapboxDrawRef, container, point) {
     textarea.addEventListener("input", function () {
-      console.log("afafafa");
       textarea.style.height = "auto";
       textarea.style.height = textarea.scrollHeight + "px";
       textarea.setAttribute("contenteditable", true);
@@ -111,7 +110,10 @@ const CountryMap = ({ searchCountry, disasters }) => {
       );
       container.style.left = screenCoordinates.x;
       container.style.top =
-        screenCoordinates.y - textarea.clientHeight / 2 + "px";
+        screenCoordinates.y - textarea.scrollHeight / 2 + "px";
+
+      // Update the textarea height based on its content
+      textarea.style.height = textarea.scrollHeight + "px";
     });
   }
 
@@ -134,7 +136,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
     var textarea = document.createElement("textarea");
     textarea.cols = 1;
     textarea.style.lineHeight = textarea.style.height;
-    textarea.style.width = "180px";
+    textarea.style.width = "150px";
     var zoom = mapRef.current.getZoom();
 
     textarea.style.fontSize = 5 + (zoom - 10) * 1 + "px"; //
@@ -166,13 +168,41 @@ const CountryMap = ({ searchCountry, disasters }) => {
     });
 
     container.appendChild(textarea);
+
+    var saveButton = document.createElement("button");
+    saveButton.classList.add("custom_save_button");
+
+    saveButton.textContent = "Save";
+    saveButton.style.display = "none";
+    saveButton.addEventListener("click", function () {
+      console.log(textarea.value);
+
+      saveButton.style.display = "none";
+    });
+    textarea.addEventListener("focus", function () {
+      saveButton.style.display = "block";
+    });
+
+    textarea.addEventListener("blur", function (event) {
+      if (
+        event.relatedTarget &&
+        event.relatedTarget.classList.contains("custom_save_button")
+      ) {
+        return;
+      }
+      saveButton.style.display = "none";
+    });
+
+    container.appendChild(saveButton);
+
     var screenCoordinates = mapRef.current.project(point.geometry.coordinates);
     container.style.top =
       screenCoordinates.y - textarea.offsetHeight / 2 + "px";
     container.style.left =
       screenCoordinates.x + textarea.clientHeight / 5 + "px";
     //textarea.focus();
-
+    textAreaZoom(saveButton, mapRef, container, point);
+    textAreaMove(saveButton, mapRef, container, point);
     textAreaZoom(textarea, mapRef, container, point);
     textAreaMove(textarea, mapRef, container, point);
   }
@@ -209,11 +239,11 @@ const CountryMap = ({ searchCountry, disasters }) => {
       mapRef.current.addControl(mapboxDrawRef.current);
 
       mapRef.current.on("draw.create", function (e) {
-        addPinData(e.features[0]);
-
         if (e.features[0].geometry.type === "Point") {
+          addPinData(e.features[0]);
           createTextArea(mapboxDrawRef, mapRef, e.features[0]);
         }
+        console.log(e.features[0]);
       });
 
       mapRef.current.on("draw.update", function (e) {
@@ -373,7 +403,6 @@ const CountryMap = ({ searchCountry, disasters }) => {
   const addPinData = (newPin) => {
     const pinTestData = {
       disaster: id,
-      // pinText: newPin.properties.text,
       pinText: "test text",
       pinCoordinates: {
         type: newPin.geometry.type,
