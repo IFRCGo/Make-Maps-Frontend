@@ -7,12 +7,32 @@ import * as Mutation from "../API/AllMutations";
 const TrashButton = ({ mapboxDrawRef }) => {
   const [deletePin] = useMutation(Mutation.DELETE_PIN);
 
-  const handleClick = (pinId) => {
-    if (window.confirm("Are you sure you want to delete this pin?")) {
-      deletePin({ variables: { filter: { _id: pinId } } })
-        .then(() => alert("Value deleted successfully!"))
-        .catch((error) => alert(error.message));
-    }
+  const handleClick = (selectedFeatures) => {
+    selectedFeatures.forEach((feature) => {
+      console.log(feature.id);
+      if (window.confirm("Are you sure you want to delete this pin?")) {
+        deletePin({ variables: { filter: { _id: feature.id } } })
+          .then(() => alert("Value deleted successfully!"))
+          .catch((error) => alert(error.message));
+        let state = feature;
+        if (state.geometry.type === "Point") {
+          let container = document.getElementById(`text-container-${state.id}`);
+          if (container) {
+            // console.log("Found container element:", container);
+            setTimeout(() => {
+              container.remove();
+            }, 0);
+          } else {
+            console.log(
+              `Could not find container with ID 'text-container-${state.id}'`
+            );
+          }
+          mapboxDrawRef.current.trash();
+        } else {
+          mapboxDrawRef.current.trash();
+        }
+      }
+    });
   };
 
   return (
@@ -22,29 +42,7 @@ const TrashButton = ({ mapboxDrawRef }) => {
       icon={<CgTrash />}
       onClick={() => {
         const selectedFeatures = mapboxDrawRef.current.getSelected().features;
-        selectedFeatures.forEach((feature) => {
-          console.log(feature.id);
-          handleClick(feature.id);
-          let state = feature;
-          if (state.geometry.type === "Point") {
-            let container = document.getElementById(
-              `text-container-${state.id}`
-            );
-            if (container) {
-              // console.log("Found container element:", container);
-              setTimeout(() => {
-                container.remove();
-              }, 0);
-            } else {
-              console.log(
-                `Could not find container with ID 'text-container-${state.id}'`
-              );
-            }
-            mapboxDrawRef.current.trash();
-          } else {
-            mapboxDrawRef.current.trash();
-          }
-        });
+        handleClick(selectedFeatures);
       }}
     />
   );
