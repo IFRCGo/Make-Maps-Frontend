@@ -188,6 +188,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
         style: mapStyle,
         center: [long, lat],
         zoom: 9,
+        minZoom: 10,
       });
 
       mapboxDrawRef.current = new MapboxDraw({
