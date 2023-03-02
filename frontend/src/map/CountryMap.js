@@ -352,24 +352,37 @@ const CountryMap = ({ searchCountry, disasters }) => {
 
     renderMap.once("idle", () => {
       setTimeout(() => {
-        const canvasDataURL = renderMap.getCanvas().toDataURL();
+        const canvas = document.createElement("canvas");
+        canvas.width = maplibreMap.getCanvas().width;
+        canvas.height = maplibreMap.getCanvas().height;
+        const canvasContext = canvas.getContext("2d");
+        canvasContext.drawImage(maplibreMap.getCanvas(), 0, 0);
+
+        const textContainers = document.querySelectorAll(
+          "[id^='text-container-']"
+        ); // Add this line to select text containers
+        textContainers.forEach((textContainer) => {
+          console.log(textContainer);
+          const { left, top, width, height } =
+            textContainer.getBoundingClientRect();
+          canvasContext.drawImage(
+            maplibreMap.getCanvas(),
+            left,
+            top,
+            width,
+            height,
+            left,
+            top,
+            width,
+            height
+          );
+        });
+
+        const canvasDataURL = canvas.toDataURL();
         const link = document.createElement("a");
         link.href = canvasDataURL;
         link.download = "map-export.png";
-        const pdf = new jsPDF("l", "mm", "a4");
 
-        // Add the map image to the PDF document
-        pdf.addImage(
-          canvasDataURL,
-          "PNG",
-          0,
-          0,
-          pdf.internal.pageSize.getWidth(),
-          pdf.internal.pageSize.getHeight()
-        );
-
-        // Save the PDF file
-        pdf.save("map-export.pdf");
         link.click();
         link.remove();
       }, 1000);
@@ -381,7 +394,6 @@ const CountryMap = ({ searchCountry, disasters }) => {
       }, 1000);
     });
   };
-
   const handleExportButtonToJSON = () => {
     const json = mapboxDrawRef.current.getAll();
 
