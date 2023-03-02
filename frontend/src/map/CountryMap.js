@@ -45,6 +45,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
     },
   });
   const [addPin] = useMutation(Mutation.ADD_PIN);
+  const [updatePin] = useMutation(Mutation.UPDATE_PIN);
 
   const gridStyle: React.CSSProperties = {
     width: "50%",
@@ -71,6 +72,8 @@ const CountryMap = ({ searchCountry, disasters }) => {
 
   function textAreaInput(textarea, mapRef, mapboxDrawRef, container, point) {
     textarea.addEventListener("input", function () {
+      console.log("text inputing");
+      console.log(point.id);
       textarea.style.height = "auto";
       textarea.style.height = textarea.scrollHeight + "px";
       textarea.setAttribute("contenteditable", true);
@@ -131,7 +134,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
   }
 
   function createTextArea(mapboxDrawRef, mapRef, point) {
-    console.log("Afafasa");
+    console.log("creating text");
     var container = createTextAreaContainer(point, mapRef);
     var textarea = document.createElement("textarea");
     textarea.cols = 1;
@@ -176,6 +179,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
     saveButton.style.display = "none";
     saveButton.addEventListener("click", function () {
       console.log(textarea.value);
+      updatePinTextData(textarea.value, point.id);
 
       saveButton.style.display = "none";
     });
@@ -248,7 +252,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
 
       mapRef.current.on("draw.update", function (e) {
         if (e.features[0].geometry.type === "Point") {
-          console.log("fafafa");
+          updatePinLocData(e.features[0]);
           var pointId = e.features[0].id;
           var container = document.getElementById(`text-container-${pointId}`);
           if (container) {
@@ -394,6 +398,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
       }, 1000);
     });
   };
+
   const handleExportButtonToJSON = () => {
     const json = mapboxDrawRef.current.getAll();
 
@@ -425,6 +430,27 @@ const CountryMap = ({ searchCountry, disasters }) => {
     addPin({ variables: { record: pinTestData } }).catch((error) =>
       alert(error.message)
     );
+  };
+
+  const updatePinLocData = (updatedPinLoc) => {
+    const pinUpdatedLoc = {
+      pinCoordinates: {
+        coordinates: updatedPinLoc.geometry.coordinates,
+        type: updatedPinLoc.geometry.type,
+      },
+    };
+    updatePin({
+      variables: { id: updatedPinLoc.id, record: pinUpdatedLoc },
+    }).catch((error) => alert(error.message));
+  };
+
+  const updatePinTextData = (updatedPinText, pointID) => {
+    const pinUpdatedText = {
+      pinText: updatedPinText,
+    };
+    updatePin({
+      variables: { id: pointID, record: pinUpdatedText },
+    }).catch((error) => alert(error.message));
   };
 
   return (
