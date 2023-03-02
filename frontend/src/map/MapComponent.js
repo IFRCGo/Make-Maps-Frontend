@@ -252,6 +252,13 @@ const MapComponent = ({ searchCountry, props }) => {
       // Add the point feature to the map using the "draw_point" mode
       mapboxDrawRef.current.add(point);
 
+      //todo
+      var scale = new maplibregl.ScaleControl({
+        maxWidth: 80,
+        unit: 'metric'
+      });
+      mapRef.current.addControl(scale);
+
       var pointId = point.id;
       var container = document.getElementById(`text-container-${pointId}`);
       if (!container) {
@@ -392,17 +399,17 @@ const MapComponent = ({ searchCountry, props }) => {
   const handleDownloadButton = () => {
     // Prompt a dialog box to ask the user for their choice
     const confirmed = window.confirm("Please choose the file type to download:\n\n- Click \"OK\" to download a PNG file\n- Click \"Cancel\" to download a PDF file");
-  
+
     // If the user cancels, download a PDF file
     if (!confirmed) {
       downloadMap("PDF");
       return;
     }
-  
+
     // Download a PNG file
     downloadMap("PNG");
   };
-  
+
   const downloadMap = (type) => {
     const maplibreMap = mapRef.current;
 
@@ -423,7 +430,7 @@ const MapComponent = ({ searchCountry, props }) => {
       setTimeout(() => {
         const canvasDataURL = renderMap.getCanvas().toDataURL();
         const link = document.createElement("a");
-        if (type == 'PNG') {
+        if (type === 'PNG') {
           link.href = canvasDataURL;
           link.download = "map-export.png";
           link.click();
