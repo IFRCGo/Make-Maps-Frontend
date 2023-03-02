@@ -15,3 +15,11 @@ export const DELETE_PIN = gql`
     }
   }
 `;
+
+export const UPDATE_PIN = gql`
+  mutation Mutation($id: MongoID!, $record: UpdateByIdPinInput!) {
+    pinUpdateById(_id: $id, record: $record) {
+      recordId
+    }
+  }
+`;
