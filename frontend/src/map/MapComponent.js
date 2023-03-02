@@ -390,6 +390,20 @@ const MapComponent = ({ searchCountry, props }) => {
   };
 
   const handleDownloadButton = () => {
+    // Prompt a dialog box to ask the user for their choice
+    const confirmed = window.confirm("Please choose the file type to download:\n\n- Click \"OK\" to download a PNG file\n- Click \"Cancel\" to download a PDF file");
+  
+    // If the user cancels, download a PDF file
+    if (!confirmed) {
+      downloadMap("PDF");
+      return;
+    }
+  
+    // Download a PNG file
+    downloadMap("PNG");
+  };
+  
+  const downloadMap = (type) => {
     const maplibreMap = mapRef.current;
 
     const renderMap = new Map({
@@ -409,24 +423,30 @@ const MapComponent = ({ searchCountry, props }) => {
       setTimeout(() => {
         const canvasDataURL = renderMap.getCanvas().toDataURL();
         const link = document.createElement("a");
-        link.href = canvasDataURL;
-        link.download = "map-export.png";
-        const pdf = new jsPDF("l", "mm", [1728, 1212]);
+        if (type == 'PNG') {
+          link.href = canvasDataURL;
+          link.download = "map-export.png";
+          link.click();
+          link.remove();
+        } else {
+          const pdf = new jsPDF("l", "mm", [1728, 1212]);
 
-        // Add the map image to the PDF document
-        pdf.addImage(
-          canvasDataURL,
-          "PNG",
-          0,
-          0,
-          pdf.internal.pageSize.getWidth(),
-          pdf.internal.pageSize.getHeight()
-        );
+          // Add the map image to the PDF document
+          pdf.addImage(
+            canvasDataURL,
+            "PNG",
+            0,
+            0,
+            pdf.internal.pageSize.getWidth(),
+            pdf.internal.pageSize.getHeight()
+          );
 
-        // Save the PDF file
-        pdf.save("map-export.pdf");
-        link.click();
-        link.remove();
+          // Save the PDF file
+          pdf.save("map-export.pdf");
+        }
+
+
+
       }, 1000);
     });
 
