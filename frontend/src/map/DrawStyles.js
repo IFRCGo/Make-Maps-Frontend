@@ -9,8 +9,8 @@ const DrawStyles = [
       ["!=", "mode", "static"],
     ],
     paint: {
-      "fill-color": "#3bb2d0",
-      "fill-outline-color": "#3bb2d0",
+      "fill-color": "#000000",
+      "fill-outline-color": "#000000",
       "fill-opacity": 0.1,
     },
   },
@@ -19,8 +19,8 @@ const DrawStyles = [
     type: "fill",
     filter: ["all", ["==", "active", "true"], ["==", "$type", "Polygon"]],
     paint: {
-      "fill-color": "#fbb03b",
-      "fill-outline-color": "#fbb03b",
+      "fill-color": "#f6343f",
+      "fill-outline-color": "#f6343f",
       "fill-opacity": 0.1,
     },
   },
@@ -30,7 +30,7 @@ const DrawStyles = [
     filter: ["all", ["==", "$type", "Point"], ["==", "meta", "midpoint"]],
     paint: {
       "circle-radius": 3,
-      "circle-color": "#fbb03b",
+      "circle-color": "#f6343f",
     },
   },
   {
@@ -47,8 +47,8 @@ const DrawStyles = [
       "line-join": "round",
     },
     paint: {
-      "line-color": "#3bb2d0",
-      "line-width": 2,
+      "line-color": "#000000",
+      "line-width": 4,
     },
   },
   {
@@ -60,7 +60,7 @@ const DrawStyles = [
       "line-join": "round",
     },
     paint: {
-      "line-color": "#fbb03b",
+      "line-color": "#f6343f",
       "line-dasharray": [0.2, 2],
       "line-width": 2,
     },
