@@ -79,8 +79,8 @@ const DrawStyles = [
       "line-join": "round",
     },
     paint: {
-      "line-color": "#ffa07a",
-      "line-width": 10,
+      "line-color": "#000000",
+      "line-width": 4,
     },
   },
   {
@@ -92,9 +92,9 @@ const DrawStyles = [
       "line-join": "round",
     },
     paint: {
-      "line-color": "#fbb03b",
+      "line-color": "#f6343f",
       "line-dasharray": [0.2, 2],
-      "line-width": 2,
+      "line-width": 3,
     },
   },
   {
@@ -122,7 +122,7 @@ const DrawStyles = [
     ],
     paint: {
       "circle-radius": 3,
-      "circle-color": "#fbb03b",
+      "circle-color": "#f6343f",
     },
   },
   {
@@ -136,7 +136,7 @@ const DrawStyles = [
       ["!=", "mode", "static"],
     ],
     paint: {
-      "circle-radius": 5,
+      "circle-radius": 6,
       "circle-opacity": 1,
       "circle-color": "#fff",
     },
@@ -152,8 +152,8 @@ const DrawStyles = [
       ["!=", "mode", "static"],
     ],
     paint: {
-      "circle-radius": 3,
-      "circle-color": "#3bb2d0",
+      "circle-radius": 4,
+      "circle-color": "#000000",
     },
   },
   {
@@ -181,7 +181,7 @@ const DrawStyles = [
     ],
     paint: {
       "circle-radius": 5,
-      "circle-color": "#fbb03b",
+      "circle-color": "#f6343f",
     },
   },
   {
@@ -216,8 +216,8 @@ const DrawStyles = [
       "line-join": "round",
     },
     paint: {
-      "line-color": "#404040",
-      "line-width": 10,
+      "line-color": "#000000",
+      "line-width": 2,
     },
   },
   {
@@ -226,7 +226,7 @@ const DrawStyles = [
     filter: ["all", ["==", "mode", "static"], ["==", "$type", "Point"]],
     paint: {
       "circle-radius": 5,
-      "circle-color": "#404040",
+      "circle-color": "#f6343f",
     },
   },
 ];

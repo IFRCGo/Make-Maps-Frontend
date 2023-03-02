@@ -16,6 +16,7 @@ import TrashButton from "./TrashButton";
 import ToolBar from "./ToolBar";
 import "./CustomMarker.css";
 import "./MapComponent.css";
+import DrawStyles from "./DrawStyles";
 
 const { Meta } = Card;
 
@@ -170,7 +171,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
       screenCoordinates.y - textarea.offsetHeight / 2 + "px";
     container.style.left =
       screenCoordinates.x + textarea.clientHeight / 5 + "px";
-    textarea.focus();
+    //textarea.focus();
 
     textAreaZoom(textarea, mapRef, container, point);
     textAreaMove(textarea, mapRef, container, point);
@@ -201,7 +202,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
           draw_paint_mode: PaintMode,
           draw_point_with_text_mode: DrawPointWithText,
         },
-        //styles: DrawStyles,
+        styles: DrawStyles,
       });
 
       mapRef.current.addControl(mapboxDrawRef.current);
