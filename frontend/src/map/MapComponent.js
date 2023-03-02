@@ -11,6 +11,7 @@ import StyleButton from "./StyleButton";
 import LayerMoral from "./LayerMoral";
 import TrashButton from "./TrashButton";
 import DrawStyles from "./DrawStyles";
+import * as MaplibreGrid from 'maplibre-grid';
 
 const MapComponent = ({ searchCountry, props }) => {
   const [mapStyle, setMapStyle] = useState(
@@ -258,6 +259,20 @@ const MapComponent = ({ searchCountry, props }) => {
         unit: 'metric'
       });
       mapRef.current.addControl(scale);
+      const grid = new MaplibreGrid.Grid({
+        gridWidth: 1,
+        gridHeight: 1,
+        units: 'degrees',
+        paint: {
+          'line-opacity': 0.2
+        }
+      });
+      mapRef.current.addControl(grid);
+
+      mapRef.current.addControl(new maplibregl.NavigationControl({
+        showCompass: true,
+        showZoom: false
+      }), 'top-left');
 
       var pointId = point.id;
       var container = document.getElementById(`text-container-${pointId}`);
@@ -367,6 +382,12 @@ const MapComponent = ({ searchCountry, props }) => {
             screenCoordinates.x + textarea.clientHeight / 5 + "px";
           container.style.top =
             screenCoordinates.y - textarea.clientHeight / 2 + "px";
+            var info = document.getElementById('info');
+          var center = mapRef.current.getCenter();
+          var lnglat = new maplibregl.LngLat(center.lng, center.lat);
+          var lng = lnglat.lng.toFixed(4);
+          var lat = lnglat.lat.toFixed(4);
+          document.getElementById('data-output').innerHTML = 'Longitude: ' + lng + '<br>Latitude: ' + lat;
         });
       }
     });
@@ -484,6 +505,9 @@ const MapComponent = ({ searchCountry, props }) => {
 
   return (
     <div className="map-wrap">
+      <div id="info">
+        <div id="data-output"></div>
+      </div>
       <div ref={mapContainer} style={{ width: "100vw", height: "100vh" }} />
       <TrashButton mapboxDrawRef={mapboxDrawRef} />
       <LayerMoral
