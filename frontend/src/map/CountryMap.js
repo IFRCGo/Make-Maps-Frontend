@@ -45,8 +45,23 @@ const CountryMap = ({ searchCountry, disasters }) => {
     },
   });
 
+  const {
+    loading: layersLoading,
+    error: layersError,
+    data: layersData,
+  } = useQuery(Query.GET_DRAWING_LAYERS, {
+    variables: {
+      filter: {
+        disaster: countryData._id,
+      },
+    },
+  });
+
   const [addPin] = useMutation(Mutation.ADD_PIN);
   const [updatePin] = useMutation(Mutation.UPDATE_PIN);
+
+  const [addDrawingLayer] = useMutation(Mutation.ADD_DRAWING_LAYER);
+  const [updateDrawingLayer] = useMutation(Mutation.UPDATE_DRAWING_LAYER);
 
   const gridStyle: React.CSSProperties = {
     width: "50%",
@@ -271,6 +286,31 @@ const CountryMap = ({ searchCountry, disasters }) => {
             .catch((error) => {
               console.error(error);
             });
+        } else {
+          addDrawingLayerData(e.features[0])
+            .then((drawingLayer_id) => {
+              console.log("MONGO ID: ", drawingLayer_id);
+              console.log("FEATURE Before: ", e.features[0]);
+              console.log("ALL 1: ", mapboxDrawRef.current.getAll());
+              var features = mapboxDrawRef.current.getAll();
+              var feature = features.features.find(function (f) {
+                return f.id === e.features[0].id;
+              });
+              console.log("afafafafa: ", feature);
+              feature.id = drawingLayer_id;
+
+              mapboxDrawRef.current.delete(e.features[0].id);
+
+              // Add the updated feature to the map
+              mapboxDrawRef.current.add(feature);
+              e.features[0] = feature;
+              console.log("FEATURE After: ", e.features[0]);
+              console.log("ALL 2: ", mapboxDrawRef.current.getAll());
+              createTextArea(mapboxDrawRef, mapRef, e.features[0]);
+            })
+            .catch((error) => {
+              console.error(error);
+            });
         }
       });
 
@@ -310,6 +350,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
     if (!mapContainer) {
       return;
     }
+
     if (!loading && data) {
       // reformat the data fetched
       const pinData = data.pinMany.map((item) => ({
@@ -441,6 +482,21 @@ const CountryMap = ({ searchCountry, disasters }) => {
     link.click();
   };
 
+  const addDrawingLayerData = (newDrawingLayer) => {
+    const drawingLayerData = {
+      disaster: id,
+      featureType: newDrawingLayer.geometry.type,
+      featureGeoJSON: newDrawingLayer,
+      createdBy: "63d10ad4e30540f8a78a183f",
+    };
+    console.log("afafaf: ", drawingLayerData);
+    return addDrawingLayer({ variables: { record: drawingLayerData } })
+      .catch((error) => alert(error.message))
+      .then((result) => {
+        return result.data.drawingLayerCreateOne.recordId;
+      });
+  };
+
   const addPinData = (newPin) => {
     const pinTestData = {
       disaster: id,
@@ -451,6 +507,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
       },
       createdBy: "63d10ad4e30540f8a78a183f",
     };
+
     return addPin({ variables: { record: pinTestData } })
       .catch((error) => alert(error.message))
       .then((result) => {
