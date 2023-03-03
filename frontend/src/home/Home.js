@@ -29,6 +29,7 @@ const Home = ({ disasters }) => {
 			style: mapStyle,
 			center: [0, 25],
 			zoom: 0.9,
+			minZoom: 0.9,
 		});
 
 		mapboxDrawRef.current = new MapboxDraw({
