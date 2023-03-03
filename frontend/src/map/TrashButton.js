@@ -11,7 +11,7 @@ const TrashButton = ({ mapboxDrawRef }) => {
     selectedFeatures.forEach((feature) => {
       console.log(feature.id);
       if (window.confirm("Are you sure you want to delete this pin?")) {
-        deletePin({ variables: { filter: { _id: feature.id } } })
+        deletePin({ variables: { id: feature.id } })
           .then(() => alert("Value deleted successfully!"))
           .catch((error) => alert(error.message));
         let state = feature;

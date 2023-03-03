@@ -444,7 +444,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
   const addPinData = (newPin) => {
     const pinTestData = {
       disaster: id,
-      pinText: "test text",
+      pinText: "",
       pinCoordinates: {
         type: newPin.geometry.type,
         coordinates: newPin.geometry.coordinates,

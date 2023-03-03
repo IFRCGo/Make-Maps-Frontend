@@ -9,9 +9,11 @@ export const ADD_PIN = gql`
 `;
 
 export const DELETE_PIN = gql`
-  mutation PinRemoveOne($filter: FilterRemoveOnePinInput) {
-    pinRemoveOne(filter: $filter) {
-      recordId
+  mutation PinRemoveOneCustom($id: MongoID!) {
+    pinRemoveOneCustom(_id: $id) {
+      record {
+        _id
+      }
     }
   }
 `;
