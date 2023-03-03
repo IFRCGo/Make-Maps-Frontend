@@ -27,3 +27,34 @@ export const UPDATE_PIN = gql`
     }
   }
 `;
+
+export const ADD_DRAWING_LAYER = gql`
+  mutation DrawingLayerCreateOne($record: CreateOneDrawingLayerInput!) {
+    drawingLayerCreateOne(record: $record) {
+      recordId
+    }
+  }
+`;
+
+export const DELETE_DRAWING_LAYER = gql`
+  mutation DrawingLayerRemoveOneCustom($id: MongoID!) {
+    drawingLayerRemoveOneCustom(_id: $id) {
+      record {
+        _id
+      }
+    }
+  }
+`;
+
+export const UPDATE_DRAWING_LAYER = gql`
+  mutation DrawingLayerUpdateByIdCustom(
+    $id: MongoID!
+    $record: UpdateByIdDrawingLayerInput!
+  ) {
+    drawingLayerUpdateByIdCustom(_id: $id, record: $record) {
+      record {
+        _id
+      }
+    }
+  }
+`;
