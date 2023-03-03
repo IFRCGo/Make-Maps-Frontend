@@ -27,8 +27,8 @@ const Home = ({ disasters }) => {
 		mapRef.current = new maplibregl.Map({
 			container: mapContainer.current,
 			style: mapStyle,
-			center: [16.62662018, 49.2125578],
-			zoom: 0,
+			center: [0, 25],
+			zoom: 0.9,
 		});
 
 		mapboxDrawRef.current = new MapboxDraw({
