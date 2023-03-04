@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Modal } from "antd";
 import { LAYERS, LAYER_STATUS } from "./constant";
 
-const LayerMoral = ({ mapRef, isModalOpen, setIsModalOpen }) => {
+const LayerMoral = ({ mapRef, isModalOpen, setIsModalOpen, currentLayers, setCurrentLayers }) => {
   const [layerStatus, setLayerStatus] = useState(() => {
     return LAYERS.reduce((acc, layer) => {
       acc[layer.name] = LAYER_STATUS.NOT_RENDERING;
@@ -11,6 +11,7 @@ const LayerMoral = ({ mapRef, isModalOpen, setIsModalOpen }) => {
   });
 
   const addLayer = (layerName) => {
+    setCurrentLayers([...currentLayers, layerName]);
     const maplibreMap = mapRef.current;
     const layer = LAYERS.find((layer) => layer.name === layerName);
     if (layer.type === "TMS") {
@@ -69,6 +70,7 @@ const LayerMoral = ({ mapRef, isModalOpen, setIsModalOpen }) => {
   };
 
   const removeLayer = (layerName) => {
+    setCurrentLayers(currentLayers.filter(layer => layer !== layerName));
     const maplibreMap = mapRef.current;
     maplibreMap.removeLayer(layerName);
     maplibreMap.removeSource(layerName);
