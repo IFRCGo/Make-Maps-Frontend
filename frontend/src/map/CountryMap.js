@@ -238,7 +238,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
         style: mapStyle,
         center: [long, lat],
         zoom: 9,
-        minZoom: 10,
+        minZoom: 8,
       });
 
       mapboxDrawRef.current = new MapboxDraw({
@@ -262,15 +262,10 @@ const CountryMap = ({ searchCountry, disasters }) => {
         if (e.features[0].geometry.type === "Point") {
           addPinData(e.features[0])
             .then((pin_id) => {
-              console.log("MONGO ID: ", pin_id);
-
-              console.log("FEATURE Before: ", e.features[0]);
-              console.log("ALL 1: ", mapboxDrawRef.current.getAll());
               var features = mapboxDrawRef.current.getAll();
               var feature = features.features.find(function (f) {
                 return f.id === e.features[0].id;
               });
-              console.log("afafafafa: ", feature);
               feature.id = pin_id;
 
               mapboxDrawRef.current.delete(e.features[0].id);
@@ -278,25 +273,20 @@ const CountryMap = ({ searchCountry, disasters }) => {
               // Add the updated feature to the map
               mapboxDrawRef.current.add(feature);
               e.features[0] = feature;
-              console.log("FEATURE After: ", e.features[0]);
-              console.log("ALL 2: ", mapboxDrawRef.current.getAll());
               createTextArea(mapboxDrawRef, mapRef, e.features[0]);
             })
-
             .catch((error) => {
               console.error(error);
             });
         } else {
+          console.log(e.features[0]);
           addDrawingLayerData(e.features[0])
             .then((drawingLayer_id) => {
-              console.log("MONGO ID: ", drawingLayer_id);
-              console.log("FEATURE Before: ", e.features[0]);
-              console.log("ALL 1: ", mapboxDrawRef.current.getAll());
+              console.log(drawingLayer_id);
               var features = mapboxDrawRef.current.getAll();
               var feature = features.features.find(function (f) {
                 return f.id === e.features[0].id;
               });
-              console.log("afafafafa: ", feature);
               feature.id = drawingLayer_id;
 
               mapboxDrawRef.current.delete(e.features[0].id);
@@ -304,9 +294,8 @@ const CountryMap = ({ searchCountry, disasters }) => {
               // Add the updated feature to the map
               mapboxDrawRef.current.add(feature);
               e.features[0] = feature;
-              console.log("FEATURE After: ", e.features[0]);
-              console.log("ALL 2: ", mapboxDrawRef.current.getAll());
-              createTextArea(mapboxDrawRef, mapRef, e.features[0]);
+              console.log(e.features[0]);
+              updateDrawData(e.features[0]);
             })
             .catch((error) => {
               console.error(error);
@@ -341,6 +330,9 @@ const CountryMap = ({ searchCountry, disasters }) => {
               e.features[0]
             );
           }
+        } else {
+          console.log(e.features[0]);
+          updateDrawData(e.features[0]);
         }
       });
     }
@@ -351,7 +343,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
       return;
     }
 
-    if (!loading && data) {
+    if (!loading && data && !layersLoading && layersData) {
       // reformat the data fetched
       const pinData = data.pinMany.map((item) => ({
         id: item._id,
@@ -366,16 +358,32 @@ const CountryMap = ({ searchCountry, disasters }) => {
         },
       }));
 
+      const drawData = layersData.drawingLayerMany.map((item) => ({
+        id: item._id,
+        type: "Feature",
+        properties: {
+          type: "Feature",
+        },
+        geometry: {
+          coordinates: item.featureGeoJSON.geometry.coordinates,
+          type: item.featureGeoJSON.geometry.type,
+          id: item._id,
+        },
+      }));
+
       mapRef.current.on("load", function () {
         console.log("loading");
         pinData.forEach((pin) => {
           mapboxDrawRef.current.add(pin);
           createTextArea(mapboxDrawRef, mapRef, pin);
         });
+        drawData.forEach((draw) => {
+          mapboxDrawRef.current.add(draw);
+        });
       });
       // Add the point feature to the map using the "draw_point" mode
     }
-  }, [loading, data]);
+  }, [loading, data, layersLoading, layersData]);
 
   useEffect(() => {
     if (!loading && data) {
@@ -536,6 +544,22 @@ const CountryMap = ({ searchCountry, disasters }) => {
     }).catch((error) => alert(error.message));
   };
 
+  const updateDrawData = (updatedDrawData) => {
+    const drawUpdated = {
+      featureGeoJSON: {
+        id: updatedDrawData.id,
+        type: "Feature",
+        geometry: {
+          coordinates: updatedDrawData.geometry.coordinates,
+          type: updatedDrawData.geometry.type,
+        },
+      },
+    };
+    updateDrawingLayer({
+      variables: { id: updatedDrawData.id, record: drawUpdated },
+    }).catch((error) => alert(error.message));
+  };
+
   return (
     <div className="map-wrap" style={{ position: "relative" }}>
       <div
@@ -545,7 +569,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
           height: "calc(100vh - 64px)",
         }}
       >
-        <div style={{ position: "absolute", zIndex: 1 }}>
+        <div style={{ position: "absolute", zIndex: 101 }}>
           <Collapse
             expandIconPosition="end"
             style={{ backgroundColor: "white", margin: 20 }}
