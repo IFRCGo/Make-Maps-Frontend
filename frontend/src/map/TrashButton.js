@@ -6,16 +6,18 @@ import * as Mutation from "../API/AllMutations";
 
 const TrashButton = ({ mapboxDrawRef }) => {
   const [deletePin] = useMutation(Mutation.DELETE_PIN);
+  const [deleteDraw] = useMutation(Mutation.DELETE_DRAWING_LAYER);
 
   const handleClick = (selectedFeatures) => {
     selectedFeatures.forEach((feature) => {
-      console.log(feature.id);
+      console.log(feature);
+      // change the window UI
       if (window.confirm("Are you sure you want to delete this pin?")) {
-        deletePin({ variables: { id: feature.id } })
-          .then(() => alert("Value deleted successfully!"))
-          .catch((error) => alert(error.message));
         let state = feature;
         if (state.geometry.type === "Point") {
+          deletePin({ variables: { id: feature.id } })
+            .then(() => alert("Value deleted successfully!"))
+            .catch((error) => alert(error.message));
           let container = document.getElementById(`text-container-${state.id}`);
           if (container) {
             // console.log("Found container element:", container);
@@ -29,6 +31,9 @@ const TrashButton = ({ mapboxDrawRef }) => {
           }
           mapboxDrawRef.current.trash();
         } else {
+          deleteDraw({ variables: { id: feature.id } })
+            .then(() => alert("Value deleted successfully!"))
+            .catch((error) => alert(error.message));
           mapboxDrawRef.current.trash();
         }
       }

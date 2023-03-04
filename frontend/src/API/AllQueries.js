@@ -37,6 +37,7 @@ export const GET_PINS = gql`
 export const GET_DRAWING_LAYERS = gql`
   query DrawingLayerMany($filter: FilterFindManyDrawingLayerInput) {
     drawingLayerMany(filter: $filter) {
+      _id
       featureGeoJSON
     }
   }
