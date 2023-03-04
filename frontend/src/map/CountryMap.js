@@ -32,6 +32,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
     "https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentLayers, setCurrentLayers] = useState([]);
 
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
@@ -541,6 +542,32 @@ const CountryMap = ({ searchCountry, disasters }) => {
       <div
         ref={mapContainer}
         style={{
+          width: "30vw",
+          height: "calc(100vh - 64px)",
+          position: "absolute",
+          top: 0,
+          right: 0
+        }}
+      >
+        <div style={{ position: "absolute", zIndex: 1 }}>
+          <Collapse
+            expandIconPosition="end"
+            style={{ backgroundColor: "white", margin: 20 }}
+          >
+            <Panel
+              header="Layer Information"
+              key="2"
+              style={{ width: 300, fontSize: 18 }}
+            >
+              {currentLayers}
+            </Panel>
+          </Collapse>
+        </div>
+      </div>
+
+      <div
+        ref={mapContainer}
+        style={{
           width: "100vw",
           height: "calc(100vh - 64px)",
         }}
@@ -610,6 +637,8 @@ const CountryMap = ({ searchCountry, disasters }) => {
         mapRef={mapRef}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
+        currentLayers={currentLayers} 
+        setCurrentLayers={setCurrentLayers}
       />
       <StyleButton setMapStyle={setMapStyle} />
       <ToolBar
