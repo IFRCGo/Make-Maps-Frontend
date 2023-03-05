@@ -280,10 +280,10 @@ const CountryMap = ({ searchCountry, disasters }) => {
               console.error(error);
             });
         } else {
-          console.log(e.features[0]);
           addDrawingLayerData(e.features[0])
             .then((drawingLayer_id) => {
               console.log(drawingLayer_id);
+              console.log(mapboxDrawRef.current.getAll());
               var features = mapboxDrawRef.current.getAll();
               var feature = features.features.find(function (f) {
                 return f.id === e.features[0].id;
@@ -507,7 +507,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
   };
 
   const addPinData = (newPin) => {
-    const pinTestData = {
+    const pinData = {
       disaster: id,
       pinText: "",
       pinCoordinates: {
@@ -517,7 +517,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
       createdBy: "63d10ad4e30540f8a78a183f",
     };
 
-    return addPin({ variables: { record: pinTestData } })
+    return addPin({ variables: { record: pinData } })
       .catch((error) => alert(error.message))
       .then((result) => {
         return result.data.pinCreateOne.recordId;
@@ -570,7 +570,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
           height: "calc(100vh - 64px)",
           position: "absolute",
           top: 0,
-          right: 0
+          right: 0,
         }}
       >
         <div style={{ position: "absolute", zIndex: 1 }}>
@@ -661,7 +661,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
         mapRef={mapRef}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-        currentLayers={currentLayers} 
+        currentLayers={currentLayers}
         setCurrentLayers={setCurrentLayers}
       />
       <StyleButton setMapStyle={setMapStyle} />
