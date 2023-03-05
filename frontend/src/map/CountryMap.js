@@ -579,7 +579,13 @@ const CountryMap = ({ searchCountry, disasters }) => {
               key="2"
               style={{ width: 300, fontSize: 18 }}
             >
-              {currentLayers}
+              {currentLayers !== [] ? (
+                currentLayers.map((layer, index) => (
+                  <h4 key={index}>{layer}</h4>
+                ))
+              ) : (
+                <></>
+              )}
             </Panel>
           </Collapse>
         </div>
