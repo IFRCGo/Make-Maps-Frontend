@@ -8,10 +8,10 @@ import "./MapComponent.css";
 import ToolBar from "./ToolBar";
 import jsPDF from "jspdf";
 import StyleButton from "./StyleButton";
-import LayerMoral from "./LayerMoral";
+import LayerMoral from "./LayerModal";
 import TrashButton from "./TrashButton";
 import DrawStyles from "./DrawStyles";
-import * as MaplibreGrid from 'maplibre-grid';
+import * as MaplibreGrid from "maplibre-grid";
 
 const MapComponent = ({ searchCountry, props }) => {
   const [mapStyle, setMapStyle] = useState(
@@ -256,23 +256,26 @@ const MapComponent = ({ searchCountry, props }) => {
       //todo
       var scale = new maplibregl.ScaleControl({
         maxWidth: 80,
-        unit: 'metric'
+        unit: "metric",
       });
       mapRef.current.addControl(scale);
       const grid = new MaplibreGrid.Grid({
         gridWidth: 1,
         gridHeight: 1,
-        units: 'degrees',
+        units: "degrees",
         paint: {
-          'line-opacity': 0.2
-        }
+          "line-opacity": 0.2,
+        },
       });
       mapRef.current.addControl(grid);
 
-      mapRef.current.addControl(new maplibregl.NavigationControl({
-        showCompass: true,
-        showZoom: false
-      }), 'top-left');
+      mapRef.current.addControl(
+        new maplibregl.NavigationControl({
+          showCompass: true,
+          showZoom: false,
+        }),
+        "top-left"
+      );
 
       var pointId = point.id;
       var container = document.getElementById(`text-container-${pointId}`);
@@ -382,12 +385,13 @@ const MapComponent = ({ searchCountry, props }) => {
             screenCoordinates.x + textarea.clientHeight / 5 + "px";
           container.style.top =
             screenCoordinates.y - textarea.clientHeight / 2 + "px";
-            var info = document.getElementById('info');
+          var info = document.getElementById("info");
           var center = mapRef.current.getCenter();
           var lnglat = new maplibregl.LngLat(center.lng, center.lat);
           var lng = lnglat.lng.toFixed(4);
           var lat = lnglat.lat.toFixed(4);
-          document.getElementById('data-output').innerHTML = 'Longitude: ' + lng + '<br>Latitude: ' + lat;
+          document.getElementById("data-output").innerHTML =
+            "Longitude: " + lng + "<br>Latitude: " + lat;
         });
       }
     });
@@ -419,7 +423,9 @@ const MapComponent = ({ searchCountry, props }) => {
 
   const handleDownloadButton = () => {
     // Prompt a dialog box to ask the user for their choice
-    const confirmed = window.confirm("Please choose the file type to download:\n\n- Click \"OK\" to download a PNG file\n- Click \"Cancel\" to download a PDF file");
+    const confirmed = window.confirm(
+      'Please choose the file type to download:\n\n- Click "OK" to download a PNG file\n- Click "Cancel" to download a PDF file'
+    );
 
     // If the user cancels, download a PDF file
     if (!confirmed) {
@@ -451,7 +457,7 @@ const MapComponent = ({ searchCountry, props }) => {
       setTimeout(() => {
         const canvasDataURL = renderMap.getCanvas().toDataURL();
         const link = document.createElement("a");
-        if (type === 'PNG') {
+        if (type === "PNG") {
           link.href = canvasDataURL;
           link.download = "map-export.png";
           link.click();
@@ -472,9 +478,6 @@ const MapComponent = ({ searchCountry, props }) => {
           // Save the PDF file
           pdf.save("map-export.pdf");
         }
-
-
-
       }, 1000);
     });
 

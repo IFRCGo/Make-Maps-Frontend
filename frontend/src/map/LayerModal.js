@@ -2,7 +2,13 @@ import React, { useState } from "react";
 import { Modal } from "antd";
 import { LAYERS, LAYER_STATUS } from "./constant";
 
-const LayerMoral = ({ mapRef, isModalOpen, setIsModalOpen, currentLayers, setCurrentLayers }) => {
+const LayerModal = ({
+  mapRef,
+  isModalOpen,
+  setIsModalOpen,
+  currentLayers,
+  setCurrentLayers,
+}) => {
   const [layerStatus, setLayerStatus] = useState(() => {
     return LAYERS.reduce((acc, layer) => {
       acc[layer.name] = LAYER_STATUS.NOT_RENDERING;
@@ -70,7 +76,7 @@ const LayerMoral = ({ mapRef, isModalOpen, setIsModalOpen, currentLayers, setCur
   };
 
   const removeLayer = (layerName) => {
-    setCurrentLayers(currentLayers.filter(layer => layer !== layerName));
+    setCurrentLayers(currentLayers.filter((layer) => layer !== layerName));
     const maplibreMap = mapRef.current;
     maplibreMap.removeLayer(layerName);
     maplibreMap.removeSource(layerName);
@@ -89,7 +95,6 @@ const LayerMoral = ({ mapRef, isModalOpen, setIsModalOpen, currentLayers, setCur
       maplibreMap.setPaintProperty(layerName, "raster-opacity", opacity);
     } else {
       maplibreMap.setPaintProperty(layerName, "icon-opacity", opacity);
-
     }
   };
 
@@ -157,4 +162,4 @@ const LayerMoral = ({ mapRef, isModalOpen, setIsModalOpen, currentLayers, setCur
   );
 };
 
-export default LayerMoral;
+export default LayerModal;

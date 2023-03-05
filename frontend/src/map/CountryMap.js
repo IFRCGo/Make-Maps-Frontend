@@ -11,7 +11,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import * as Query from "../API/AllQueries";
 import * as Mutation from "../API/AllMutations";
 import StyleButton from "./StyleButton";
-import LayerMoral from "./LayerMoral";
+import LayerModal from "./LayerModal";
 import TrashButton from "./TrashButton";
 import ToolBar from "./ToolBar";
 import "./CustomMarker.css";
@@ -27,10 +27,6 @@ const CountryMap = ({ searchCountry, disasters }) => {
   const { state } = useLocation();
   const { countryData } = state || {};
 
-  // new from 36 - 43
-  const [mapStyle, setMapStyle] = useState(
-    "https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC"
-  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentLayers, setCurrentLayers] = useState([]);
 
@@ -236,7 +232,8 @@ const CountryMap = ({ searchCountry, disasters }) => {
 
       mapRef.current = new maplibregl.Map({
         container: mapContainer.current,
-        style: mapStyle,
+        style:
+          "https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC",
         center: [long, lat],
         zoom: 9,
         minZoom: 8,
@@ -337,7 +334,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
         }
       });
     }
-  }, [loading, data, long, lat, mapStyle]);
+  }, [loading, data, long, lat]);
 
   useEffect(() => {
     if (!mapContainer) {
@@ -391,9 +388,8 @@ const CountryMap = ({ searchCountry, disasters }) => {
       if (!mapContainer) {
         return;
       }
-      mapRef.current.setStyle(mapStyle);
     }
-  }, [mapStyle, loading, data]);
+  }, [loading, data]);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -573,7 +569,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
           right: 0,
         }}
       >
-        <div style={{ position: "absolute", zIndex: 1 }}>
+        <div style={{ position: "absolute", zIndex: 101 }}>
           <Collapse
             expandIconPosition="end"
             style={{ backgroundColor: "white", margin: 20 }}
@@ -657,14 +653,14 @@ const CountryMap = ({ searchCountry, disasters }) => {
       </div>
 
       <TrashButton mapboxDrawRef={mapboxDrawRef} />
-      <LayerMoral
+      <LayerModal
         mapRef={mapRef}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
         currentLayers={currentLayers}
         setCurrentLayers={setCurrentLayers}
       />
-      <StyleButton setMapStyle={setMapStyle} />
+      {mapRef ? <StyleButton mapRef={mapRef} /> : <></>}
       <ToolBar
         handlePinButton={handlePinButton}
         showModal={showModal}
