@@ -23,7 +23,6 @@ const IFRCPointModal = ({
                 form.resetFields();
                 const maplibre = mapRef.current;
                 updateFeatureGeometry(reloadedLayer, featureID, [values.LNG, values.LAT]);
-                console.log(reloadLayer);
                 reloadLayer(maplibre, reloadedLayer);
             })
             .catch((info) => {
