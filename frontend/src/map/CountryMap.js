@@ -17,6 +17,7 @@ import ToolBar from "./ToolBar";
 import "./CustomMarker.css";
 import "./MapComponent.css";
 import DrawStyles from "./DrawStyles";
+import html2canvas from "html2canvas";
 
 const { Meta } = Card;
 
@@ -424,48 +425,17 @@ const CountryMap = ({ searchCountry, disasters }) => {
       attributionControl: false,
     });
 
-    renderMap.once("idle", () => {
-      setTimeout(() => {
-        const canvas = document.createElement("canvas");
-        canvas.width = maplibreMap.getCanvas().width;
-        canvas.height = maplibreMap.getCanvas().height;
-        const canvasContext = canvas.getContext("2d");
-        canvasContext.drawImage(maplibreMap.getCanvas(), 0, 0);
-
-        const textContainers = document.querySelectorAll(
-          "[id^='text-container-']"
-        ); // Add this line to select text containers
-        textContainers.forEach((textContainer) => {
-          console.log(textContainer);
-          const { left, top, width, height } =
-            textContainer.getBoundingClientRect();
-          canvasContext.drawImage(
-            maplibreMap.getCanvas(),
-            left,
-            top,
-            width,
-            height,
-            left,
-            top,
-            width,
-            height
-          );
-        });
-
+    renderMap.on("load", function () {
+      html2canvas(renderMap.getContainer()).then(function (canvas) {
+        const timestamp = new Date();
         const canvasDataURL = canvas.toDataURL();
         const link = document.createElement("a");
         link.href = canvasDataURL;
-        link.download = "map-export.png";
-
+        link.download = "map-" + timestamp.getTime() + ".png";
         link.click();
         link.remove();
-      }, 1000);
-    });
-
-    renderMap.once("idle", () => {
-      setTimeout(() => {
-        renderMap.remove();
-      }, 1000);
+      });
+      renderMap.remove();
     });
   };
 

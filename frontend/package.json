@@ -16,6 +16,7 @@
     "bootstrap": "^5.2.3",
     "flatlist-react": "^1.5.7",
     "graphql": "^16.6.0",
+    "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
     "mapbox-gl-draw-paint-mode": "^1.1.1",
     "mapbox-gl-draw-point-with-text-mode": "^1.0.2",
