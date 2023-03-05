@@ -14,8 +14,7 @@ const CountrySearch = ({ disasters }) => {
   const handleSelect = (value) => {
     const disaster = locationOptions.find((option) => value === option.value);
     navigate(
-      `map/${disaster._id}/${disaster.disasterCoordinates.coordinates[0]}/${disaster.disasterCoordinates.coordinates[1]}`,
-      { state: { countryData: disaster } }
+      `map/${disaster._id}/${disaster.disasterCoordinates.coordinates[0]}/${disaster.disasterCoordinates.coordinates[1]}`
     );
     // refresh the page
     navigate(0);

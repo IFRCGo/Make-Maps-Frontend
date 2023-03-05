@@ -18,6 +18,20 @@ export const GET_DISASTERS = gql`
   }
 `;
 
+export const GET_DISASTERS_BY_ID = gql`
+  query GetDisasterById($id: MongoID!) {
+    disasterById(_id: $id) {
+      _id
+      date
+      disasterName
+      disasterType
+      amount_requested
+      amount_funded
+      location
+    }
+  }
+`;
+
 export const GET_PINS = gql`
   query PinQuery($filter: FilterFindManyPinInput) {
     pinMany(filter: $filter) {

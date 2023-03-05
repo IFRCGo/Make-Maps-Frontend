@@ -9,7 +9,7 @@
 }
 
 .ant-drawer .ant-drawer-body {
-  padding: 15px;
+  /* padding: 15px; */
 }
 
 .tool-button {
@@ -17,7 +17,8 @@
   vertical-align: middle;
 }
 
-.tool-area .ant-btn.ant-btn-lg.ant-btn-icon-only, button {
+.tool-area .ant-btn.ant-btn-lg.ant-btn-icon-only,
+button {
   width: 50px;
   padding-inline-start: 0;
   padding-inline-end: 0;
@@ -30,10 +31,11 @@
   border-radius: 8px;
 }
 
-.tool-area .ant-drawer-bottom>.ant-drawer-content-wrapper {
+.tool-area .ant-drawer-bottom > .ant-drawer-content-wrapper {
   bottom: 0;
   inset-inline: 0;
-  box-shadow: 0 -6px 16px 0 rgb(0 0 0 / 8%), 0 -3px 6px -4px rgb(0 0 0 / 12%), 0 -9px 28px 8px rgb(0 0 0 / 5%);
+  box-shadow: 0 -6px 16px 0 rgb(0 0 0 / 8%), 0 -3px 6px -4px rgb(0 0 0 / 12%),
+    0 -9px 28px 8px rgb(0 0 0 / 5%);
   border-top-left-radius: 25px;
   border-top-right-radius: 25px;
 }

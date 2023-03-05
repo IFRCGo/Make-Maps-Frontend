@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
-
-import MapComponent from "./map/MapComponent";
 import Layout from "./components/Layout";
 import Home from "./home/Home";
 import CountryMap from "./map/CountryMap";
@@ -12,7 +10,7 @@ import * as Query from "./API/AllQueries";
 
 function App() {
   const [disasters, setDisasters] = useState([]);
-  const { loading, error, data } = useQuery(Query.GET_DISASTERS);
+  const { data } = useQuery(Query.GET_DISASTERS);
 
   useEffect(() => {
     if (data) {
@@ -28,8 +26,8 @@ function App() {
         </Route>
         <Route index element={<Home disasters={disasters} />} />
         <Route path="map">
-          <Route index element={<MapComponent />} />
           <Route
+            index
             path=":id?/:long?/:lat?"
             element={<CountryMap disasters={disasters} />}
           />
