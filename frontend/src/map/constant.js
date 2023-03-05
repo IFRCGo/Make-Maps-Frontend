@@ -50,15 +50,23 @@ export const LAYERS = [
         type: "Feature",
         geometry: {
           type: "Point",
-          coordinates: [16.62662018, 49.2125578],
+          coordinates: [-66.84734335564356,
+            18.38480676410721],
         },
+        properties: {
+          id: "point-1"
+        }
       },
       {
         type: "Feature",
         geometry: {
           type: "Point",
-          coordinates: [55.8718047, 12.3982],
+          coordinates: [-67.08629599236279,
+            18.39785950349716],
         },
+        properties: {
+          id: "point-2" 
+        }
       },
     ],
     type: "geojson",

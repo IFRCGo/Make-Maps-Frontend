@@ -9,6 +9,10 @@ const LayerModal = ({
   currentLayers,
   setCurrentLayers,
 }) => {
+
+
+  const [IFRCModalOpen, setIFRCModalOpen] = useState(false);
+
   const [layerStatus, setLayerStatus] = useState(() => {
     return LAYERS.reduce((acc, layer) => {
       acc[layer.name] = LAYER_STATUS.NOT_RENDERING;
@@ -58,10 +62,55 @@ const LayerModal = ({
               "icon-image": "custom-marker",
               "icon-size": 0.1,
             },
+            interactive: true
           });
         }
       );
-    }
+
+      maplibreMap.on('dblclick', layerName, function (e) {
+        const features = maplibreMap.queryRenderedFeatures(e.point, { layers: ['IFRC Points'] });
+        const clickedFeature = features[0];
+        const clickedFeatureId = clickedFeature.properties.id;
+        const layer = LAYERS.find((layer) => layer.name === layerName);
+        const feature = layer.data.find(f => f.properties.id === clickedFeatureId);
+
+        console.log(layer);
+        feature.geometry.coordinates = [-68.84734335564356, 18.38480676410721];
+        const updatedFeatures = [...layer.data];
+        updatedFeatures[clickedFeatureId] = feature;
+        layer.data = updatedFeatures;
+        removeLayer(layerName);
+
+
+        maplibreMap.loadImage(
+          require("./../images/IFRC.jpeg"),
+          function (error, image) {
+            if (error) throw error;
+            maplibreMap.addImage("custom-marker", image);
+            // Add a GeoJSON source with 15 points
+            maplibreMap.addSource(layerName, {
+              type: "geojson",
+              data: {
+                type: "FeatureCollection",
+                features: layer.data,
+              },
+            });
+            //todo refactor this function. should be easy to do
+            // Add a symbol layer
+            maplibreMap.addLayer({
+              id: layerName,
+              type: "symbol",
+              source: layerName,
+              layout: {
+                "icon-image": "custom-marker",
+                "icon-size": 0.1,
+              },
+              interactive: true
+            });
+          }
+        );
+      })
+    };
 
     const layers = mapRef.current.getStyle().layers;
 
