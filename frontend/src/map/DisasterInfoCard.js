@@ -1,21 +1,77 @@
 import React from "react";
-import { Card } from "antd";
+import { Collapse, Card } from "antd";
+import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
 
-const DisasterInfoCard = () => {
+const { Meta } = Card;
+const { Panel } = Collapse;
+
+const gridStyle = {
+  width: "50%",
+  textAlign: "center",
+  display: "flex",
+  alignContent: "center",
+  justifyContent: "center",
+  alignItems: "center",
+};
+
+const DisasterInfoCard = ({ countryData }) => {
   return (
-    <div style={{ zIndex: 999 }}>
-      <Card
-        title="Default size card"
-        style={{
-          zIndex: 999,
-          width: 300,
-        }}
+    <Collapse
+      expandIconPosition="end"
+      style={{ backgroundColor: "white", margin: 20 }}
+    >
+      <Panel
+        header={countryData.location}
+        key="1"
+        style={{ width: 300, fontSize: 18 }}
       >
-        <p>Card content</p>
-        <p>Card content</p>
-        <p>Card content</p>
-      </Card>
-    </div>
+        <Card>
+          <Card.Grid hoverable={false} style={gridStyle}>
+            <div
+              style={{
+                flexDirection: "row",
+                flex: 1,
+                justifyContent: "space-around",
+              }}
+            >
+              <GiReceiveMoney style={{ color: "red", fontSize: "4em" }} />
+              <Meta
+                title={new Intl.NumberFormat("en-US").format(
+                  parseInt(countryData.amount_requested)
+                )}
+                description="Amount Requested (CHF)"
+              />
+            </div>
+          </Card.Grid>
+          <Card.Grid hoverable={false} style={gridStyle}>
+            <div
+              style={{
+                flexDirection: "row",
+                flex: 1,
+                justifyConxtent: "space-around",
+              }}
+            >
+              <GiPayMoney style={{ color: "red", fontSize: "4em" }} />
+              <Meta
+                title={new Intl.NumberFormat("en-US").format(
+                  parseInt(countryData.amount_funded)
+                )}
+                description="Amount Funded (CHF)"
+              />
+            </div>
+          </Card.Grid>
+        </Card>
+        <Card
+          title="Emergency Overview"
+          style={{
+            textAlign: "center",
+            width: "100%",
+          }}
+        >
+          Information...
+        </Card>
+      </Panel>
+    </Collapse>
   );
 };
 

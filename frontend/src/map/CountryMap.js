@@ -5,8 +5,6 @@ import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import PaintMode from "mapbox-gl-draw-paint-mode";
 import DrawPointWithText from "mapbox-gl-draw-point-with-text-mode";
 import jsPDF from "jspdf";
-import { Card, Collapse } from "antd";
-import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
 import { useMutation, useQuery } from "@apollo/client";
 import * as Query from "../API/AllQueries";
 import * as Mutation from "../API/AllMutations";
@@ -18,10 +16,8 @@ import "./CustomMarker.css";
 import "./CountryMap.css";
 import DrawStyles from "./DrawStyles";
 import html2canvas from "html2canvas";
-
-const { Meta } = Card;
-
-const { Panel } = Collapse;
+import DisasterInfoCard from "./DisasterInfoCard";
+import ChosenLayerCard from "./ChosenLayerCard";
 
 const CountryMap = ({ searchCountry, disasters }) => {
   const { id, long, lat } = useParams();
@@ -69,15 +65,6 @@ const CountryMap = ({ searchCountry, disasters }) => {
 
   const [addDrawingLayer] = useMutation(Mutation.ADD_DRAWING_LAYER);
   const [updateDrawingLayer] = useMutation(Mutation.UPDATE_DRAWING_LAYER);
-
-  const gridStyle: React.CSSProperties = {
-    width: "50%",
-    textAlign: "center",
-    display: "flex",
-    alignContent: "center",
-    justifyContent: "center",
-    alignItems: "center",
-  };
 
   function createTextAreaContainer(point, mapRef) {
     var container = document.getElementById(`text-container-${point.id}`);
@@ -558,103 +545,15 @@ const CountryMap = ({ searchCountry, disasters }) => {
     <div className="map-wrap" style={{ position: "relative" }}>
       <div
         ref={mapContainer}
-        style={{
-          width: "30vw",
-          height: "calc(100vh - 64px)",
-          position: "absolute",
-          top: 0,
-          right: 0,
-        }}
+        style={{ width: "100vw", height: "calc(100vh - 64px)" }}
       >
         <div style={{ position: "absolute", zIndex: 101 }}>
-          <Collapse
-            expandIconPosition="end"
-            style={{ backgroundColor: "white", margin: 20 }}
-          >
-            <Panel
-              header="Layer Information"
-              key="2"
-              style={{ width: 300, fontSize: 18 }}
-            >
-              {currentLayers !== [] ? (
-                currentLayers.map((layer, index) => (
-                  <h4 key={index}>{layer}</h4>
-                ))
-              ) : (
-                <></>
-              )}
-            </Panel>
-          </Collapse>
+          <DisasterInfoCard countryData={countryData} />
+        </div>
+        <div style={{ position: "absolute", zIndex: 101, right: 80 }}>
+          <ChosenLayerCard currentLayers={currentLayers} />
         </div>
       </div>
-
-      <div
-        ref={mapContainer}
-        style={{
-          width: "100vw",
-          height: "calc(100vh - 64px)",
-        }}
-      >
-        <div style={{ position: "absolute", zIndex: 101 }}>
-          <Collapse
-            expandIconPosition="end"
-            style={{ backgroundColor: "white", margin: 20 }}
-          >
-            <Panel
-              header={countryData.location}
-              key="1"
-              style={{ width: 300, fontSize: 18 }}
-            >
-              <Card>
-                <Card.Grid hoverable={false} style={gridStyle}>
-                  <div
-                    style={{
-                      flexDirection: "row",
-                      flex: 1,
-                      justifyContent: "space-around",
-                    }}
-                  >
-                    <GiReceiveMoney style={{ color: "red", fontSize: "4em" }} />
-                    <Meta
-                      title={new Intl.NumberFormat("en-US").format(
-                        parseInt(countryData.amount_requested)
-                      )}
-                      description="Amount Requested (CHF)"
-                    />
-                  </div>
-                </Card.Grid>
-                <Card.Grid hoverable={false} style={gridStyle}>
-                  <div
-                    style={{
-                      flexDirection: "row",
-                      flex: 1,
-                      justifyConxtent: "space-around",
-                    }}
-                  >
-                    <GiPayMoney style={{ color: "red", fontSize: "4em" }} />
-                    <Meta
-                      title={new Intl.NumberFormat("en-US").format(
-                        parseInt(countryData.amount_funded)
-                      )}
-                      description="Amount Funded (CHF)"
-                    />
-                  </div>
-                </Card.Grid>
-              </Card>
-              <Card
-                title="Emergency Overview"
-                style={{
-                  textAlign: "center",
-                  width: "100%",
-                }}
-              >
-                Information...
-              </Card>
-            </Panel>
-          </Collapse>
-        </div>
-      </div>
-
       <TrashButton mapboxDrawRef={mapboxDrawRef} />
       <LayerModal
         mapRef={mapRef}

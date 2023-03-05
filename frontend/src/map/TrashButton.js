@@ -10,7 +10,6 @@ const TrashButton = ({ mapboxDrawRef }) => {
 
   const handleClick = (selectedFeatures) => {
     selectedFeatures.forEach((feature) => {
-      console.log(feature);
       // change the window UI
       if (window.confirm("Are you sure you want to delete this pin?")) {
         let state = feature;
@@ -20,7 +19,6 @@ const TrashButton = ({ mapboxDrawRef }) => {
             .catch((error) => alert(error.message));
           let container = document.getElementById(`text-container-${state.id}`);
           if (container) {
-            // console.log("Found container element:", container);
             setTimeout(() => {
               container.remove();
             }, 0);
