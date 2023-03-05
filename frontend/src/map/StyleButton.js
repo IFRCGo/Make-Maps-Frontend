@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FloatButton, Button, Space, Popover } from "antd";
 import { HiOutlineMap } from "react-icons/hi";
 
-const StyleButton = ({ mapRef }) => {
+const StyleButton = ({ mapRef, currentLayers }) => {
   const [select, setSelect] = useState("Default");
 
   const moveLayer = () => {
@@ -11,6 +11,11 @@ const StyleButton = ({ mapRef }) => {
     drawLayers.forEach((layer) => {
       mapRef.current.moveLayer(layer.id);
     });
+    if (currentLayers !== []) {
+      currentLayers.forEach((layer) => {
+        mapRef.current.moveLayer(layer);
+      });
+    }
   };
 
   const removeLayer = () => {

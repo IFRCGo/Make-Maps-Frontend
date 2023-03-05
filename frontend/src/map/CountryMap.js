@@ -380,7 +380,6 @@ const CountryMap = ({ searchCountry, disasters }) => {
           mapboxDrawRef.current.add(draw);
         });
       });
-      // Add the point feature to the map using the "draw_point" mode
     }
   }, [loading, data, layersLoading, layersData]);
 
@@ -668,7 +667,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
         currentLayers={currentLayers}
         setCurrentLayers={setCurrentLayers}
       />
-      {mapRef ? <StyleButton mapRef={mapRef} /> : <></>}
+      {mapRef ? <StyleButton mapRef={mapRef} currentLayers={currentLayers} /> : <></>}
       <ToolBar
         handlePinButton={handlePinButton}
         showModal={showModal}
