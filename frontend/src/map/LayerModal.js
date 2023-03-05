@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Modal } from "antd";
 import { LAYERS, LAYER_STATUS } from "./constant";
+import IFRCPointModal from "./IFRCPointModal";
 
 const LayerModal = ({
   mapRef,
@@ -9,6 +10,11 @@ const LayerModal = ({
   currentLayers,
   setCurrentLayers,
 }) => {
+
+
+  const [IFRCModalOpen, setIFRCModalOpen] = useState(false);
+  const [reloadID, setReloadID] = useState();
+
   const [layerStatus, setLayerStatus] = useState(() => {
     return LAYERS.reduce((acc, layer) => {
       acc[layer.name] = LAYER_STATUS.NOT_RENDERING;
@@ -21,47 +27,10 @@ const LayerModal = ({
     const maplibreMap = mapRef.current;
     const layer = LAYERS.find((layer) => layer.name === layerName);
     if (layer.type === "TMS") {
-      maplibreMap.addSource(layerName, {
-        type: "raster",
-        tiles: [layer.url],
-        tileSize: 256,
-      });
-      maplibreMap.addLayer({
-        id: layerName,
-        type: "raster",
-        source: layerName,
-        paint: {
-          "raster-opacity": 1,
-        },
-      });
+      addTMSLayer(maplibreMap, layer);
     } else if (layer.type === "geojson") {
-      maplibreMap.loadImage(
-        require("./../images/IFRC.jpeg"),
-        function (error, image) {
-          if (error) throw error;
-          maplibreMap.addImage("custom-marker", image);
-          // Add a GeoJSON source with 15 points
-          maplibreMap.addSource(layerName, {
-            type: "geojson",
-            data: {
-              type: "FeatureCollection",
-              features: layer.data,
-            },
-          });
-
-          // Add a symbol layer
-          maplibreMap.addLayer({
-            id: layerName,
-            type: "symbol",
-            source: layerName,
-            layout: {
-              "icon-image": "custom-marker",
-              "icon-size": 0.1,
-            },
-          });
-        }
-      );
-    }
+      addGeoJsonLayer(maplibreMap, layer);
+    };
 
     const layers = mapRef.current.getStyle().layers;
 
@@ -72,6 +41,85 @@ const LayerModal = ({
     });
     updateLayerStatus(layerName, LAYER_STATUS.IS_RENDERING);
   };
+
+  const addTMSLayer = (map, layer) => {
+    map.addSource(layer.name, {
+      type: "raster",
+      tiles: [layer.url],
+      tileSize: 256,
+    });
+    map.addLayer({
+      id: layer.name,
+      type: "raster",
+      source: layer.name,
+      paint: {
+        "raster-opacity": 1,
+      },
+    });
+  };
+
+  const addGeoJsonLayer = (map, layer) => {
+    map.loadImage(
+      require("./../images/IFRC.jpeg"),
+      function (error, image) {
+        if (error) throw error;
+        map.addImage("custom-marker", image);
+        // Add a GeoJSON source with 15 points
+        map.addSource(layer.name, {
+          type: "geojson",
+          data: {
+            type: "FeatureCollection",
+            features: layer.data,
+          },
+        });
+
+        // Add a symbol layer
+        map.addLayer({
+          id: layer.name,
+          type: "symbol",
+          source: layer.name,
+          layout: {
+            "icon-image": "custom-marker",
+            "icon-size": 0.1,
+          },
+          interactive: true
+        });
+      }
+    );
+
+    if (layer.name === 'IFRC Points') {
+      map.on('dblclick', layer.name, function (e) {
+        const features = map.queryRenderedFeatures(e.point, { layers: ['IFRC Points'] });
+        const clickedFeature = features[0];
+        console.log(clickedFeature.geometry.coordinates);
+        const clickedFeatureId = clickedFeature.properties.id;
+        setReloadID(clickedFeatureId);
+        setIFRCModalOpen(true);
+        reloadLayer(map, layer);
+      })
+    }
+  };
+
+  const updateFeatureGeometry = (layer, featureId, newCoordinates) => {
+    const feature = layer.data.find(f => f.properties.id === featureId);
+    console.log(featureId);
+    feature.geometry.coordinates = newCoordinates;
+    const updatedFeatures = [...layer.data];
+    updatedFeatures[featureId] = feature;
+    layer.data = updatedFeatures;
+  };
+
+  const reloadLayer = (map, layer) => {
+    removeLayer(layer.name);
+
+    if (layer.type === "TMS") {
+      addTMSLayer(map, layer);
+    } else if (layer.type === "geojson") {
+      addGeoJsonLayer(map, layer);
+    }
+  };
+
+
 
   const removeLayer = (layerName) => {
     setCurrentLayers(currentLayers.filter((layer) => layer !== layerName));
@@ -116,6 +164,7 @@ const LayerModal = ({
   };
 
   return (
+    <>
     <Modal
       title="Basic Modal"
       open={isModalOpen}
@@ -157,6 +206,16 @@ const LayerModal = ({
         </div>
       ))}
     </Modal>
+    <IFRCPointModal
+        mapRef={mapRef}
+        IFRCModalOpen={IFRCModalOpen}
+        setIFRCModalOpen={setIFRCModalOpen}
+        reloadLayer={reloadLayer}
+        reloadedLayer={LAYERS.find((layer) => layer.name === "IFRC Points")}
+        featureID={reloadID}
+        updateFeatureGeometry={updateFeatureGeometry}
+      />
+    </>
   );
 };
 
