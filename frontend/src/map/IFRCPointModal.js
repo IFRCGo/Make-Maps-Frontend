@@ -1,16 +1,17 @@
 import React, { useState } from "react";
-import { Modal } from "antd";
 import { LAYERS, LAYER_STATUS } from "./constant";
 import { Form, Input, Modal } from 'antd';
 
-const LayerModal = ({
+//todo 
+//Add detection to ensure that the input value cannot exceed the range
+const IFRCPointModal = ({
     mapRef,
     IFRCModalOpen,
     setIFRCModalOpen,
     reloadLayer,
     reloadedLayer,
+    featureID,
     updateFeatureGeometry,
-    reloadedData
 }) => {
     const [form] = Form.useForm();
     const [reloadData, setReloadData] = useState([]);
@@ -20,48 +21,55 @@ const LayerModal = ({
             .validateFields()
             .then((values) => {
                 form.resetFields();
-                useState
+                const maplibre = mapRef.current;
+                updateFeatureGeometry(reloadedLayer, featureID, [values.LNG, values.LAT]);
+                console.log(reloadLayer);
+                reloadLayer(maplibre, reloadedLayer);
             })
             .catch((info) => {
                 console.log("Validate Failed:", info);
+                //todo
             });
-        IFRCModalOpen(false);
+        setIFRCModalOpen(false);
     };
 
     const handleCancel = () => {
-        IFRCModalOpen(false);
+        setIFRCModalOpen(false);
     };
 
     return (
         <Modal
-            open={open}
-            title="Create a new collection"
-            okText="Create"
+            open={IFRCModalOpen}
+            title={reloadedLayer.name + "  " + featureID}
+            okText="Submit"
             cancelText="Cancel"
             onCancel={handleCancel}
             onOk={handleOk}
         >
-            <Form
-                form={form}
-                layout="vertical"
-                name="form_in_modal"
-                initialValues={{ modifier: "public" }}
-            >
+            <Form form={form} layout="vertical" name="form_in_modal">
                 <Form.Item
-                    name="title"
-                    label="Title"
+                    name="LNG"
+                    label="Longitude"
                     rules={[
-                        { required: true, message: "Please input the title of collection!" }
+                        { required: true, message: "Please input the longitude!" },
+                        // { type: "number", message: "Please input a number for longitude!" }
                     ]}
                 >
                     <Input />
                 </Form.Item>
-                <Form.Item name="description" label="Description">
-                    <Input type="textarea" />
+                <Form.Item
+                    name="LAT"
+                    label="Latitude"
+                    rules={[
+                        { required: true, message: "Please input the latitude!" },
+                        // { type: "number", message: "Please input a number for latitude!" }
+                    ]}
+                >
+                    <Input />
                 </Form.Item>
             </Form>
         </Modal>
     );
 };
 
-export default LayerModal;
+export default IFRCPointModal;

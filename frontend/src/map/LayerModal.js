@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Modal } from "antd";
 import { LAYERS, LAYER_STATUS } from "./constant";
+import IFRCPointModal from "./IFRCPointModal";
 
 const LayerModal = ({
   mapRef,
@@ -12,6 +13,7 @@ const LayerModal = ({
 
 
   const [IFRCModalOpen, setIFRCModalOpen] = useState(false);
+  const [reloadID, setReloadID] = useState();
 
   const [layerStatus, setLayerStatus] = useState(() => {
     return LAYERS.reduce((acc, layer) => {
@@ -85,12 +87,14 @@ const LayerModal = ({
       }
     );
 
-    if (layer.name == 'IFRC Points') {
+    if (layer.name === 'IFRC Points') {
       map.on('dblclick', layer.name, function (e) {
         const features = map.queryRenderedFeatures(e.point, { layers: ['IFRC Points'] });
         const clickedFeature = features[0];
+        console.log(clickedFeature.geometry.coordinates);
         const clickedFeatureId = clickedFeature.properties.id;
-        updateFeatureGeometry(layer, clickedFeatureId, [-68.84734335564356, 18.38480676410721])//todo
+        setReloadID(clickedFeatureId);
+        setIFRCModalOpen(true);
         reloadLayer(map, layer);
       })
     }
@@ -160,6 +164,7 @@ const LayerModal = ({
   };
 
   return (
+    <>
     <Modal
       title="Basic Modal"
       open={isModalOpen}
@@ -201,6 +206,16 @@ const LayerModal = ({
         </div>
       ))}
     </Modal>
+    <IFRCPointModal
+        mapRef={mapRef}
+        IFRCModalOpen={IFRCModalOpen}
+        setIFRCModalOpen={setIFRCModalOpen}
+        reloadLayer={reloadLayer}
+        reloadedLayer={LAYERS.find((layer) => layer.name === "IFRC Points")}
+        featureID={reloadID}
+        updateFeatureGeometry={updateFeatureGeometry}
+      />
+    </>
   );
 };
 
