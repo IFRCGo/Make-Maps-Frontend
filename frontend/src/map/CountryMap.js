@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import React, { useEffect, useState, useRef, useMemo } from "react";
+import { useParams } from "react-router-dom";
 import maplibregl, { Map } from "!maplibre-gl"; // eslint-disable-line import/no-webpack-loader-syntax
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import PaintMode from "mapbox-gl-draw-paint-mode";
@@ -15,7 +15,7 @@ import LayerModal from "./LayerModal";
 import TrashButton from "./TrashButton";
 import ToolBar from "./ToolBar";
 import "./CustomMarker.css";
-import "./MapComponent.css";
+import "./CountryMap.css";
 import DrawStyles from "./DrawStyles";
 import html2canvas from "html2canvas";
 
@@ -25,9 +25,7 @@ const { Panel } = Collapse;
 
 const CountryMap = ({ searchCountry, disasters }) => {
   const { id, long, lat } = useParams();
-  const { state } = useLocation();
-  const { countryData } = state || {};
-
+  const [countryData, setCountryData] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentLayers, setCurrentLayers] = useState([]);
 
@@ -35,7 +33,19 @@ const CountryMap = ({ searchCountry, disasters }) => {
   const mapRef = useRef(null);
   const mapboxDrawRef = useRef(null);
 
-  const { loading, error, data } = useQuery(Query.GET_PINS, {
+  const { data: countryDisaster } = useQuery(Query.GET_DISASTERS_BY_ID, {
+    variables: {
+      id: id,
+    },
+  });
+
+  useMemo(() => {
+    if (countryDisaster) {
+      setCountryData(countryDisaster.disasterById);
+    }
+  }, [countryDisaster]);
+
+  const { loading, data } = useQuery(Query.GET_PINS, {
     variables: {
       filter: {
         disaster: countryData._id,
@@ -43,17 +53,16 @@ const CountryMap = ({ searchCountry, disasters }) => {
     },
   });
 
-  const {
-    loading: layersLoading,
-    error: layersError,
-    data: layersData,
-  } = useQuery(Query.GET_DRAWING_LAYERS, {
-    variables: {
-      filter: {
-        disaster: countryData._id,
+  const { loading: layersLoading, data: layersData } = useQuery(
+    Query.GET_DRAWING_LAYERS,
+    {
+      variables: {
+        filter: {
+          disaster: countryData._id,
+        },
       },
-    },
-  });
+    }
+  );
 
   const [addPin] = useMutation(Mutation.ADD_PIN);
   const [updatePin] = useMutation(Mutation.UPDATE_PIN);
@@ -286,15 +295,17 @@ const CountryMap = ({ searchCountry, disasters }) => {
               var feature = features.features.find(function (f) {
                 return f.id === e.features[0].id;
               });
-              feature.id = drawingLayer_id;
-
-              mapboxDrawRef.current.delete(e.features[0].id);
-
-              // Add the updated feature to the map
-              mapboxDrawRef.current.add(feature);
-              e.features[0] = feature;
-              console.log(e.features[0]);
-              updateDrawData(e.features[0]);
+              if (feature) {
+                feature.id = drawingLayer_id;
+                mapboxDrawRef.current.delete(e.features[0].id);
+                // Add the updated feature to the map
+                mapboxDrawRef.current.add(feature);
+                e.features[0] = feature;
+                console.log(e.features[0]);
+                updateDrawData(e.features[0]);
+              } else {
+                console.log(mapboxDrawRef.current.getAll());
+              }
             })
             .catch((error) => {
               console.error(error);
