@@ -68,10 +68,8 @@ const LayerModal = ({
     const drawLayers = layers.filter((layer) => layer.id.startsWith("gl-draw"));
 
     drawLayers.forEach((layer) => {
-      mapRef.current.moveLayer(layerName, layer.id);
+      mapRef.current.moveLayer(layer.id);
     });
-    mapRef.current.moveLayer(layerName, "gl-draw-polygon-fill-inactive.cold");
-    mapRef.current.moveLayer(layerName, "gl-draw-polygon-stroke-inactive.cold");
     updateLayerStatus(layerName, LAYER_STATUS.IS_RENDERING);
   };
 
