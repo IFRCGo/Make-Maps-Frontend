@@ -25,91 +25,9 @@ const LayerModal = ({
     const maplibreMap = mapRef.current;
     const layer = LAYERS.find((layer) => layer.name === layerName);
     if (layer.type === "TMS") {
-      maplibreMap.addSource(layerName, {
-        type: "raster",
-        tiles: [layer.url],
-        tileSize: 256,
-      });
-      maplibreMap.addLayer({
-        id: layerName,
-        type: "raster",
-        source: layerName,
-        paint: {
-          "raster-opacity": 1,
-        },
-      });
+      addTMSLayer(maplibreMap, layer);
     } else if (layer.type === "geojson") {
-      maplibreMap.loadImage(
-        require("./../images/IFRC.jpeg"),
-        function (error, image) {
-          if (error) throw error;
-          maplibreMap.addImage("custom-marker", image);
-          // Add a GeoJSON source with 15 points
-          maplibreMap.addSource(layerName, {
-            type: "geojson",
-            data: {
-              type: "FeatureCollection",
-              features: layer.data,
-            },
-          });
-
-          // Add a symbol layer
-          maplibreMap.addLayer({
-            id: layerName,
-            type: "symbol",
-            source: layerName,
-            layout: {
-              "icon-image": "custom-marker",
-              "icon-size": 0.1,
-            },
-            interactive: true
-          });
-        }
-      );
-
-      maplibreMap.on('dblclick', layerName, function (e) {
-        const features = maplibreMap.queryRenderedFeatures(e.point, { layers: ['IFRC Points'] });
-        const clickedFeature = features[0];
-        const clickedFeatureId = clickedFeature.properties.id;
-        const layer = LAYERS.find((layer) => layer.name === layerName);
-        const feature = layer.data.find(f => f.properties.id === clickedFeatureId);
-
-        console.log(layer);
-        feature.geometry.coordinates = [-68.84734335564356, 18.38480676410721];
-        const updatedFeatures = [...layer.data];
-        updatedFeatures[clickedFeatureId] = feature;
-        layer.data = updatedFeatures;
-        removeLayer(layerName);
-
-
-        maplibreMap.loadImage(
-          require("./../images/IFRC.jpeg"),
-          function (error, image) {
-            if (error) throw error;
-            maplibreMap.addImage("custom-marker", image);
-            // Add a GeoJSON source with 15 points
-            maplibreMap.addSource(layerName, {
-              type: "geojson",
-              data: {
-                type: "FeatureCollection",
-                features: layer.data,
-              },
-            });
-            //todo refactor this function. should be easy to do
-            // Add a symbol layer
-            maplibreMap.addLayer({
-              id: layerName,
-              type: "symbol",
-              source: layerName,
-              layout: {
-                "icon-image": "custom-marker",
-                "icon-size": 0.1,
-              },
-              interactive: true
-            });
-          }
-        );
-      })
+      addGeoJsonLayer(maplibreMap, layer);
     };
 
     const layers = mapRef.current.getStyle().layers;
@@ -121,6 +39,83 @@ const LayerModal = ({
     });
     updateLayerStatus(layerName, LAYER_STATUS.IS_RENDERING);
   };
+
+  const addTMSLayer = (map, layer) => {
+    map.addSource(layer.name, {
+      type: "raster",
+      tiles: [layer.url],
+      tileSize: 256,
+    });
+    map.addLayer({
+      id: layer.name,
+      type: "raster",
+      source: layer.name,
+      paint: {
+        "raster-opacity": 1,
+      },
+    });
+  };
+
+  const addGeoJsonLayer = (map, layer) => {
+    map.loadImage(
+      require("./../images/IFRC.jpeg"),
+      function (error, image) {
+        if (error) throw error;
+        map.addImage("custom-marker", image);
+        // Add a GeoJSON source with 15 points
+        map.addSource(layer.name, {
+          type: "geojson",
+          data: {
+            type: "FeatureCollection",
+            features: layer.data,
+          },
+        });
+
+        // Add a symbol layer
+        map.addLayer({
+          id: layer.name,
+          type: "symbol",
+          source: layer.name,
+          layout: {
+            "icon-image": "custom-marker",
+            "icon-size": 0.1,
+          },
+          interactive: true
+        });
+      }
+    );
+
+    if (layer.name == 'IFRC Points') {
+      map.on('dblclick', layer.name, function (e) {
+        const features = map.queryRenderedFeatures(e.point, { layers: ['IFRC Points'] });
+        const clickedFeature = features[0];
+        const clickedFeatureId = clickedFeature.properties.id;
+        updateFeatureGeometry(layer, clickedFeatureId, [-68.84734335564356, 18.38480676410721])//todo
+        reloadLayer(map, layer);
+      })
+    }
+  };
+
+  const updateFeatureGeometry = (layer, featureId, newCoordinates) => {
+    const feature = layer.data.find(f => f.properties.id === featureId);
+    console.log(featureId);
+    feature.geometry.coordinates = newCoordinates;
+    const updatedFeatures = [...layer.data];
+    updatedFeatures[featureId] = feature;
+    layer.data = updatedFeatures;
+  };
+
+  const reloadLayer = (map, layer) => {
+    removeLayer(layer.name);
+
+    if (layer.type === "TMS") {
+      addTMSLayer(map, layer);
+    } else if (layer.type === "geojson") {
+      addGeoJsonLayer(map, layer);
+    }
+  };
+
+
 
   const removeLayer = (layerName) => {
     setCurrentLayers(currentLayers.filter((layer) => layer !== layerName));
