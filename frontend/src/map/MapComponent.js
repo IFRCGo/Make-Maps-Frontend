@@ -502,7 +502,6 @@ const MapComponent = ({ searchCountry, props }) => {
     const link = document.createElement("a");
     link.setAttribute("download", filename);
     link.setAttribute("href", url);
-
     link.click();
   };
 

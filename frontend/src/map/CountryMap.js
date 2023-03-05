@@ -428,9 +428,41 @@ const CountryMap = ({ searchCountry, disasters }) => {
     renderMap.on("load", function () {
       html2canvas(renderMap.getContainer()).then(function (canvas) {
         const timestamp = new Date();
-        const canvasDataURL = canvas.toDataURL();
         const link = document.createElement("a");
-        link.href = canvasDataURL;
+
+        // create a new canvas element
+        const titleCanvas = document.createElement("canvas");
+        titleCanvas.width = canvas.width + 200; // add 200 pixels for the legend
+        titleCanvas.height = canvas.height + 100; // add 100 pixels for the title and legend
+        const titleCtx = titleCanvas.getContext("2d");
+
+        titleCtx.fillStyle = "#f6343f";
+        titleCtx.fillRect(0, 0, titleCanvas.width, titleCanvas.height);
+
+        titleCtx.drawImage(canvas, 0, 100);
+
+        // draw title text on top of red background
+        titleCtx.fillStyle = "white";
+        titleCtx.font = "bold 50px Poppins";
+        titleCtx.textAlign = "center";
+        titleCtx.fillText(countryData.location, titleCanvas.width / 2, 50);
+
+        titleCtx.fillStyle = "white";
+        titleCtx.font = "24px Poppins";
+        titleCtx.textAlign = "left";
+        titleCtx.fillStyle = "black";
+        titleCtx.fillText("Layers:", canvas.width + 10, 150);
+
+        if (currentLayers !== []) {
+          var y = 160;
+          currentLayers.forEach((layer) => {
+            titleCtx.fillRect(canvas.width + 10, y, 20, 20); // draw legend box
+            titleCtx.fillText(layer, canvas.width + 50, y + 15);
+            y += 30;
+          });
+        }
+
+        link.href = titleCanvas.toDataURL();
         link.download = "map-" + timestamp.getTime() + ".png";
         link.click();
         link.remove();
