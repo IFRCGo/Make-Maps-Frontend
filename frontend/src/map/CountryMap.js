@@ -95,8 +95,6 @@ const CountryMap = ({ searchCountry, disasters }) => {
 
   function textAreaInput(textarea, mapRef, mapboxDrawRef, container, point) {
     textarea.addEventListener("input", function () {
-      console.log("text inputing");
-      console.log(point.id);
       textarea.style.height = "auto";
       textarea.style.height = textarea.scrollHeight + "px";
       textarea.setAttribute("contenteditable", true);
@@ -148,7 +146,6 @@ const CountryMap = ({ searchCountry, disasters }) => {
       var screenCoordinates = mapRef.current.project(
         point.geometry.coordinates
       );
-      //console.log(screenCoordinates);
       container.style.left =
         screenCoordinates.x + textarea.clientHeight / 5 + "px";
       container.style.top =
@@ -157,7 +154,6 @@ const CountryMap = ({ searchCountry, disasters }) => {
   }
 
   function createTextArea(mapboxDrawRef, mapRef, point) {
-    console.log("creating text");
     var container = createTextAreaContainer(point, mapRef);
     var textarea = document.createElement("textarea");
     textarea.cols = 1;
@@ -201,7 +197,6 @@ const CountryMap = ({ searchCountry, disasters }) => {
     saveButton.textContent = "Save";
     saveButton.style.display = "none";
     saveButton.addEventListener("click", function () {
-      console.log(textarea.value);
       updatePinTextData(textarea.value, point.id);
 
       saveButton.style.display = "none";
@@ -289,23 +284,16 @@ const CountryMap = ({ searchCountry, disasters }) => {
         } else {
           addDrawingLayerData(e.features[0])
             .then((drawingLayer_id) => {
-              console.log(drawingLayer_id);
-              console.log(mapboxDrawRef.current.getAll());
               var features = mapboxDrawRef.current.getAll();
               var feature = features.features.find(function (f) {
                 return f.id === e.features[0].id;
               });
-              if (feature) {
-                feature.id = drawingLayer_id;
-                mapboxDrawRef.current.delete(e.features[0].id);
-                // Add the updated feature to the map
-                mapboxDrawRef.current.add(feature);
-                e.features[0] = feature;
-                console.log(e.features[0]);
-                updateDrawData(e.features[0]);
-              } else {
-                console.log(mapboxDrawRef.current.getAll());
-              }
+              feature.id = drawingLayer_id;
+              mapboxDrawRef.current.delete(e.features[0].id);
+              // Add the updated feature to the map
+              mapboxDrawRef.current.add(feature);
+              e.features[0] = feature;
+              updateDrawData(e.features[0]);
             })
             .catch((error) => {
               console.error(error);
@@ -341,7 +329,6 @@ const CountryMap = ({ searchCountry, disasters }) => {
             );
           }
         } else {
-          console.log(e.features[0]);
           updateDrawData(e.features[0]);
         }
       });
@@ -382,7 +369,6 @@ const CountryMap = ({ searchCountry, disasters }) => {
       }));
 
       mapRef.current.on("load", function () {
-        console.log("loading");
         pinData.forEach((pin) => {
           mapboxDrawRef.current.add(pin);
           createTextArea(mapboxDrawRef, mapRef, pin);
@@ -506,7 +492,6 @@ const CountryMap = ({ searchCountry, disasters }) => {
       featureGeoJSON: newDrawingLayer,
       createdBy: "63d10ad4e30540f8a78a183f",
     };
-    console.log("afafaf: ", drawingLayerData);
     return addDrawingLayer({ variables: { record: drawingLayerData } })
       .catch((error) => alert(error.message))
       .then((result) => {
@@ -678,7 +663,11 @@ const CountryMap = ({ searchCountry, disasters }) => {
         currentLayers={currentLayers}
         setCurrentLayers={setCurrentLayers}
       />
-      {mapRef ? <StyleButton mapRef={mapRef} currentLayers={currentLayers} /> : <></>}
+      {mapRef ? (
+        <StyleButton mapRef={mapRef} currentLayers={currentLayers} />
+      ) : (
+        <></>
+      )}
       <ToolBar
         handlePinButton={handlePinButton}
         showModal={showModal}
