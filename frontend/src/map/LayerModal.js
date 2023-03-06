@@ -95,7 +95,6 @@ const LayerModal = ({
         const clickedFeatureId = clickedFeature.properties.id;
         setReloadID(clickedFeatureId);
         setIFRCModalOpen(true);
-        reloadLayer(map, layer);
       })
     }
   };
@@ -109,14 +108,9 @@ const LayerModal = ({
     layer.data = updatedFeatures;
   };
 
-  const reloadLayer = (map, layer) => {
+  const reloadLayer = (layer) => {
     removeLayer(layer.name);
-
-    if (layer.type === "TMS") {
-      addTMSLayer(map, layer);
-    } else if (layer.type === "geojson") {
-      addGeoJsonLayer(map, layer);
-    }
+    addLayer(layer.name);
   };
 
 
@@ -207,7 +201,6 @@ const LayerModal = ({
       ))}
     </Modal>
     <IFRCPointModal
-        mapRef={mapRef}
         IFRCModalOpen={IFRCModalOpen}
         setIFRCModalOpen={setIFRCModalOpen}
         reloadLayer={reloadLayer}
