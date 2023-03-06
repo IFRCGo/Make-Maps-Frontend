@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import Home from "./home/Home";
 import CountryMap from "./map/CountryMap";
+import LiveMap from "./map/LiveMap";
 import Login from "./login/Login";
 import TestAPI from "./TestAPI";
 import { useQuery } from "@apollo/client";
@@ -27,9 +28,12 @@ function App() {
         <Route index element={<Home disasters={disasters} />} />
         <Route path="map">
           <Route
-            index
             path=":id?/:long?/:lat?"
             element={<CountryMap disasters={disasters} />}
+          />
+          <Route
+            path="live/:id?/:long?/:lat?"
+            element={<LiveMap disasters={disasters} />}
           />
         </Route>
       </Route>

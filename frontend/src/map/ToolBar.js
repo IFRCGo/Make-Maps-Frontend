@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import { 
-  Drawer, 
-  FloatButton, 
-  Button, Space, 
-  Tooltip, 
-  Divider 
-} from "antd";
+import { Drawer, FloatButton, Button, Space, Tooltip, Divider } from "antd";
 import {
   PushpinOutlined,
   LinkOutlined,
@@ -19,7 +13,8 @@ import "./ToolBar.css";
 
 const ToolBar = ({
   handlePinButton,
-  showModal,
+  showLayerModal,
+  showLinkModal,
   handlePaintButton,
   handleLineButton,
   handlePolygonButton,
@@ -78,7 +73,7 @@ const ToolBar = ({
                 <Button
                   type="text"
                   size="large"
-                  icon={<BiLayer onClick={showModal} />}
+                  icon={<BiLayer onClick={showLayerModal} />}
                 />
               </Tooltip>
               <Tooltip placement="top" title={<span>Draw</span>}>
@@ -102,22 +97,26 @@ const ToolBar = ({
                   icon={<BiShapePolygon onClick={handlePolygonButton} />}
                 />
               </Tooltip>
-              <Divider type="vertical" style={{ height: "2em", }}/>
+              <Divider type="vertical" style={{ height: "2em" }} />
               <Tooltip placement="top" title={<span>Link</span>}>
-                <Button type="text" size="large" icon={<LinkOutlined />} />
+                <Button
+                  type="text"
+                  size="large"
+                  icon={<LinkOutlined onClick={showLinkModal} />}
+                />
               </Tooltip>
               <Tooltip placement="top" title={<span>Download</span>}>
                 <Button
                   type="text"
                   size="large"
-                  icon={<DownloadOutlined onClick={handleDownloadButton} />} 
+                  icon={<DownloadOutlined onClick={handleDownloadButton} />}
                 />
               </Tooltip>
               <Tooltip placement="top" title={<span>Export GeoJson</span>}>
                 <Button
                   type="text"
                   size="large"
-                  icon={<ExportOutlined onClick={handleExportButton} />} 
+                  icon={<ExportOutlined onClick={handleExportButton} />}
                 />
               </Tooltip>
             </Space>

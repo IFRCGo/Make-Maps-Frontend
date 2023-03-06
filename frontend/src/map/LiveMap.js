@@ -5,9 +5,10 @@ import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import PaintMode from "mapbox-gl-draw-paint-mode";
 import DrawPointWithText from "mapbox-gl-draw-point-with-text-mode";
 import jsPDF from "jspdf";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import * as Query from "../API/AllQueries";
 import * as Mutation from "../API/AllMutations";
+import * as Subscription from "../API/AllSubscriptions";
 import StyleButton from "./StyleButton";
 import LayerModal from "./LayerModal";
 import TrashButton from "./TrashButton";
@@ -20,7 +21,7 @@ import DisasterInfoCard from "./DisasterInfoCard";
 import ChosenLayerCard from "./ChosenLayerCard";
 import LinkModal from "./LinkModal";
 
-const CountryMap = ({ disasters }) => {
+const LiveMap = ({ disasters }) => {
   const { id, long, lat } = useParams();
   const [countryData, setCountryData] = useState({});
   const [isLayerModalOpen, setIsLayerModalOpen] = useState(false);
@@ -75,6 +76,19 @@ const CountryMap = ({ disasters }) => {
 
   const [addDrawingLayer] = useMutation(Mutation.ADD_DRAWING_LAYER);
   const [updateDrawingLayer] = useMutation(Mutation.UPDATE_DRAWING_LAYER);
+
+  const { loading: liveLoading, data: liveData } = useSubscription(
+    Subscription.DISASTER_SUBSCRIPTION_QUERY,
+    {
+      variables: {
+        id: countryData._id,
+      },
+    }
+  );
+
+  if (!liveLoading) {
+    console.log(liveData);
+  }
 
   function createTextAreaContainer(point, mapRef) {
     var container = document.getElementById(`text-container-${point.id}`);
@@ -591,4 +605,4 @@ const CountryMap = ({ disasters }) => {
   );
 };
 
-export default CountryMap;
+export default LiveMap;
