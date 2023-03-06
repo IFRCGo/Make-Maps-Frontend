@@ -26,6 +26,7 @@ const CountryMap = ({ disasters }) => {
   const [isLayerModalOpen, setIsLayerModalOpen] = useState(false);
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [currentLayers, setCurrentLayers] = useState([]);
+  const [createdPins, setCreatedPins] = useState([]);
 
   const showLayerModal = () => {
     setIsLayerModalOpen(true);
@@ -366,9 +367,13 @@ const CountryMap = ({ disasters }) => {
       }));
 
       mapRef.current.on("load", function () {
+        console.log(pinData);
         pinData.forEach((pin) => {
-          mapboxDrawRef.current.add(pin);
-          createTextArea(mapboxDrawRef, mapRef, pin);
+          if (!createdPins.includes(pin.id)) {
+            mapboxDrawRef.current.add(pin);
+            createTextArea(mapboxDrawRef, mapRef, pin);
+            createdPins.push(pin.id);
+          }
         });
         drawData.forEach((draw) => {
           mapboxDrawRef.current.add(draw);
@@ -376,14 +381,6 @@ const CountryMap = ({ disasters }) => {
       });
     }
   }, [data, layersData]);
-
-  useEffect(() => {
-    if (!loading && data) {
-      if (!mapContainer) {
-        return;
-      }
-    }
-  }, [data]);
 
   const handlePinButton = () => {
     mapboxDrawRef.current.changeMode("draw_point_with_text_mode");
