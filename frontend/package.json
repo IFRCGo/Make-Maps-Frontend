@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.7.7",
+    "@azure/msal-browser": "^2.33.0",
+    "@azure/msal-react": "^1.5.3",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@mapbox/mapbox-gl-draw": "^1.4.0",
