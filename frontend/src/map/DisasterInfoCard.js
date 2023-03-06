@@ -68,7 +68,7 @@ const DisasterInfoCard = ({ countryData }) => {
             width: "100%",
           }}
         >
-          Information...
+          {countryData.disasterInformation}
         </Card>
       </Panel>
     </Collapse>

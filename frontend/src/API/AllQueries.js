@@ -28,6 +28,7 @@ export const GET_DISASTERS_BY_ID = gql`
       amount_requested
       amount_funded
       location
+      disasterInformation
     }
   }
 `;
