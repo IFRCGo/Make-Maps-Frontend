@@ -4,8 +4,8 @@ import { LAYERS, LAYER_STATUS } from "./constant";
 
 const LayerModal = ({
   mapRef,
-  isModalOpen,
-  setIsModalOpen,
+  isLayerModalOpen,
+  setIsLayerModalOpen,
   currentLayers,
   setCurrentLayers,
 }) => {
@@ -108,17 +108,18 @@ const LayerModal = ({
   };
 
   const handleOk = () => {
-    setIsModalOpen(false);
+    setIsLayerModalOpen(false);
   };
 
   const handleCancel = () => {
-    setIsModalOpen(false);
+    setIsLayerModalOpen(false);
   };
 
   return (
     <Modal
-      title="Basic Modal"
-      open={isModalOpen}
+      title="Layer Selection"
+      centered
+      open={isLayerModalOpen}
       onOk={handleOk}
       onCancel={handleCancel}
       style={{ maxHeight: "300px" }}

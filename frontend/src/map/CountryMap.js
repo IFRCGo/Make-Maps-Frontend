@@ -18,12 +18,22 @@ import DrawStyles from "./DrawStyles";
 import html2canvas from "html2canvas";
 import DisasterInfoCard from "./DisasterInfoCard";
 import ChosenLayerCard from "./ChosenLayerCard";
+import LinkModal from "./LinkModal";
 
-const CountryMap = ({ searchCountry, disasters }) => {
+const CountryMap = ({ disasters }) => {
   const { id, long, lat } = useParams();
   const [countryData, setCountryData] = useState({});
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLayerModalOpen, setIsLayerModalOpen] = useState(false);
+  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [currentLayers, setCurrentLayers] = useState([]);
+
+  const showLayerModal = () => {
+    setIsLayerModalOpen(true);
+  };
+
+  const showLinkModal = () => {
+    setIsLinkModalOpen(true);
+  };
 
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
@@ -320,7 +330,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
         }
       });
     }
-  }, [loading, data, long, lat]);
+  }, [data, long, lat]);
 
   useEffect(() => {
     if (!mapContainer) {
@@ -365,7 +375,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
         });
       });
     }
-  }, [loading, data, layersLoading, layersData]);
+  }, [data, layersData]);
 
   useEffect(() => {
     if (!loading && data) {
@@ -373,11 +383,7 @@ const CountryMap = ({ searchCountry, disasters }) => {
         return;
       }
     }
-  }, [loading, data]);
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
+  }, [data]);
 
   const handlePinButton = () => {
     mapboxDrawRef.current.changeMode("draw_point_with_text_mode");
@@ -557,10 +563,14 @@ const CountryMap = ({ searchCountry, disasters }) => {
       <TrashButton mapboxDrawRef={mapboxDrawRef} />
       <LayerModal
         mapRef={mapRef}
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
+        isLayerModalOpen={isLayerModalOpen}
+        setIsLayerModalOpen={setIsLayerModalOpen}
         currentLayers={currentLayers}
         setCurrentLayers={setCurrentLayers}
+      />
+      <LinkModal
+        isLinkModalOpen={isLinkModalOpen}
+        setIsLinkModalOpen={setIsLinkModalOpen}
       />
       {mapRef ? (
         <StyleButton mapRef={mapRef} currentLayers={currentLayers} />
@@ -569,7 +579,8 @@ const CountryMap = ({ searchCountry, disasters }) => {
       )}
       <ToolBar
         handlePinButton={handlePinButton}
-        showModal={showModal}
+        showLayerModal={showLayerModal}
+        showLinkModal={showLinkModal}
         handlePaintButton={handlePaintButton}
         handleLineButton={handleLineButton}
         handlePolygonButton={handlePolygonButton}

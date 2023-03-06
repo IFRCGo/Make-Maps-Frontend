@@ -27,10 +27,10 @@ function App() {
         <Route index element={<Home disasters={disasters} />} />
         <Route path="map">
           <Route
-            index
             path=":id?/:long?/:lat?"
             element={<CountryMap disasters={disasters} />}
           />
+          <Route path="live:id?/:long?/:lat?" element={<TestAPI />} />
         </Route>
       </Route>
       <Route path="/test" element={<TestAPI />} />
