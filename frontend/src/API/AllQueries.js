@@ -37,7 +37,6 @@ export const GET_PINS = gql`
     pinMany(filter: $filter) {
       disaster
       pinText
-      date
       pinCoordinates {
         coordinates
         type
