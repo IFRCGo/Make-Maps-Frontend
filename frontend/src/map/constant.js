@@ -1,7 +1,7 @@
 export const API_KEY = "HMeYX3yPwK7wfZQDqdeC";
 export const LAYERS = [
   {
-    name: "Open Rail Way Map",
+    name: "Open Railway Map",
     url: "https://a.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png",
     type: "TMS",
   },
@@ -50,23 +50,21 @@ export const LAYERS = [
         type: "Feature",
         geometry: {
           type: "Point",
-          coordinates: [-66.84734335564356,
-            18.38480676410721],
+          coordinates: [-66.84734335564356, 18.38480676410721],
         },
         properties: {
-          id: "point-1"
-        }
+          id: "point-1",
+        },
       },
       {
         type: "Feature",
         geometry: {
           type: "Point",
-          coordinates: [-67.08629599236279,
-            18.39785950349716],
+          coordinates: [-67.08629599236279, 18.39785950349716],
         },
         properties: {
-          id: "point-2" 
-        }
+          id: "point-2",
+        },
       },
     ],
     type: "geojson",
