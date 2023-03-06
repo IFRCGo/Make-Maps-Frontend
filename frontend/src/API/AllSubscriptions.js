@@ -8,3 +8,98 @@ export const DISASTER_SUBSCRIPTION_QUERY = gql`
     }
   }
 `;
+
+export const PIN_ADDED_SUBSCRIPTION = gql`
+  subscription PinAdded($disasterId: MongoID!) {
+    pinAdded(disasterId: $disasterId) {
+      disaster
+      pinText
+      pinCoordinates {
+        type
+        coordinates
+      }
+      createdBy
+      _id
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const PIN_UPDATED_SUBSCRIPTION = gql`
+  subscription PinUpdated($disasterId: MongoID!) {
+    pinUpdated(disasterId: $disasterId) {
+      pinText
+      pinCoordinates {
+        coordinates
+        type
+      }
+      _id
+      createdAt
+      createdBy
+      disaster
+      updatedAt
+    }
+  }
+`;
+
+export const PIN_REMOVED_SUBSCRIPTION = gql`
+  subscription PinRemoved($disasterId: MongoID!) {
+    pinRemoved(disasterId: $disasterId) {
+      updatedAt
+      pinText
+      pinCoordinates {
+        type
+        coordinates
+      }
+      disaster
+      createdBy
+      createdAt
+      _id
+    }
+  }
+`;
+
+// ----------------
+
+export const DRAWING_LAYER_ADDED_SUBSCRIPTION = gql`
+  subscription DrawingLayerAdded($disasterId: MongoID!) {
+    drawingLayerAdded(disasterId: $disasterId) {
+      disaster
+      createdBy
+      featureType
+      featureGeoJSON
+      _id
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const DRAWING_LAYER_UPDATED_SUBSCRIPTION = gql`
+  subscription DrawingLayerUpdated($disasterId: MongoID!) {
+    drawingLayerUpdated(disasterId: $disasterId) {
+      disaster
+      createdBy
+      featureType
+      featureGeoJSON
+      _id
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const DRAWING_LAYER_REMOVED_SUBSCRIPTION = gql`
+  subscription DrawingLayerRemoved($disasterId: MongoID!) {
+    drawingLayerRemoved(disasterId: $disasterId) {
+      disaster
+      createdBy
+      featureType
+      featureGeoJSON
+      _id
+      createdAt
+      updatedAt
+    }
+  }
+`;
