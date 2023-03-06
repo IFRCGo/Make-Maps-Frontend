@@ -1,13 +1,8 @@
 export const API_KEY = "HMeYX3yPwK7wfZQDqdeC";
 export const LAYERS = [
   {
-    name: "Open Rail Way Map",
+    name: "Open Railway Map",
     url: "https://a.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png",
-    type: "TMS",
-  },
-  {
-    name: "OSM Inspector: Places",
-    url: "http://tools.geofabrik.de/osmi/tiles/places/{z}/{x}/{y}.png",
     type: "TMS",
   },
   {
@@ -28,11 +23,6 @@ export const LAYERS = [
     type: "TMS",
   },
   {
-    name: "Waymarked Trails: Cycling",
-    url: "http://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png",
-    type: "TMS",
-  },
-  {
     name: "Free worldwide topographic map",
     url: "https://tile.opentopomap.org/{z}/{x}/{y}.png",
     type: "TMS",
@@ -50,23 +40,21 @@ export const LAYERS = [
         type: "Feature",
         geometry: {
           type: "Point",
-          coordinates: [-66.84734335564356,
-            18.38480676410721],
+          coordinates: [-66.84734335564356, 18.38480676410721],
         },
         properties: {
-          id: "point-1"
-        }
+          id: "point-1",
+        },
       },
       {
         type: "Feature",
         geometry: {
           type: "Point",
-          coordinates: [-67.08629599236279,
-            18.39785950349716],
+          coordinates: [-67.08629599236279, 18.39785950349716],
         },
         properties: {
-          id: "point-2" 
-        }
+          id: "point-2",
+        },
       },
     ],
     type: "geojson",

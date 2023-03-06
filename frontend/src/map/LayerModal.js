@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Modal } from "antd";
+import { Modal, Button, Space } from "antd";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { LAYERS, LAYER_STATUS } from "./constant";
 import IFRCPointModal from "./IFRCPointModal";
 
@@ -10,8 +11,6 @@ const LayerModal = ({
   currentLayers,
   setCurrentLayers,
 }) => {
-
-
   const [IFRCModalOpen, setIFRCModalOpen] = useState(false);
   const [reloadID, setReloadID] = useState();
 
@@ -30,7 +29,7 @@ const LayerModal = ({
       addTMSLayer(maplibreMap, layer);
     } else if (layer.type === "geojson") {
       addGeoJsonLayer(maplibreMap, layer);
-    };
+    }
 
     const layers = mapRef.current.getStyle().layers;
 
@@ -59,48 +58,47 @@ const LayerModal = ({
   };
 
   const addGeoJsonLayer = (map, layer) => {
-    map.loadImage(
-      require("./../images/IFRC.jpeg"),
-      function (error, image) {
-        if (error) throw error;
-        map.addImage("custom-marker", image);
-        // Add a GeoJSON source with 15 points
-        map.addSource(layer.name, {
-          type: "geojson",
-          data: {
-            type: "FeatureCollection",
-            features: layer.data,
-          },
-        });
+    map.loadImage(require("./../images/IFRC.jpeg"), function (error, image) {
+      if (error) throw error;
+      map.addImage("custom-marker", image);
+      // Add a GeoJSON source with 15 points
+      map.addSource(layer.name, {
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: layer.data,
+        },
+      });
 
-        // Add a symbol layer
-        map.addLayer({
-          id: layer.name,
-          type: "symbol",
-          source: layer.name,
-          layout: {
-            "icon-image": "custom-marker",
-            "icon-size": 0.1,
-          },
-          interactive: true
-        });
-      }
-    );
+      // Add a symbol layer
+      map.addLayer({
+        id: layer.name,
+        type: "symbol",
+        source: layer.name,
+        layout: {
+          "icon-image": "custom-marker",
+          "icon-size": 0.1,
+        },
+        interactive: true,
+      });
+    });
 
-    if (layer.name === 'IFRC Points') {
-      map.on('dblclick', layer.name, function (e) {
-        const features = map.queryRenderedFeatures(e.point, { layers: ['IFRC Points'] });
+    if (layer.name === "IFRC Points") {
+      map.on("dblclick", layer.name, function (e) {
+        const features = map.queryRenderedFeatures(e.point, {
+          layers: ["IFRC Points"],
+        });
         const clickedFeature = features[0];
         console.log(clickedFeature.geometry.coordinates);
         const clickedFeatureId = clickedFeature.properties.id;
         setReloadID(clickedFeatureId);
         setIFRCModalOpen(true);
-      })
+      });
     }
   };
 
   const updateFeatureGeometry = (layer, featureId, newCoordinates) => {
-    const feature = layer.data.find(f => f.properties.id === featureId);
+    const feature = layer.data.find((f) => f.properties.id === featureId);
     console.log(featureId);
     feature.geometry.coordinates = newCoordinates;
     const updatedFeatures = [...layer.data];
@@ -112,8 +110,6 @@ const LayerModal = ({
     removeLayer(layer.name);
     addLayer(layer.name);
   };
-
-
 
   const removeLayer = (layerName) => {
     setCurrentLayers(currentLayers.filter((layer) => layer !== layerName));
@@ -159,49 +155,62 @@ const LayerModal = ({
 
   return (
     <>
-    <Modal
-      title="Layer Selection"
-      centered
-      open={isLayerModalOpen}
-      onOk={handleOk}
-      onCancel={handleCancel}
-      style={{ maxHeight: "300px" }}
-    >
-      {LAYERS.map((item, index) => (
-        <div
-          key={index}
-          style={{
-            border: "2px ",
-            borderRadius: "5px",
-            padding: "10px",
-          }}
-        >
-          <div
-            style={{
-              fontWeight: "bold",
-            }}
-          >
-            {item.name}
-          </div>
-          {checkLayerStatus(item.name) === LAYER_STATUS.IS_RENDERING ? (
-            <>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                onChange={(e) => changeOpacity(e, item.name)}
-              />
-              <button onClick={(e) => removeLayer(item.name)}>
-                Remove this layer
-              </button>
-            </>
-          ) : (
-            <button onClick={(e) => addLayer(item.name)}>Add this layer</button>
-          )}
+      <Modal
+        title="Layer Selection"
+        centered
+        open={isLayerModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={null}
+        style={{ maxHeight: "300px" }}
+        bodyStyle={{ border: "1px solid #f0f0f0" }}
+      >
+        <div>
+          {LAYERS.map((item, index) => (
+            <div
+              key={index}
+              style={{
+                border: "2px ",
+                borderRadius: "5px",
+                padding: "10px",
+              }}
+            >
+              <Space>
+                <div
+                  style={{
+                    fontWeight: "bold",
+                  }}
+                >
+                  {item.name}
+                </div>
+                {checkLayerStatus(item.name) === LAYER_STATUS.IS_RENDERING ? (
+                  <>
+                    <input
+                      defaultValue={100}
+                      type="range"
+                      min="0"
+                      max="100"
+                      onChange={(e) => changeOpacity(e, item.name)}
+                    />
+                    <Button
+                      // style={{ width: "auto" }}
+                      onClick={(e) => removeLayer(item.name)}
+                      icon={<DeleteOutlined />}
+                    ></Button>
+                  </>
+                ) : (
+                  <Button
+                    // style={{ width: "auto" }}
+                    onClick={(e) => addLayer(item.name)}
+                    icon={<PlusOutlined />}
+                  ></Button>
+                )}
+              </Space>
+            </div>
+          ))}
         </div>
-      ))}
-    </Modal>
-    <IFRCPointModal
+      </Modal>
+      <IFRCPointModal
         IFRCModalOpen={IFRCModalOpen}
         setIFRCModalOpen={setIFRCModalOpen}
         reloadLayer={reloadLayer}
