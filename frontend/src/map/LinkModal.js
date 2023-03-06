@@ -7,8 +7,8 @@ import { LinkOutlined } from "@ant-design/icons";
 const LinkModal = ({ isLinkModalOpen, setIsLinkModalOpen }) => {
   const { id, long, lat } = useParams();
   const [text, setText] = useState(
-    `localhost:3000/map/live/${id}/${long}/${lat}`
-    // `https://ifrc-go-make-maps-frontend.azurewebsites.net/map/live/${id}/${long}/${lat}`
+    // `localhost:3000/map/live/${id}/${long}/${lat}`
+    `https://ifrc-go-make-maps-frontend.azurewebsites.net/map/live/${id}/${long}/${lat}`
   );
 
   const [messageApi, contextHolder] = message.useMessage();
