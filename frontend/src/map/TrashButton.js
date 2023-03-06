@@ -16,10 +16,10 @@ const TrashButton = ({ mapboxDrawRef }) => {
       content: "Object deleted successfully!",
     });
   };
-  const error = (error) => {
+  const error = () => {
     messageApi.open({
       type: "error",
-      content: error.message,
+      content: "Delete error!",
     });
   };
   const warning = () => {
@@ -30,7 +30,7 @@ const TrashButton = ({ mapboxDrawRef }) => {
   };
 
   const handleClick = (selectedFeatures) => {
-    if (selectedFeatures.length == 0) {
+    if (selectedFeatures.length === 0) {
       warning();
     }
     selectedFeatures.forEach((feature) => {
@@ -39,7 +39,7 @@ const TrashButton = ({ mapboxDrawRef }) => {
       if (state.geometry.type === "Point") {
         deletePin({ variables: { id: feature.id } })
           .then(success())
-          .catch((error) => error(error));
+          .catch((error) => error());
         let container = document.getElementById(`text-container-${state.id}`);
         if (container) {
           setTimeout(() => {
@@ -54,7 +54,7 @@ const TrashButton = ({ mapboxDrawRef }) => {
       } else {
         deleteDraw({ variables: { id: feature.id } })
           .then(success())
-          .catch((error) => error(error));
+          .catch((error) => error());
         mapboxDrawRef.current.trash();
       }
     });

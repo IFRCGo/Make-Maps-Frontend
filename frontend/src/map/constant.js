@@ -6,11 +6,6 @@ export const LAYERS = [
     type: "TMS",
   },
   {
-    name: "OSM Inspector: Places",
-    url: "http://tools.geofabrik.de/osmi/tiles/places/{z}/{x}/{y}.png",
-    type: "TMS",
-  },
-  {
     name: "ESRI World Topo",
     url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
     type: "TMS",
@@ -25,11 +20,6 @@ export const LAYERS = [
   {
     name: "Thunderforest",
     url: "https://tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=6050c913919243db8c4ffb1bad6730c0",
-    type: "TMS",
-  },
-  {
-    name: "Waymarked Trails: Cycling",
-    url: "http://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png",
     type: "TMS",
   },
   {
