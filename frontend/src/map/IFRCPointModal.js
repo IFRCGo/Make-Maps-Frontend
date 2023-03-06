@@ -5,7 +5,6 @@ import { Form, Input, Modal } from 'antd';
 //todo 
 //Add detection to ensure that the input value cannot exceed the range
 const IFRCPointModal = ({
-    mapRef,
     IFRCModalOpen,
     setIFRCModalOpen,
     reloadLayer,
@@ -21,9 +20,8 @@ const IFRCPointModal = ({
             .validateFields()
             .then((values) => {
                 form.resetFields();
-                const maplibre = mapRef.current;
                 updateFeatureGeometry(reloadedLayer, featureID, [values.LNG, values.LAT]);
-                reloadLayer(maplibre, reloadedLayer);
+                reloadLayer(reloadedLayer);
             })
             .catch((info) => {
                 console.log("Validate Failed:", info);
