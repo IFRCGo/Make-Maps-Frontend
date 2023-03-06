@@ -488,7 +488,7 @@ const CountryMap = ({ disasters }) => {
     return addDrawingLayer({ variables: { record: drawingLayerData } })
       .catch((error) => alert(error.message))
       .then((result) => {
-        return result.data.drawingLayerCreateOne.recordId;
+        return result.data.drawingLayerCreateOneCustom.record._id;
       });
   };
 
@@ -506,7 +506,7 @@ const CountryMap = ({ disasters }) => {
     return addPin({ variables: { record: pinData } })
       .catch((error) => alert(error.message))
       .then((result) => {
-        return result.data.pinCreateOne.recordId;
+        return result.data.pinCreateOneCustom.record._id;
       });
   };
 

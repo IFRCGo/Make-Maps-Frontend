@@ -1,9 +1,11 @@
 import { gql } from "@apollo/client";
 
 export const ADD_PIN = gql`
-  mutation PinCreateOne($record: CreateOnePinInput!) {
-    pinCreateOne(record: $record) {
-      recordId
+  mutation PinCreateOneCustom($record: CreateOnePinInput!) {
+    pinCreateOneCustom(record: $record) {
+      record {
+        _id
+      }
     }
   }
 `;
@@ -29,9 +31,11 @@ export const UPDATE_PIN = gql`
 `;
 
 export const ADD_DRAWING_LAYER = gql`
-  mutation DrawingLayerCreateOne($record: CreateOneDrawingLayerInput!) {
-    drawingLayerCreateOne(record: $record) {
-      recordId
+  mutation DrawingLayerCreateOneCustom($record: CreateOneDrawingLayerInput!) {
+    drawingLayerCreateOneCustom(record: $record) {
+      record {
+        _id
+      }
     }
   }
 `;
