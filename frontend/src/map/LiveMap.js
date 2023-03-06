@@ -27,6 +27,10 @@ const LiveMap = ({ disasters }) => {
   const [isLayerModalOpen, setIsLayerModalOpen] = useState(false);
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [currentLayers, setCurrentLayers] = useState([]);
+  const [createdPins, setCreatedPins] = useState([]);
+  const [pins, setPins] = useState([]);
+  const [drawLayers, setDrawLayers] = useState([]);
+  const [livePins, setLivePins] = useState([]);
 
   const showLayerModal = () => {
     setIsLayerModalOpen(true);
@@ -55,7 +59,7 @@ const LiveMap = ({ disasters }) => {
   const { loading, data } = useQuery(Query.GET_PINS, {
     variables: {
       filter: {
-        disaster: countryData._id,
+        disaster: id,
       },
     },
   });
@@ -65,7 +69,7 @@ const LiveMap = ({ disasters }) => {
     {
       variables: {
         filter: {
-          disaster: countryData._id,
+          disaster: id,
         },
       },
     }
@@ -77,18 +81,20 @@ const LiveMap = ({ disasters }) => {
   const [addDrawingLayer] = useMutation(Mutation.ADD_DRAWING_LAYER);
   const [updateDrawingLayer] = useMutation(Mutation.UPDATE_DRAWING_LAYER);
 
-  const { loading: liveLoading, data: liveData } = useSubscription(
-    Subscription.DISASTER_SUBSCRIPTION_QUERY,
+  const dataTest = useSubscription(
+    Subscription.DRAWING_LAYER_ADDED_SUBSCRIPTION,
     {
       variables: {
-        id: countryData._id,
+        disasterId: id,
       },
     }
   );
 
-  if (!liveLoading) {
-    console.log(liveData);
-  }
+  console.log(dataTest);
+
+  // if (drawAddSub) {
+  //   console.log(drawAddSub);
+  // }
 
   function createTextAreaContainer(point, mapRef) {
     var container = document.getElementById(`text-container-${point.id}`);
@@ -351,7 +357,7 @@ const LiveMap = ({ disasters }) => {
       return;
     }
 
-    if (!loading && data && !layersLoading && layersData) {
+    if (data && layersData) {
       // reformat the data fetched
       const pinData = data.pinMany.map((item) => ({
         id: item._id,
@@ -381,8 +387,11 @@ const LiveMap = ({ disasters }) => {
 
       mapRef.current.on("load", function () {
         pinData.forEach((pin) => {
-          mapboxDrawRef.current.add(pin);
-          createTextArea(mapboxDrawRef, mapRef, pin);
+          if (!createdPins.includes(pin.id)) {
+            mapboxDrawRef.current.add(pin);
+            createTextArea(mapboxDrawRef, mapRef, pin);
+            createdPins.push(pin.id);
+          }
         });
         drawData.forEach((draw) => {
           mapboxDrawRef.current.add(draw);
@@ -390,14 +399,6 @@ const LiveMap = ({ disasters }) => {
       });
     }
   }, [data, layersData]);
-
-  useEffect(() => {
-    if (!loading && data) {
-      if (!mapContainer) {
-        return;
-      }
-    }
-  }, [data]);
 
   const handlePinButton = () => {
     mapboxDrawRef.current.changeMode("draw_point_with_text_mode");
