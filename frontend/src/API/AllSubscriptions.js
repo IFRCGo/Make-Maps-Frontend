@@ -79,13 +79,8 @@ export const DRAWING_LAYER_ADDED_SUBSCRIPTION = gql`
 export const DRAWING_LAYER_UPDATED_SUBSCRIPTION = gql`
   subscription DrawingLayerUpdated($disasterId: MongoID!) {
     drawingLayerUpdated(disasterId: $disasterId) {
-      disaster
-      createdBy
-      featureType
       featureGeoJSON
       _id
-      createdAt
-      updatedAt
     }
   }
 `;

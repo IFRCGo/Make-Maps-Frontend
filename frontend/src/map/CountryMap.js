@@ -46,7 +46,7 @@ const CountryMap = ({ disasters }) => {
     },
   });
 
-  useMemo(() => {
+  useEffect(() => {
     if (countryDisaster) {
       setCountryData(countryDisaster.disasterById);
     }
