@@ -30,7 +30,8 @@ const LiveMap = ({ disasters }) => {
   const [createdPins, setCreatedPins] = useState([]);
   const [pins, setPins] = useState([]);
   const [drawLayers, setDrawLayers] = useState([]);
-  const [livePins, setLivePins] = useState([]);
+  const [livePin, setLivePin] = useState({});
+  const [liveDraw, setLiveDraw] = useState({});
 
   const showLayerModal = () => {
     setIsLayerModalOpen(true);
@@ -56,7 +57,7 @@ const LiveMap = ({ disasters }) => {
     }
   }, [countryDisaster]);
 
-  const { loading, data } = useQuery(Query.GET_PINS, {
+  const { loading: pinsLoading, data: pinsData } = useQuery(Query.GET_PINS, {
     variables: {
       filter: {
         disaster: id,
@@ -81,7 +82,7 @@ const LiveMap = ({ disasters }) => {
   const [addDrawingLayer] = useMutation(Mutation.ADD_DRAWING_LAYER);
   const [updateDrawingLayer] = useMutation(Mutation.UPDATE_DRAWING_LAYER);
 
-  const dataTest = useSubscription(
+  const { data: drawAddSub } = useSubscription(
     Subscription.DRAWING_LAYER_ADDED_SUBSCRIPTION,
     {
       variables: {
@@ -90,11 +91,197 @@ const LiveMap = ({ disasters }) => {
     }
   );
 
-  console.log(dataTest);
+  // Fetch the data from db and update the state
+  useEffect(() => {
+    if (!pinsLoading && pinsData && !layersLoading && layersData) {
+      // reformat the data fetched
+      const pinData = pinsData.pinMany.map((item) => ({
+        id: item._id,
+        // Temporary placeholder
+        type: "Feature",
+        properties: {
+          text: item.pinText,
+        },
+        geometry: {
+          coordinates: item.pinCoordinates.coordinates,
+          type: item.pinCoordinates.type,
+        },
+      }));
+      setPins(pinData);
 
-  // if (drawAddSub) {
-  //   console.log(drawAddSub);
-  // }
+      const drawData = layersData.drawingLayerMany.map((item) => ({
+        id: item._id,
+        type: "Feature",
+        properties: {
+          type: "Feature",
+        },
+        geometry: {
+          coordinates: item.featureGeoJSON.geometry.coordinates,
+          type: item.featureGeoJSON.geometry.type,
+          id: item._id,
+        },
+      }));
+      setDrawLayers(drawData);
+    }
+  }, [pinsLoading, pinsData, layersLoading, layersData]);
+
+  // Subscribe the change
+  useEffect(() => {
+    if (drawAddSub) {
+      const newDrawLayerData = {
+        id: drawAddSub.drawingLayerAdded._id,
+        type: "Feature",
+        properties: {
+          type: "Feature",
+        },
+        geometry: {
+          coordinates:
+            drawAddSub.drawingLayerAdded.featureGeoJSON.geometry.coordinates,
+          type: drawAddSub.drawingLayerAdded.featureGeoJSON.geometry.type,
+          id: drawAddSub.drawingLayerAdded._id,
+        },
+      };
+      setLiveDraw(newDrawLayerData);
+      const newDrawLayers = [...drawLayers, newDrawLayerData];
+      setDrawLayers(newDrawLayers);
+    }
+  }, [drawAddSub]);
+
+  // Create the map
+  useEffect(() => {
+    if (!mapContainer) {
+      return;
+    }
+    mapRef.current = new maplibregl.Map({
+      container: mapContainer.current,
+      style:
+        "https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC",
+      center: [long, lat],
+      zoom: 9,
+      minZoom: 8,
+    });
+
+    mapboxDrawRef.current = new MapboxDraw({
+      displayControlsDefault: false,
+      controls: {
+        polygon: false,
+        line_string: false,
+        trash: false,
+      },
+      modes: {
+        ...MapboxDraw.modes,
+        draw_paint_mode: PaintMode,
+        draw_point_with_text_mode: DrawPointWithText,
+      },
+      styles: DrawStyles,
+    });
+    mapRef.current.addControl(mapboxDrawRef.current);
+  }, [long, lat]);
+
+  // Loading the components
+  useEffect(() => {
+    mapRef.current.on("load", function () {
+      console.log("loading");
+      pins.forEach((pin) => {
+        if (!createdPins.includes(pin.id)) {
+          mapboxDrawRef.current.add(pin);
+          createTextArea(mapboxDrawRef, mapRef, pin);
+          createdPins.push(pin.id);
+        }
+      });
+      drawLayers.forEach((draw) => {
+        mapboxDrawRef.current.add(draw);
+      });
+    });
+  }, [pins, drawLayers]);
+
+  // Create and update components
+  useEffect(() => {
+    mapRef.current.on("draw.create", function (e) {
+      if (e.features[0].geometry.type === "Point") {
+        addPinData(e.features[0])
+          .then((pin_id) => {
+            var features = mapboxDrawRef.current.getAll();
+            var feature = features.features.find(function (f) {
+              return f.id === e.features[0].id;
+            });
+            feature.id = pin_id;
+
+            mapboxDrawRef.current.delete(e.features[0].id);
+
+            // Add the updated feature to the map
+            mapboxDrawRef.current.add(feature);
+            e.features[0] = feature;
+            createTextArea(mapboxDrawRef, mapRef, e.features[0]);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } else {
+        addDrawingLayerData(e.features[0])
+          .then((drawingLayer_id) => {
+            var features = mapboxDrawRef.current.getAll();
+            var feature = features.features.find(function (f) {
+              return f.id === e.features[0].id;
+            });
+            feature.id = drawingLayer_id;
+            mapboxDrawRef.current.delete(e.features[0].id);
+            // Add the updated feature to the map
+            mapboxDrawRef.current.add(feature);
+            e.features[0] = feature;
+            updateDrawData(e.features[0]);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+    });
+
+    mapRef.current.on("draw.update", function (e) {
+      if (e.features[0].geometry.type === "Point") {
+        updatePinLocData(e.features[0]);
+        var pointId = e.features[0].id;
+        var container = document.getElementById(`text-container-${pointId}`);
+        if (container) {
+          var textarea = container.querySelector("textarea");
+          if (textarea) {
+            var screenCoordinates = mapRef.current.project(
+              e.features[0].geometry.coordinates
+            );
+            container.style.top =
+              screenCoordinates.y - textarea.clientHeight / 2 + "px";
+            container.style.left =
+              screenCoordinates.x + textarea.clientHeight / 4 + "px";
+            textAreaMove(textarea, mapRef, container, e.features[0]);
+          }
+          textAreaZoom(textarea, mapRef, container, e.features[0]);
+
+          textAreaInput(
+            textarea,
+            mapRef,
+            mapboxDrawRef,
+            container,
+            e.features[0]
+          );
+        }
+      } else {
+        updateDrawData(e.features[0]);
+      }
+    });
+    console.log(liveDraw);
+    console.log(mapboxDrawRef.current.getAll());
+    if (liveDraw.id) {
+      const changedObject = mapboxDrawRef.current
+        .getAll()
+        .features.find((obj) => obj.id === liveDraw.id);
+      if (changedObject) {
+        mapboxDrawRef.current.delete(changedObject.id);
+        mapboxDrawRef.current.add(liveDraw);
+      } else {
+        mapboxDrawRef.current.add(liveDraw);
+      }
+    }
+  }, [liveDraw]);
 
   function createTextAreaContainer(point, mapRef) {
     var container = document.getElementById(`text-container-${point.id}`);
@@ -245,160 +432,6 @@ const LiveMap = ({ disasters }) => {
     textAreaZoom(textarea, mapRef, container, point);
     textAreaMove(textarea, mapRef, container, point);
   }
-
-  useEffect(() => {
-    if (!loading && data) {
-      if (!mapContainer) {
-        return;
-      }
-
-      mapRef.current = new maplibregl.Map({
-        container: mapContainer.current,
-        style:
-          "https://api.maptiler.com/maps/basic-v2/style.json?key=HMeYX3yPwK7wfZQDqdeC",
-        center: [long, lat],
-        zoom: 9,
-        minZoom: 8,
-      });
-
-      mapboxDrawRef.current = new MapboxDraw({
-        displayControlsDefault: false,
-        controls: {
-          polygon: false,
-          line_string: false,
-          trash: false,
-        },
-        modes: {
-          ...MapboxDraw.modes,
-          draw_paint_mode: PaintMode,
-          draw_point_with_text_mode: DrawPointWithText,
-        },
-        styles: DrawStyles,
-      });
-
-      mapRef.current.addControl(mapboxDrawRef.current);
-
-      mapRef.current.on("draw.create", function (e) {
-        if (e.features[0].geometry.type === "Point") {
-          addPinData(e.features[0])
-            .then((pin_id) => {
-              var features = mapboxDrawRef.current.getAll();
-              var feature = features.features.find(function (f) {
-                return f.id === e.features[0].id;
-              });
-              feature.id = pin_id;
-
-              mapboxDrawRef.current.delete(e.features[0].id);
-
-              // Add the updated feature to the map
-              mapboxDrawRef.current.add(feature);
-              e.features[0] = feature;
-              createTextArea(mapboxDrawRef, mapRef, e.features[0]);
-            })
-            .catch((error) => {
-              console.error(error);
-            });
-        } else {
-          addDrawingLayerData(e.features[0])
-            .then((drawingLayer_id) => {
-              var features = mapboxDrawRef.current.getAll();
-              var feature = features.features.find(function (f) {
-                return f.id === e.features[0].id;
-              });
-              feature.id = drawingLayer_id;
-              mapboxDrawRef.current.delete(e.features[0].id);
-              // Add the updated feature to the map
-              mapboxDrawRef.current.add(feature);
-              e.features[0] = feature;
-              updateDrawData(e.features[0]);
-            })
-            .catch((error) => {
-              console.error(error);
-            });
-        }
-      });
-
-      mapRef.current.on("draw.update", function (e) {
-        if (e.features[0].geometry.type === "Point") {
-          updatePinLocData(e.features[0]);
-          var pointId = e.features[0].id;
-          var container = document.getElementById(`text-container-${pointId}`);
-          if (container) {
-            var textarea = container.querySelector("textarea");
-            if (textarea) {
-              var screenCoordinates = mapRef.current.project(
-                e.features[0].geometry.coordinates
-              );
-              container.style.top =
-                screenCoordinates.y - textarea.clientHeight / 2 + "px";
-              container.style.left =
-                screenCoordinates.x + textarea.clientHeight / 4 + "px";
-              textAreaMove(textarea, mapRef, container, e.features[0]);
-            }
-            textAreaZoom(textarea, mapRef, container, e.features[0]);
-
-            textAreaInput(
-              textarea,
-              mapRef,
-              mapboxDrawRef,
-              container,
-              e.features[0]
-            );
-          }
-        } else {
-          updateDrawData(e.features[0]);
-        }
-      });
-    }
-  }, [data, long, lat]);
-
-  useEffect(() => {
-    if (!mapContainer) {
-      return;
-    }
-
-    if (data && layersData) {
-      // reformat the data fetched
-      const pinData = data.pinMany.map((item) => ({
-        id: item._id,
-        // Temporary placeholder
-        type: "Feature",
-        properties: {
-          text: item.pinText,
-        },
-        geometry: {
-          coordinates: item.pinCoordinates.coordinates,
-          type: item.pinCoordinates.type,
-        },
-      }));
-
-      const drawData = layersData.drawingLayerMany.map((item) => ({
-        id: item._id,
-        type: "Feature",
-        properties: {
-          type: "Feature",
-        },
-        geometry: {
-          coordinates: item.featureGeoJSON.geometry.coordinates,
-          type: item.featureGeoJSON.geometry.type,
-          id: item._id,
-        },
-      }));
-
-      mapRef.current.on("load", function () {
-        pinData.forEach((pin) => {
-          if (!createdPins.includes(pin.id)) {
-            mapboxDrawRef.current.add(pin);
-            createTextArea(mapboxDrawRef, mapRef, pin);
-            createdPins.push(pin.id);
-          }
-        });
-        drawData.forEach((draw) => {
-          mapboxDrawRef.current.add(draw);
-        });
-      });
-    }
-  }, [data, layersData]);
 
   const handlePinButton = () => {
     mapboxDrawRef.current.changeMode("draw_point_with_text_mode");
