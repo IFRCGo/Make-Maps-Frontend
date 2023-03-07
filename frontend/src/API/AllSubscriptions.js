@@ -88,13 +88,7 @@ export const DRAWING_LAYER_UPDATED_SUBSCRIPTION = gql`
 export const DRAWING_LAYER_REMOVED_SUBSCRIPTION = gql`
   subscription DrawingLayerRemoved($disasterId: MongoID!) {
     drawingLayerRemoved(disasterId: $disasterId) {
-      disaster
-      createdBy
-      featureType
-      featureGeoJSON
       _id
-      createdAt
-      updatedAt
     }
   }
 `;
