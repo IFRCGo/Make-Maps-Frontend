@@ -69,13 +69,6 @@ const ToolBar = ({
                   icon={<PushpinOutlined onClick={handlePinButton} />}
                 />
               </Tooltip>
-              <Tooltip placement="top" title={<span>Layer</span>}>
-                <Button
-                  type="text"
-                  size="large"
-                  icon={<BiLayer onClick={showLayerModal} />}
-                />
-              </Tooltip>
               <Tooltip placement="top" title={<span>Draw</span>}>
                 <Button
                   type="text"
@@ -95,6 +88,13 @@ const ToolBar = ({
                   type="text"
                   size="large"
                   icon={<BiShapePolygon onClick={handlePolygonButton} />}
+                />
+              </Tooltip>
+              <Tooltip placement="top" title={<span>Layer</span>}>
+                <Button
+                  type="text"
+                  size="large"
+                  icon={<BiLayer onClick={showLayerModal} />}
                 />
               </Tooltip>
               <Divider type="vertical" style={{ height: "2em" }} />

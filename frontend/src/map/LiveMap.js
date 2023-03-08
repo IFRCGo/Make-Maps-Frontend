@@ -31,8 +31,15 @@ const LiveMap = ({ disasters }) => {
   const [pins, setPins] = useState([]);
   const [drawLayers, setDrawLayers] = useState([]);
   const [livePin, setLivePin] = useState({});
+  const [livePinRemove, setLivePinRemove] = useState({});
   const [liveDraw, setLiveDraw] = useState({});
   const [liveDrawRemove, setLiveDrawRemove] = useState({});
+
+  const subscriptionVariables = {
+    variables: {
+      disasterId: id,
+    },
+  };
 
   const showLayerModal = () => {
     setIsLayerModalOpen(true);
@@ -54,13 +61,6 @@ const LiveMap = ({ disasters }) => {
       },
     }
   );
-
-  useEffect(() => {
-    if (!countryDisasterLoading && countryDisaster) {
-      setCountryData(countryDisaster.disasterById);
-    }
-  }, [countryDisasterLoading, countryDisaster]);
-
   const { loading: pinsLoading, data: pinsData } = useQuery(Query.GET_PINS, {
     variables: {
       filter: {
@@ -68,7 +68,6 @@ const LiveMap = ({ disasters }) => {
       },
     },
   });
-
   const { loading: layersLoading, data: layersData } = useQuery(
     Query.GET_DRAWING_LAYERS,
     {
@@ -79,32 +78,39 @@ const LiveMap = ({ disasters }) => {
       },
     }
   );
-
   const [addPin] = useMutation(Mutation.ADD_PIN);
   const [updatePin] = useMutation(Mutation.UPDATE_PIN);
-
   const [addDrawingLayer] = useMutation(Mutation.ADD_DRAWING_LAYER);
   const [updateDrawingLayer] = useMutation(Mutation.UPDATE_DRAWING_LAYER);
-
+  const { data: pinCreateSub } = useSubscription(
+    Subscription.PIN_ADDED_SUBSCRIPTION,
+    subscriptionVariables
+  );
+  const { data: pinUpdateSub } = useSubscription(
+    Subscription.PIN_UPDATED_SUBSCRIPTION,
+    subscriptionVariables
+  );
+  const { data: pinRemoveSub } = useSubscription(
+    Subscription.PIN_REMOVED_SUBSCRIPTION,
+    subscriptionVariables
+  );
   const { data: drawUpdateSub } = useSubscription(
     Subscription.DRAWING_LAYER_UPDATED_SUBSCRIPTION,
-    {
-      variables: {
-        disasterId: id,
-      },
-    }
+    subscriptionVariables
   );
-
   const { data: drawRemoveSub } = useSubscription(
     Subscription.DRAWING_LAYER_REMOVED_SUBSCRIPTION,
-    {
-      variables: {
-        disasterId: id,
-      },
-    }
+    subscriptionVariables
   );
 
-  // Fetch the data from db and update the state
+  // Fetch the selected country data
+  useEffect(() => {
+    if (!countryDisasterLoading && countryDisaster) {
+      setCountryData(countryDisaster.disasterById);
+    }
+  }, [countryDisasterLoading, countryDisaster]);
+
+  // Fetch the map data from db and update the state
   useEffect(() => {
     if (!pinsLoading && pinsData && !layersLoading && layersData) {
       // reformat the data fetched
@@ -137,29 +143,6 @@ const LiveMap = ({ disasters }) => {
       setDrawLayers(drawData);
     }
   }, [pinsLoading, pinsData, layersLoading, layersData]);
-
-  // Transfer the real time data to state
-  useEffect(() => {
-    if (drawUpdateSub) {
-      const newDrawLayerData = {
-        id: drawUpdateSub.drawingLayerUpdated._id,
-        type: "Feature",
-        properties: {
-          type: "Feature",
-        },
-        geometry: {
-          coordinates:
-            drawUpdateSub.drawingLayerUpdated.featureGeoJSON.geometry
-              .coordinates,
-          type: drawUpdateSub.drawingLayerUpdated.featureGeoJSON.geometry.type,
-          id: drawUpdateSub.drawingLayerUpdated._id,
-        },
-      };
-      setLiveDraw(newDrawLayerData);
-      const newDrawLayers = [...drawLayers, newDrawLayerData];
-      setDrawLayers(newDrawLayers);
-    }
-  }, [drawUpdateSub]);
 
   // Create the map
   useEffect(() => {
@@ -199,7 +182,8 @@ const LiveMap = ({ disasters }) => {
         if (!createdPins.includes(pin.id)) {
           mapboxDrawRef.current.add(pin);
           createTextArea(mapboxDrawRef, mapRef, pin);
-          createdPins.push(pin.id);
+          setCreatedPins([...createdPins, pin.id]);
+          // createdPins.push(pin.id);
         }
       });
       drawLayers.forEach((draw) => {
@@ -219,13 +203,14 @@ const LiveMap = ({ disasters }) => {
               return f.id === e.features[0].id;
             });
             feature.id = pin_id;
-
             mapboxDrawRef.current.delete(e.features[0].id);
-
             // Add the updated feature to the map
             mapboxDrawRef.current.add(feature);
             e.features[0] = feature;
-            createTextArea(mapboxDrawRef, mapRef, e.features[0]);
+            // console.log("creating in map");
+            // createTextArea(mapboxDrawRef, mapRef, e.features[0]);
+            // setCreatedPins([...createdPins, e.features[0].id]);
+            // createdPins.push(e.features[0].id);
           })
           .catch((error) => {
             console.error(error);
@@ -251,39 +236,167 @@ const LiveMap = ({ disasters }) => {
     });
 
     mapRef.current.on("draw.update", function (e) {
-      if (e.features[0].geometry.type === "Point") {
-        updatePinLocData(e.features[0]);
-        var pointId = e.features[0].id;
+      console.log("updating");
+      if (e.features[0]) {
+        if (e.features[0].geometry.type === "Point") {
+          updatePinLocData(e.features[0]);
+          var pointId = e.features[0].id;
+          var container = document.getElementById(`text-container-${pointId}`);
+          if (container) {
+            var textarea = container.querySelector("textarea");
+            if (textarea) {
+              var screenCoordinates = mapRef.current.project(
+                e.features[0].geometry.coordinates
+              );
+              container.style.top =
+                screenCoordinates.y - textarea.clientHeight / 2 + "px";
+              container.style.left =
+                screenCoordinates.x + textarea.clientHeight / 4 + "px";
+              textAreaMove(textarea, mapRef, container, e.features[0]);
+            }
+            textAreaZoom(textarea, mapRef, container, e.features[0]);
+
+            textAreaInput(
+              textarea,
+              mapRef,
+              mapboxDrawRef,
+              container,
+              e.features[0]
+            );
+          }
+        } else {
+          updateDrawData(e.features[0]);
+        }
+      }
+    });
+  }, []);
+
+  // Real time create, update and remove pins
+  useEffect(() => {
+    if (pinCreateSub) {
+      const newPinData = {
+        id: pinCreateSub.pinAdded._id,
+        type: "Feature",
+        properties: {
+          text: pinCreateSub.pinAdded.pinText,
+        },
+        geometry: {
+          coordinates: pinCreateSub.pinAdded.pinCoordinates.coordinates,
+          type: pinCreateSub.pinAdded.pinCoordinates.type,
+          id: pinCreateSub.pinAdded._id,
+        },
+      };
+      setLivePin(newPinData);
+    }
+  }, [pinCreateSub]);
+  useEffect(() => {
+    if (pinUpdateSub) {
+      console.log("updating pin");
+      const newPinData = {
+        id: pinUpdateSub.pinUpdated._id,
+        type: "Feature",
+        properties: {
+          text: pinUpdateSub.pinUpdated.pinText,
+        },
+        geometry: {
+          coordinates: pinUpdateSub.pinUpdated.pinCoordinates.coordinates,
+          type: pinUpdateSub.pinUpdated.pinCoordinates.type,
+          id: pinUpdateSub.pinUpdated._id,
+        },
+      };
+      setLivePin(newPinData);
+    }
+  }, [pinUpdateSub]);
+  useEffect(() => {
+    if (livePin.id) {
+      const changedObject = mapboxDrawRef.current
+        .getAll()
+        .features.find((obj) => obj.id === livePin.id);
+      if (changedObject) {
+        mapboxDrawRef.current.delete(changedObject.id);
+        mapboxDrawRef.current.add(livePin);
+        var pointId = livePin.id;
         var container = document.getElementById(`text-container-${pointId}`);
         if (container) {
           var textarea = container.querySelector("textarea");
           if (textarea) {
+            textarea.value = livePin.properties.text;
             var screenCoordinates = mapRef.current.project(
-              e.features[0].geometry.coordinates
+              livePin.geometry.coordinates
             );
             container.style.top =
               screenCoordinates.y - textarea.clientHeight / 2 + "px";
             container.style.left =
               screenCoordinates.x + textarea.clientHeight / 4 + "px";
-            textAreaMove(textarea, mapRef, container, e.features[0]);
+            textAreaMove(textarea, mapRef, container, livePin);
           }
-          textAreaZoom(textarea, mapRef, container, e.features[0]);
-
-          textAreaInput(
-            textarea,
-            mapRef,
-            mapboxDrawRef,
-            container,
-            e.features[0]
-          );
+          textAreaZoom(textarea, mapRef, container, livePin);
+          textAreaInput(textarea, mapRef, mapboxDrawRef, container, livePin);
         }
       } else {
-        updateDrawData(e.features[0]);
+        if (!createdPins.includes(livePin.id)) {
+          mapboxDrawRef.current.add(livePin);
+          console.log("creating text area");
+          createTextArea(mapboxDrawRef, mapRef, livePin);
+          setCreatedPins([...createdPins, livePin.id]);
+          // createdPins.push(livePin.id);
+        }
       }
-    });
-  }, []);
+    }
+  }, [livePin]);
+  useEffect(() => {
+    if (pinRemoveSub) {
+      const removedPinData = {
+        id: pinRemoveSub.pinRemoved._id,
+      };
+      setLivePinRemove(removedPinData);
+    }
+  }, [pinRemoveSub]);
+  useEffect(() => {
+    if (livePinRemove.id) {
+      const changedObject = mapboxDrawRef.current
+        .getAll()
+        .features.find((obj) => obj.id === livePinRemove.id);
+      if (changedObject) {
+        mapboxDrawRef.current.delete(changedObject.id);
+        let container = document.getElementById(
+          `text-container-${changedObject.id}`
+        );
+        if (container) {
+          setTimeout(() => {
+            container.remove();
+          }, 0);
+        } else {
+          console.log(
+            `Could not find container with ID 'text-container-${changedObject.id}'`
+          );
+        }
+      }
+    }
+  }, [livePinRemove]);
 
-  // Real time create and update the components
+  // Real time create, update and remove draws
+  useEffect(() => {
+    if (drawUpdateSub) {
+      const newDrawLayerData = {
+        id: drawUpdateSub.drawingLayerUpdated._id,
+        type: "Feature",
+        properties: {
+          type: "Feature",
+        },
+        geometry: {
+          coordinates:
+            drawUpdateSub.drawingLayerUpdated.featureGeoJSON.geometry
+              .coordinates,
+          type: drawUpdateSub.drawingLayerUpdated.featureGeoJSON.geometry.type,
+          id: drawUpdateSub.drawingLayerUpdated._id,
+        },
+      };
+      setLiveDraw(newDrawLayerData);
+      const newDrawLayers = [...drawLayers, newDrawLayerData];
+      setDrawLayers(newDrawLayers);
+    }
+  }, [drawUpdateSub]);
   useEffect(() => {
     if (liveDraw.id) {
       const changedObject = mapboxDrawRef.current
@@ -297,11 +410,7 @@ const LiveMap = ({ disasters }) => {
       }
     }
   }, [liveDraw]);
-
-  // Real time remove the components
   useEffect(() => {
-    console.log(liveDrawRemove);
-    console.log(drawRemoveSub);
     if (drawRemoveSub) {
       const removedDrawLayerData = {
         id: drawRemoveSub.drawingLayerRemoved._id,
@@ -309,7 +418,6 @@ const LiveMap = ({ disasters }) => {
       setLiveDrawRemove(removedDrawLayerData);
     }
   }, [drawRemoveSub]);
-
   useEffect(() => {
     if (liveDrawRemove.id) {
       const changedObject = mapboxDrawRef.current
@@ -564,20 +672,6 @@ const LiveMap = ({ disasters }) => {
     link.click();
   };
 
-  const addDrawingLayerData = (newDrawingLayer) => {
-    const drawingLayerData = {
-      disaster: id,
-      featureType: newDrawingLayer.geometry.type,
-      featureGeoJSON: newDrawingLayer,
-      createdBy: "63d10ad4e30540f8a78a183f",
-    };
-    return addDrawingLayer({ variables: { record: drawingLayerData } })
-      .catch((error) => alert(error.message))
-      .then((result) => {
-        return result.data.drawingLayerCreateOneCustom.record._id;
-      });
-  };
-
   const addPinData = (newPin) => {
     const pinData = {
       disaster: id,
@@ -615,6 +709,20 @@ const LiveMap = ({ disasters }) => {
     updatePin({
       variables: { id: pointID, record: pinUpdatedText },
     }).catch((error) => alert(error.message));
+  };
+
+  const addDrawingLayerData = (newDrawingLayer) => {
+    const drawingLayerData = {
+      disaster: id,
+      featureType: newDrawingLayer.geometry.type,
+      featureGeoJSON: newDrawingLayer,
+      createdBy: "63d10ad4e30540f8a78a183f",
+    };
+    return addDrawingLayer({ variables: { record: drawingLayerData } })
+      .catch((error) => alert(error.message))
+      .then((result) => {
+        return result.data.drawingLayerCreateOneCustom.record._id;
+      });
   };
 
   const updateDrawData = (updatedDrawData) => {
