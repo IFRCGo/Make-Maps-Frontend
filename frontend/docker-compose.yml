@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  ifrc-go-make-maps-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    command: ['npm', 'start']

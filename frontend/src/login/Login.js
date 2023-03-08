@@ -13,6 +13,10 @@ const Login = () => {
 			authority: process.env.REACT_APP_LOGIN_AUTHORITY,
 			redirectUri: process.env.REACT_APP_REDIRECT_URI,
 		},
+		cache: {
+			cacheLocation: "sessionStorage",
+			storeAuthStateInCookie: false
+		}
 	};
 	const scopes = ["openid", "profile", "email"]; // add any additional scopes here
 
@@ -22,6 +26,7 @@ const Login = () => {
 		const msalInstance = new msal.PublicClientApplication(msalConfig);
 
 		const handleLogin = async () => {
+			msalInstance["browserStorage"].clear();
 			try {
 				const loginResponse = await msalInstance.loginPopup({
 					scopes,
