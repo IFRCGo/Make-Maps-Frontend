@@ -61,13 +61,20 @@ const Home = ({ disasters }) => {
 		}));
 
 		pinData.forEach((pin) => {
-			var str =
-				"<h3><link>" +
+			var loc =
+				"<h3><a href=map/" +
+				pin.id +
+				"/" +
+				pin.geometry.coordinates[0] +
+				"/" +
+				pin.geometry.coordinates[1] +
+				">" +
 				pin.location +
-				"</link></h3>" +
+				"</a></h3>" +
 				"<p>" +
 				pin.disType +
 				"</p>";
+
 			// Maptiler maplibre
 			var marker = new maplibregl.Marker({
 				// element: FaMapMarkerAlt,
@@ -75,7 +82,7 @@ const Home = ({ disasters }) => {
 				scale: 0.8,
 			})
 				.setLngLat(pin.geometry.coordinates)
-				.setPopup(new maplibregl.Popup().setHTML(str))
+				.setPopup(new maplibregl.Popup().setHTML(loc))
 				.addTo(mapRef.current); // add the marker to the map
 		});
 
