@@ -1,8 +1,11 @@
 import React from "react";
 import { Button, Drawer, Menu } from "antd";
 import { useState } from "react";
-import { MenuOutlined, HomeOutlined } from "@ant-design/icons";
-import { BiMapAlt } from "react-icons/bi";
+import {
+  MenuOutlined,
+  HomeOutlined,
+  VideoCameraOutlined,
+} from "@ant-design/icons";
 import { IoClose } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import "./LeftDrawer.css";
@@ -33,11 +36,11 @@ const LeftDrawer = () => {
       <HomeOutlined />
     ),
     // getItem(
-    // 	<Link to="map" onClick={onClose}>
-    // 		<p>Disaster Map</p>
-    // 	</Link>,
-    // 	"map",
-    // 	<BiMapAlt />
+    //   <a href="https://www.youtube.com/watch?v=DSyl1Z1y9Pw" target={"_blank"}>
+    //     Demo video
+    //   </a>,
+    //   "demo video",
+    //   <VideoCameraOutlined />
     // ),
   ];
 
