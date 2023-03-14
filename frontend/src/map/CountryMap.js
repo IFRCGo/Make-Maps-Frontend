@@ -19,12 +19,14 @@ import html2canvas from "html2canvas";
 import DisasterInfoCard from "./DisasterInfoCard";
 import ChosenLayerCard from "./ChosenLayerCard";
 import LinkModal from "./LinkModal";
+import DownLoadModal from "./DownLoadModal";
 
 const CountryMap = ({ disasters }) => {
   const { id, long, lat } = useParams();
   const [countryData, setCountryData] = useState({});
   const [isLayerModalOpen, setIsLayerModalOpen] = useState(false);
-  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
+  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false)
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [currentLayers, setCurrentLayers] = useState([]);
   const [createdPins, setCreatedPins] = useState([]);
 
@@ -36,6 +38,9 @@ const CountryMap = ({ disasters }) => {
     setIsLinkModalOpen(true);
   };
 
+  const showDownLoadModal = () => {
+    setIsDownloadModalOpen(true);
+  }
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
   const mapboxDrawRef = useRef(null);
@@ -395,7 +400,8 @@ const CountryMap = ({ disasters }) => {
     mapboxDrawRef.current.changeMode("draw_polygon");
   };
 
-  const handleDownloadButton = () => {
+
+  const handleDownloadButton = (type) => {
     const maplibreMap = mapRef.current;
 
     const renderMap = new Map({
@@ -447,11 +453,21 @@ const CountryMap = ({ disasters }) => {
             y += 30;
           });
         }
+        if (type === "PDF") {
+          const imageBase64 = titleCanvas.toDataURL("image/png");
 
-        link.href = titleCanvas.toDataURL();
-        link.download = "map-" + timestamp.getTime() + ".png";
-        link.click();
-        link.remove();
+          const doc = new jsPDF("l", "mm", "a4");
+
+          doc.addImage(imageBase64, "PNG", 0, 0, 297, 210);
+
+          doc.save("map-" + timestamp.getTime() + ".pdf");
+        } else {
+          link.href = titleCanvas.toDataURL();
+          link.download = "map-" + timestamp.getTime() + ".png";
+          link.click();
+          link.remove();
+        }
+
       });
       renderMap.remove();
     });
@@ -565,6 +581,11 @@ const CountryMap = ({ disasters }) => {
         currentLayers={currentLayers}
         setCurrentLayers={setCurrentLayers}
       />
+      <DownLoadModal
+        isDownloadModalOpen={isDownloadModalOpen}
+        setIsDownloadModalOpen={setIsDownloadModalOpen}
+        download={handleDownloadButton}
+      />
       <LinkModal
         isLinkModalOpen={isLinkModalOpen}
         setIsLinkModalOpen={setIsLinkModalOpen}
@@ -581,7 +602,7 @@ const CountryMap = ({ disasters }) => {
         handlePaintButton={handlePaintButton}
         handleLineButton={handleLineButton}
         handlePolygonButton={handlePolygonButton}
-        handleDownloadButton={handleDownloadButton}
+        handleDownloadButton={setIsDownloadModalOpen}
         handleExportButton={handleExportButtonToJSON}
       />
     </div>
