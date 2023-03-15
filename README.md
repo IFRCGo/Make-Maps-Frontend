@@ -12,6 +12,9 @@ As an overview, the IFRC GO Make Map is aimed to:
 - Effectively support and respond to emergency incidents in the field.
 - Assist the organisations with relief planning with greater knowledge of the region’s disasters.
 
+## Demo
+This is the demo for the project: https://www.youtube.com/watch?v=DSyl1Z1y9Pw
+
 ## Contact
 
 ![Project Logo](https://github.com/IFRC-GO-Make-Maps/IFRC-GO-Make-Maps-Frontend/blob/main/README%20Assets/IFRC_Group.jpg)
