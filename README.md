@@ -14,7 +14,7 @@ As an overview, the IFRC GO Make Map is aimed to:
 
 ## Contact
 
-![Project Logo](https://example.com/images/logo.png)
+![Project Logo](https://github.com/IFRC-GO-Make-Maps/IFRC-GO-Make-Maps-Frontend/blob/main/README%20Assets/IFRC_Group.jpg)
 
 
 If you have any questions or concerns, please reach out to:
