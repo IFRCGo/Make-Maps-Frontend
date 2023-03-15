@@ -25,7 +25,7 @@ const CountryMap = ({ disasters }) => {
   const { id, long, lat } = useParams();
   const [countryData, setCountryData] = useState({});
   const [isLayerModalOpen, setIsLayerModalOpen] = useState(false);
-  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false)
+  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [currentLayers, setCurrentLayers] = useState([]);
   const [createdPins, setCreatedPins] = useState([]);
@@ -40,7 +40,7 @@ const CountryMap = ({ disasters }) => {
 
   const showDownLoadModal = () => {
     setIsDownloadModalOpen(true);
-  }
+  };
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
   const mapboxDrawRef = useRef(null);
@@ -400,7 +400,6 @@ const CountryMap = ({ disasters }) => {
     mapboxDrawRef.current.changeMode("draw_polygon");
   };
 
-
   const handleDownloadButton = (type) => {
     const maplibreMap = mapRef.current;
 
@@ -428,7 +427,7 @@ const CountryMap = ({ disasters }) => {
         titleCanvas.height = canvas.height + 100; // add 100 pixels for the title and legend
         const titleCtx = titleCanvas.getContext("2d");
 
-        titleCtx.fillStyle = "#f6343f";
+        titleCtx.fillStyle = "#e87676";
         titleCtx.fillRect(0, 0, titleCanvas.width, titleCanvas.height);
 
         titleCtx.drawImage(canvas, 0, 100);
@@ -467,7 +466,6 @@ const CountryMap = ({ disasters }) => {
           link.click();
           link.remove();
         }
-
       });
       renderMap.remove();
     });
