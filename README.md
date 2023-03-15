@@ -16,15 +16,14 @@ As an overview, the IFRC GO Make Map is aimed to:
 
 ![Project Logo](https://github.com/IFRC-GO-Make-Maps/IFRC-GO-Make-Maps-Frontend/blob/main/README%20Assets/IFRC_Group.jpg)
 
-
 If you have any questions or concerns, please reach out to:
 
-* Piraveenan Kirupakaran (Team Leader): p.kirupakaran@ucl.ac.uk
-* Tao Huang: tao.huang.22@ucl.ac.uk
-* Yizhou Li: ucabiaz@ucl.ac.uk
-* Jaden Wan: jaden.wan.22@ucl.ac.uk
-* Yi-Hsin: yi-hsien.hsin.22@ucl.ac.uk
-* Daniel Swarup: daniel.swarup.22@ucl.ac.uk
+- Piraveenan Kirupakaran (Team Leader): p.kirupakaran@ucl.ac.uk
+- Tao Huang: tao.huang.22@ucl.ac.uk
+- Yizhou Li: ucabiaz@ucl.ac.uk
+- Jaden Wan: jaden.wan.22@ucl.ac.uk
+- Yi-Hsin: yi-hsien.hsin.22@ucl.ac.uk
+- Daniel Swarup: daniel.swarup.22@ucl.ac.uk
 
 Project URL: https://ifrc-go-make-maps-frontend.azurewebsites.net/
 
@@ -47,25 +46,25 @@ git clone https://github.com/IFRC-GO-Make-Maps/IFRC-GO-Make-Maps-Frontend
 
 2. Navigate to the project directory:
 
-````bash
+```bash
 cd frontend/
-````
+```
 
 3. Install the dependencies:
 
-````bash
+```bash
 yarn install
 # OR
 npm install
-````
+```
 
 4. Start the development server:
 
-````bash
+```bash
 yarn start
 # OR
 npm start
-````
+```
 
 Your application should now be running on http://localhost:3000.
 
@@ -75,7 +74,7 @@ Provide instructions on how to use your application, including any necessary con
 
 # Azure setup
 
-````bash
+```bash
 ## Azure Setup
 
 This project is designed to be deployed to an Azure Web App using a Docker container. Follow these steps to set up an Azure Web App for your project:
@@ -115,17 +114,14 @@ This project is designed to be deployed to an Azure Web App using a Docker conta
 13. Choose "GitHub Actions" as your deployment method and follow the instructions to configure the GitHub Actions workflow.
 
 Make sure to update the `env.AZURE_WEBAPP_NAME` value in your GitHub Actions workflow file (`.github/workflows/main.yml`) with the name you chose for your Web App.
-````
+```
 
 ## Contributing
 
-If you'd like to contribute to [Your Project Name], please follow these steps:
+If you'd like to contribute to _IFRC GO Make Maps_, please follow these steps:
 
 Fork the repository.
 Create a new branch with a descriptive name (e.g., feature/awesome-feature).
 Make your changes and commit them with a clear and concise commit message.
 Push your changes to your forked repository.
 Create a pull request and describe the changes you've made.
-
-
-
