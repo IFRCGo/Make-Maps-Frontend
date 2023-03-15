@@ -101,78 +101,22 @@ This project is designed to be deployed to an Azure Web App using a Docker conta
 Make sure to update the `env.AZURE_WEBAPP_NAME` value in your GitHub Actions workflow file (`.github/workflows/main.yml`) with the name you chose for your Web App.
 ````
 
-## Github Action
+## Contributing
+If you'd like to contribute to [Your Project Name], please follow these steps:
 
-````yaml
-## GitHub Actions
+Fork the repository.
+Create a new branch with a descriptive name (e.g., feature/awesome-feature).
+Make your changes and commit them with a clear and concise commit message.
+Push your changes to your forked repository.
+Create a pull request and describe the changes you've made.
 
-This project uses GitHub Actions to build and deploy a container to an Azure Web App. The workflow is defined in the `.github/workflows/main.yml` file.
 
-```yaml
-name: Build and deploy a container to an Azure Web App
+## Contact
 
-env:
-  AZURE_WEBAPP_NAME: IFRC-GO-Make-Maps-Frontend  
+If you have any questions or concerns, please reach out to:
 
-on:
-  push:
-    branches: [ "main" ]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  packages: write
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Log in to GitHub container registry
-        uses: docker/login-action@v1.10.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
-
-      - name: Lowercase the repo name and username
-        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
-
-      - name: Build and push container image to registry
-        uses: docker/build-push-action@v2
-        with:
-          context: ./frontend
-          push: true
-          tags: ghcr.io/${{ env.REPO }}:${{ github.sha }}
-          file: ./frontend/Dockerfile
-
-  deploy:
-    permissions:
-      contents: none
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: 'Development'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-    steps:
-      - name: Lowercase the repo name and username
-        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
-
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FRONTEND }}
-          images: 'ghcr.io/${{ env.REPO }}:${{ github.sha }}'
-
-````
+[Your Name] - [your.email@example.com]
+Project URL: https://ifrc-go-make-maps-frontend.azurewebsites.net/
 
 # IFRC-GO-Make-Maps
 
