@@ -1,3 +1,7 @@
+/*
+DESCRIPTION: Defines GraphQL subscriptions using the Apollo Client library.
+Includes subscriptions for listening to changes in Disaster, Pin, and Drawing Layer records.
+*/
 import { gql } from "@apollo/client";
 
 export const DISASTER_SUBSCRIPTION_QUERY = gql`
@@ -59,8 +63,6 @@ export const PIN_REMOVED_SUBSCRIPTION = gql`
     }
   }
 `;
-
-// ----------------
 
 export const DRAWING_LAYER_ADDED_SUBSCRIPTION = gql`
   subscription DrawingLayerAdded($disasterId: MongoID!) {

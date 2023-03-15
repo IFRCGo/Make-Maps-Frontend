@@ -1,3 +1,7 @@
+/*
+DESCRIPTION: Defines GraphQL queries using the Apollo Client library.
+Includes queries for fetching Disaster, Pin, and Drawing Layer records.
+*/
 import { gql } from "@apollo/client";
 
 export const GET_DISASTERS = gql`

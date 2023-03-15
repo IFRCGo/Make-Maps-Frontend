@@ -1,3 +1,7 @@
+/*
+DESCRIPTION: Defines GraphQL mutations using the Apollo Client library.
+Includes mutations for creating, deleting, and updating Pin and Drawing Layer records.
+*/
 import { gql } from "@apollo/client";
 
 export const ADD_PIN = gql`
