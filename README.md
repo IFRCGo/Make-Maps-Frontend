@@ -34,6 +34,22 @@ Before you begin, ensure you have met the following requirements:
 
 - Node.js [v19.6.0] or higher is installed.
 - Yarn [1.22.19] or npm [9.4.0] is installed (depending on your preferred package manager).
+## Dependencies
+
+| Package                             | Version  |
+| ----------------------------------- | -------- |
+| @apollo/client                      | ^3.7.7   |
+| @mapbox/mapbox-gl-draw              | ^1.4.0   |
+| antd                                | ^5.1.5   |
+| graphql                             | ^16.6.0  |
+| graphql-ws                          | ^5.12.0  |
+| html2canvas                         | ^1.4.1   |
+| jspdf                               | ^2.5.1   |
+| mapbox-gl-draw-paint-mode           | ^1.1.1   |
+| mapbox-gl-draw-point-with-text-mode | ^1.0.2   |
+| maplibre-gl                         | ^2.4.0   |
+| react                               | ^18.2.0  |
+
 
 ## Installation
 
