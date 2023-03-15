@@ -1,4 +1,4 @@
-# IFRC GO Make Maps Frontend 
+# IFRC GO Make Maps Frontend
 
 The versatility of the web tool is apparent as it offers various features such as drawing, adding pins with notes, and multiple map layers. This makes it a game-changer in different fields, such as disaster reporting, planning, tech, consulting, and utilities. Additionally, the web tool supports real-time collaboration, making it an excellent solution for teams working on disaster response efforts.
 
@@ -102,6 +102,7 @@ Make sure to update the `env.AZURE_WEBAPP_NAME` value in your GitHub Actions wor
 ````
 
 ## Contributing
+
 If you'd like to contribute to [Your Project Name], please follow these steps:
 
 Fork the repository.
@@ -110,16 +111,15 @@ Make your changes and commit them with a clear and concise commit message.
 Push your changes to your forked repository.
 Create a pull request and describe the changes you've made.
 
-
 ## Contact
 
 If you have any questions or concerns, please reach out to:
 
-[Your Name] - [your.email@example.com]
+* Piraveenan Kirupakaran (Team Leader): p.kirupakaran@ucl.ac.uk
+* Tao Huang: tao.huang.22@ucl.ac.uk
+* Yizhou Li: ucabiaz@ucl.ac.uk
+* Jaden Wan: jaden.wan.22@ucl.ac.uk
+* Yi-Hsin: yi-hsien.hsin.22@ucl.ac.uk
+* Daniel Swarup: daniel.swarup.22@ucl.ac.uk
+
 Project URL: https://ifrc-go-make-maps-frontend.azurewebsites.net/
-
-# IFRC-GO-Make-Maps
-
-IFRC GO Make Maps for Disaster Response Frontend
-
-https://ifrc-go-make-maps-frontend.azurewebsites.net/
