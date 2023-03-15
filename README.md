@@ -1,37 +1,42 @@
-# IFRC-GO-Make-Maps-Frontend
+# IFRC GO Make Maps Frontend 
 
-IFRC-GO-Make-Maps-Frontend is a [short description of your project]. This React-based web application is designed to [describe the primary goal or purpose of your application].
+The versatility of the web tool is apparent as it offers various features such as drawing, adding pins with notes, and multiple map layers. This makes it a game-changer in different fields, such as disaster reporting, planning, tech, consulting, and utilities. Additionally, the web tool supports real-time collaboration, making it an excellent solution for teams working on disaster response efforts.
 
-## Features
+As an overview, the IFRC GO Make Map is aimed to:
 
-- Feature 1: [Brief description of feature 1]
-- Feature 2: [Brief description of feature 2]
-- Feature 3: [Brief description of feature 3]
-- ...
+- Increase the workflow efficiency of an IFRC reporter creating a map.
+- Enable reporters and analysts to create rich reports with critical data.
+- Encourage public donations.
+- Assist national societies, other humanitarian organisations, and the general public to gain important information about disasters that have occurred.
+- Enable donors to understand critical information about events in regions to encourage them to donate
+- Effectively support and respond to emergency incidents in the field.
+- Assist the organisations with relief planning with greater knowledge of the region’s disasters.
 
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
 
-- Node.js [version] or higher is installed.
-- Yarn [version] or npm [version] is installed (depending on your preferred package manager).
+- Node.js [v19.6.0] or higher is installed.
+- Yarn [1.22.19] or npm [9.4.0] is installed (depending on your preferred package manager).
 
 ## Installation
 
-Follow these steps to set up and run [IFRC-GO-Make-Maps-Frontend]:
+Follow these steps to set up and run IFRC GO Make Maps Frontend:
 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/yourprojectname.git
-````
+git clone https://github.com/IFRC-GO-Make-Maps/IFRC-GO-Make-Maps-Frontend
+```
 
 2. Navigate to the project directory:
+
 ````bash
-cd yourprojectname
+cd frontend/
 ````
 
 3. Install the dependencies:
+
 ````bash
 yarn install
 # OR
@@ -39,6 +44,7 @@ npm install
 ````
 
 4. Start the development server:
+
 ````bash
 yarn start
 # OR
@@ -48,9 +54,10 @@ npm start
 Your application should now be running on http://localhost:3000.
 
 ## Usage
+
 Provide instructions on how to use your application, including any necessary configuration steps, user registration, or feature explanations.
 
-##Azure setup 
+# Azure setup
 
 ````bash
 ## Azure Setup
@@ -95,6 +102,7 @@ Make sure to update the `env.AZURE_WEBAPP_NAME` value in your GitHub Actions wor
 ````
 
 ## Github Action
+
 ````yaml
 ## GitHub Actions
 
@@ -167,6 +175,7 @@ jobs:
 ````
 
 # IFRC-GO-Make-Maps
+
 IFRC GO Make Maps for Disaster Response Frontend
 
 https://ifrc-go-make-maps-frontend.azurewebsites.net/
