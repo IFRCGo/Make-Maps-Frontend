@@ -12,6 +12,22 @@ As an overview, the IFRC GO Make Map is aimed to:
 - Effectively support and respond to emergency incidents in the field.
 - Assist the organisations with relief planning with greater knowledge of the region’s disasters.
 
+## Contact
+
+![Project Logo](https://example.com/images/logo.png)
+
+
+If you have any questions or concerns, please reach out to:
+
+* Piraveenan Kirupakaran (Team Leader): p.kirupakaran@ucl.ac.uk
+* Tao Huang: tao.huang.22@ucl.ac.uk
+* Yizhou Li: ucabiaz@ucl.ac.uk
+* Jaden Wan: jaden.wan.22@ucl.ac.uk
+* Yi-Hsin: yi-hsien.hsin.22@ucl.ac.uk
+* Daniel Swarup: daniel.swarup.22@ucl.ac.uk
+
+Project URL: https://ifrc-go-make-maps-frontend.azurewebsites.net/
+
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
@@ -111,15 +127,5 @@ Make your changes and commit them with a clear and concise commit message.
 Push your changes to your forked repository.
 Create a pull request and describe the changes you've made.
 
-## Contact
 
-If you have any questions or concerns, please reach out to:
 
-* Piraveenan Kirupakaran (Team Leader): p.kirupakaran@ucl.ac.uk
-* Tao Huang: tao.huang.22@ucl.ac.uk
-* Yizhou Li: ucabiaz@ucl.ac.uk
-* Jaden Wan: jaden.wan.22@ucl.ac.uk
-* Yi-Hsin: yi-hsien.hsin.22@ucl.ac.uk
-* Daniel Swarup: daniel.swarup.22@ucl.ac.uk
-
-Project URL: https://ifrc-go-make-maps-frontend.azurewebsites.net/
