@@ -1,12 +1,13 @@
 import React from "react";
 import { Layout as AntdLayout, theme } from "antd";
 import HeaderContents from "./HeaderContents";
-import { Outlet } from 'react-router-dom';
+import { Outlet } from "react-router-dom";
 
 const Layout = ({ disasters }) => {
-
   const { Header, Content } = AntdLayout;
-  const { token: { colorBgContainer } } = theme.useToken();
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
 
   return (
     <div className="App">
@@ -14,10 +15,10 @@ const Layout = ({ disasters }) => {
         <Header
           style={{
             padding: 0,
-            position: 'sticky', 
-            top: 0, 
-            zIndex: 999, 
-            width: '100%',
+            position: "sticky",
+            top: 0,
+            zIndex: 999,
+            width: "100%",
             background: colorBgContainer,
           }}
         >
@@ -26,17 +27,9 @@ const Layout = ({ disasters }) => {
         <Content style={{ background: colorBgContainer }}>
           <Outlet />
         </Content>
-        {/* <Footer
-          style={{
-            textAlign: "center",
-            background: colorBgContainer,
-          }}
-        >
-          IFRC GO MAKE MAPS ©2023
-        </Footer> */}
       </AntdLayout>
     </div>
-  )
-}
+  );
+};
 
 export default Layout;

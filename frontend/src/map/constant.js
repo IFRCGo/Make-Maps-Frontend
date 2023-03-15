@@ -1,4 +1,13 @@
 export const API_KEY = "HMeYX3yPwK7wfZQDqdeC";
+/*
+  List of map layers to be displayed
+  Additional layers can be added to the array via:
+  {
+    name: "Layer Name",
+    url: "Layer URL",
+    type: "TMS",
+  },
+*/
 export const LAYERS = [
   {
     name: "Open Railway Map",

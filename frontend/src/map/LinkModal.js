@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Modal, Input, Button, message } from "antd";
 import { LinkOutlined } from "@ant-design/icons";
@@ -7,7 +7,6 @@ import { LinkOutlined } from "@ant-design/icons";
 const LinkModal = ({ isLinkModalOpen, setIsLinkModalOpen }) => {
   const { id, long, lat } = useParams();
   const [text, setText] = useState(
-    // `localhost:3000/map/live/${id}/${long}/${lat}`
     `https://ifrc-go-make-maps-frontend.azurewebsites.net/map/live/${id}/${long}/${lat}`
   );
 
@@ -38,7 +37,6 @@ const LinkModal = ({ isLinkModalOpen, setIsLinkModalOpen }) => {
               width: "calc(100% - 130px)",
             }}
             value={text}
-            // defaultValue="https://ant.design"
             defaultValue={text}
           />
           <CopyToClipboard text={text}>

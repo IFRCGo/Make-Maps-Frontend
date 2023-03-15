@@ -20,6 +20,7 @@ function App() {
   }, [data]);
 
   return (
+    // Define the routes for the application
     <Routes>
       <Route path="/" element={<Layout disasters={disasters} />}>
         <Route path="login">

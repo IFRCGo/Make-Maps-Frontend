@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useRef, useMemo } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import maplibregl, { Map } from "!maplibre-gl"; // eslint-disable-line import/no-webpack-loader-syntax
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import PaintMode from "mapbox-gl-draw-paint-mode";
 import DrawPointWithText from "mapbox-gl-draw-point-with-text-mode";
-import jsPDF from "jspdf";
 import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import * as Query from "../API/AllQueries";
 import * as Mutation from "../API/AllMutations";
@@ -207,10 +206,6 @@ const LiveMap = ({ disasters }) => {
             // Add the updated feature to the map
             mapboxDrawRef.current.add(feature);
             e.features[0] = feature;
-            // console.log("creating in map");
-            // createTextArea(mapboxDrawRef, mapRef, e.features[0]);
-            // setCreatedPins([...createdPins, e.features[0].id]);
-            // createdPins.push(e.features[0].id);
           })
           .catch((error) => {
             console.error(error);

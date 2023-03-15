@@ -1,6 +1,5 @@
 import React from "react";
 import { Collapse } from "antd";
-
 const { Panel } = Collapse;
 
 const ChosenLayerCard = ({ currentLayers }) => {

@@ -1,3 +1,5 @@
+// DrawStyles is an array of objects that define the styles for different drawing modes in Mapbox Draw.
+// Update to change the colours and size of the Points, MultiLineString, Polygon & LineString
 const DrawStyles = [
   {
     id: "gl-draw-polygon-fill-inactive",
