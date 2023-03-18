@@ -18,9 +18,9 @@ This is the demo for the project: https://www.youtube.com/watch?v=DSyl1Z1y9Pw
 
 ## Intial UI Designs
 
-![1679155138061](image/README/1679155138061.png)
+![UI Design Home](https://github.com/IFRC-GO-Make-Maps/IFRC-GO-Make-Maps-Frontend/blob/main/README%20Assets/UI_Design_Home.pn)
 
-![1679155123209](image/README/1679155123209.png)
+![1679155123209](UI Design Map)
 
 ## Contact
 
